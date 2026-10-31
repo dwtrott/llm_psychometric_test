@@ -1,5 +1,14 @@
 LLM PSYCHOMETRIC BATTERY — CSV + PYTHON
 
+READ THE CONTENT WITHOUT RUNNING CODE
+Open QUESTIONS.md for the complete question book, organized by module.
+Each page includes the actual questions/scenarios, answer options and response
+instructions. complete_prompts.csv puts each full prompt in a single column.
+Research references are background, not pointers to missing question text.
+This is a pilot task set, not a complete psychological profile. Its 436 rows
+include repeated scenario variants; many tasks are simple and require deeper
+item review and empirical validation before psychological conclusions.
+
 This is the measurement and data-processing component. The psychometric KG
 visualizer is a separate tool consuming graph.json, or nodes.csv and edges.csv.
 No rendering, layout, browser, or visualization dependencies are included.
