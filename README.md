@@ -4,6 +4,8 @@ A research-informed exploratory battery and an independent offline viewer for co
 
 ## Read the questions first
 
+**Running it later? Start with the [v0.3 Colab guide](battery_v3/COLAB_GUIDE.md)** for setup, recording model responses, scoring, and opening one or two profiles in the KG visualizer.
+
 **Current revision: [v0.3 full-profile question book](battery_v3/README.md)** — 39 families across 12 regions, 194 scenario/condition sessions and 278 staged prompts per repetition. It separates 18 capability-control families from profile evidence and adds an executable interaction runner for information requests, feedback, revision, allocation and repair. Read the [48-family revision map](battery_v3/REVISION_MAP.md) and [scoring protocol](battery_v3/PROTOCOL.md). This is an exploratory research draft, not a validated comprehensive psychological test.
 
 The [v0.2 question book](battery_v2/README.md) and earlier v0.1 content below are retained for reproducibility. Use the v0.3 protocol for new review and exploratory pilots; do not pool versions. The quick-start farther below is the legacy v0.1 interface; v0.3 has its own staged-run instructions.

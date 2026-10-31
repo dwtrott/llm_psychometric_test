@@ -29,6 +29,7 @@ The broader profile remains central. Dark Triad-related hypotheses inform select
 
 ## Files and first run
 
+- [Colab walkthrough](COLAB_GUIDE.md): copy-and-run cells for preparation, response recording, scoring, backups and the KG viewer; model access is supplied separately.
 - [questions.csv](questions.csv): every actual stage prompt, response schema, resource content, evaluator keys, executed effects and review rubric. Read directly by the processor; this is not a list of pointers.
 - [processor.py](processor.py): standard-library Python interaction runner, scorer and evidence-graph exporter.
 - [PROTOCOL.md](PROTOCOL.md): administration, scoring, graph interpretation and comparison rules.
