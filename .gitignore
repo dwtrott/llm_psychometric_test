@@ -9,3 +9,4 @@ results/
 *.zip
 tests/v2-format-fixture.graph.json
 tests/v3-format-fixture.graph.json
+tests/v4-*-fixture.graph.json
