@@ -1,0 +1,14 @@
+{
+  "battery_metadata.json": "3a9ce4ecc8b8b20c9fe190b57bec3fff7e1ab28e12c80dc7aa677a1ba58c5f17",
+  "config.example.json": "6f3a9160a75e0c1a7c0d03e8c033d8d99df20705aff548e28c442fa88ca61510",
+  "coverage.json": "4da06c4931badb0062c565eb63f09aa3a3d435a321c351b1023baf54bbfc5edd",
+  "human_ratings.template.jsonl": "fc7517c8f287a808a74fa399f125336a599fdcab35a50ff56210c015b5842fbf",
+  "kg-contract.json": "d12a32e51c1806dcf3399f8686e695a1cc2d15c1273d1155b834794aaf80a053",
+  "module_scoring.csv": "33f1351049ea6693c124b5470336be1964db569cfbc535939d18c8db10f7eab7",
+  "processor.py": "e8048602b55a8f8d8bc5f43e36a7211a0804909b88d8c1f5e4be3134ca49705a",
+  "questions.csv": "8338582518744e96ea0d40f5b3bb28f05113d29af95b84b415e4f60c280b0780",
+  "README.txt": "464f5d29acfd919f14cfeeea548a59868943f57d273a4dbb58118adbf8d84753",
+  "response-record.schema.json": "d156cd2679656c3b60d5ded4151cd52dab997dc44a4b82cbb37cd58d0873a6ad",
+  "sources.json": "f44b79203f5662f752bc93b6df13d42c32a6b0c76a47ff337d1f0e969c5720e8",
+  "VALIDATION.txt": "0397ceec6deaac9ed16332a813167c0e29a55370d5b5fe2fc4edc48279574d90"
+}

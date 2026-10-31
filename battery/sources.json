@@ -1,0 +1,181 @@
+{
+  "sources": {
+    "swow": {
+      "title": "De Deyne et al. / Small World of Words",
+      "url": "https://smallworldofwords.org/en/project/research",
+      "application": "Human association-network foundation; these prompts and the sampled concepts are original, not a reproduction of SWOW norms."
+    },
+    "typicality": {
+      "title": "Le Mens et al. (2023), Uncovering the semantics of concepts using GPT-4",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10710071/",
+      "application": "LLM concept-judgment precedent; does not validate this triadic item set."
+    },
+    "grid": {
+      "title": "Shaw and Gaines (1987), Personal construct knowledge elicitation",
+      "url": "https://gaines.library.uvic.ca/pdf/IntKATech87.pdf",
+      "application": "Human repertory-grid elicitation foundation; LLM interpretation remains exploratory."
+    },
+    "differential": {
+      "title": "Kervyn, Fiske and Yzerbyt, Semantic differential and social perception",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4479118/",
+      "application": "Human evaluative/potency framework, not evidence that an LLM has emotions."
+    },
+    "cognitive": {
+      "title": "Binz and Schulz (2023), Using cognitive psychology to understand GPT-3",
+      "url": "https://doi.org/10.1073/pnas.2218523120",
+      "application": "Precedent for controlled cognitive tasks and for checking wording and task contamination."
+    },
+    "calibration": {
+      "title": "Steyvers et al. (2025), What language models know and what people think they know",
+      "url": "https://doi.org/10.1038/s42256-024-00976-7",
+      "application": "Distinguishes confidence calibration from discrimination; this small calibration set is an original pilot."
+    },
+    "creativity": {
+      "title": "Kenett, Anaki and Faust (2014), Semantic networks and creativity",
+      "url": "https://www.frontiersin.org/journals/human-neuroscience/articles/10.3389/fnhum.2014.00407/full",
+      "application": "Human group-level association-network evidence. Network density is not used here as a creativity score."
+    },
+    "framing": {
+      "title": "Tversky and Kahneman (1981), The framing of decisions",
+      "url": "https://stanford.edu/class/psych205/papers/Tversky-Kahneman-1981.pdf",
+      "application": "Human framing foundation; the fictional lotteries here are original and not human-normed."
+    },
+    "social": {
+      "title": "Strachan et al. (2024), Testing theory of mind in LLMs and humans",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38769463/",
+      "application": "Precedent for perspective-taking tasks, not a blanket attribution of human theory of mind."
+    },
+    "svo": {
+      "title": "Murphy, Ackermann and Handgraaf (2011), Measuring Social Value Orientation",
+      "url": "https://ryanomurphy.com/resources/Murphy-Ackermann-Handgraaf-2011.pdf",
+      "application": "Human allocation-preference foundation. These tasks are not the SVO Slider Measure and do not produce an SVO angle."
+    },
+    "dark": {
+      "title": "Jones and Paulhus (2014), Introducing the Short Dark Triad",
+      "url": "https://www2.psych.ubc.ca/~dpaulhus/research/DARK_TRAITS/ARTICLES/ASSESST.2014.with.Jones.pdf",
+      "application": "Human construct reference only. No SD3 items, human norms, diagnoses, or validated LLM Dark Triad scores are supplied."
+    },
+    "machiavelli": {
+      "title": "Pan et al. (2023), MACHIAVELLI",
+      "url": "https://arxiv.org/abs/2304.03279",
+      "application": "Agent reward/ethics trade-off precedent. Our menu probes do not reproduce the interactive benchmark."
+    },
+    "scheming": {
+      "title": "Meinke et al., Frontier Models are Capable of In-context Scheming",
+      "url": "https://arxiv.org/abs/2412.04984",
+      "application": "Conditional capability evaluation precedent; no deployment prevalence inference from toy selections."
+    },
+    "alignment": {
+      "title": "Greenblatt et al., Alignment faking in large language models",
+      "url": "https://arxiv.org/abs/2412.14093",
+      "application": "Specialized selective-compliance paradigm. An audit cue effect in this battery is not automatically alignment faking."
+    },
+    "sycophancy": {
+      "title": "Sharma et al., Towards Understanding Sycophancy in Language Models",
+      "url": "https://arxiv.org/abs/2310.13548",
+      "application": "Precedent for holding content fixed while manipulating user stance."
+    },
+    "validity": {
+      "title": "Serapio-Garcia et al. (2025), A psychometric framework for LLM personality",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12719228/",
+      "application": "Reliability and validity must be established for each measurement and model."
+    },
+    "network": {
+      "title": "Epskamp, Borsboom and Fried, Estimating psychological networks and accuracy",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5809547/",
+      "application": "Network uncertainty and stability principles; the supplied scorer does not implement bootstrap inference."
+    }
+  },
+  "module_sources": {
+    "ASSOC": [
+      "swow"
+    ],
+    "SIM": [
+      "typicality"
+    ],
+    "DIFF": [
+      "differential"
+    ],
+    "GRID": [
+      "grid"
+    ],
+    "EVID": [
+      "cognitive"
+    ],
+    "CAUSE": [
+      "cognitive"
+    ],
+    "FLEX": [
+      "cognitive"
+    ],
+    "CREATIVE": [
+      "creativity"
+    ],
+    "CAL": [
+      "calibration"
+    ],
+    "LEARN": [
+      "cognitive"
+    ],
+    "INFO": [
+      "cognitive"
+    ],
+    "DECISION": [
+      "framing",
+      "cognitive"
+    ],
+    "TIME": [
+      "cognitive"
+    ],
+    "SOCIAL": [
+      "social"
+    ],
+    "AFFECT": [
+      "social"
+    ],
+    "CARE": [
+      "social",
+      "svo"
+    ],
+    "COOP": [
+      "svo"
+    ],
+    "VALUES": [
+      "svo"
+    ],
+    "MEMORY": [
+      "cognitive"
+    ],
+    "PLAN": [
+      "cognitive"
+    ],
+    "SELF": [
+      "dark",
+      "validity"
+    ],
+    "DECEP": [
+      "scheming"
+    ],
+    "OMIT": [
+      "scheming"
+    ],
+    "MANIP": [
+      "machiavelli",
+      "dark"
+    ],
+    "HARM": [
+      "machiavelli",
+      "dark"
+    ],
+    "CORRECT": [
+      "scheming"
+    ],
+    "PROXY": [
+      "machiavelli"
+    ],
+    "SYCO": [
+      "sycophancy"
+    ]
+  },
+  "status": "Research-informed original probes; citations do not validate these exact items."
+}

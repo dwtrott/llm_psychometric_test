@@ -1,0 +1,11 @@
+{
+  "provider": "REPLACE",
+  "model": "REPLACE",
+  "model_revision": "REPLACE",
+  "temperature": 0.7,
+  "top_p": 1,
+  "reasoning_budget": "record provider setting",
+  "output_limit": 1024,
+  "tools": false,
+  "language": "English"
+}

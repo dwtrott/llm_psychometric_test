@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Single external response record",
+  "type": "object",
+  "required": [
+    "trial_id",
+    "config_id",
+    "status"
+  ],
+  "properties": {
+    "trial_id": {
+      "type": "string"
+    },
+    "config_id": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "api_error"
+      ]
+    },
+    "raw_response": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "synthetic": {
+      "type": "boolean"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ok"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "raw_response"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

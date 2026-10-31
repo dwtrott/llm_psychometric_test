@@ -1,0 +1,60 @@
+{
+  "version": "0.1.0",
+  "graph_model": "directed property multigraph",
+  "node_kinds": [
+    "model_configuration",
+    "run",
+    "item",
+    "trial",
+    "concept",
+    "condition",
+    "construct_hypothesis",
+    "response_option",
+    "measurement",
+    "semantic_axis",
+    "elicited_distinction",
+    "idea",
+    "task_defined_state",
+    "selected_report"
+  ],
+  "edge_types": {
+    "evaluated_in": "configuration -> run",
+    "contains_trial": "run -> trial",
+    "instance_of": "trial -> item",
+    "researcher_assigned_anchor": "item -> concept; instrument-design metadata only",
+    "designed_to_probe": "item -> construct hypothesis; NOT evidence that the construct is established",
+    "under_condition": "trial -> condition",
+    "selected": "trial -> response option",
+    "elicited_associate": "trial -> concept; cue, context and rank retained",
+    "evokes": "cue concept -> associate concept; context-specific estimated inclusion rate",
+    "preferred_similarity": "cue -> selected candidate; conditioned on exact comparison set",
+    "rated_on": "concept -> semantic axis or trial-specific elicited distinction",
+    "elicited": "trial -> elicited distinction",
+    "generated_idea": "trial -> idea",
+    "scored_as": "trial -> measurement",
+    "implies_simulated_state": "trial -> task-defined state; not a real action",
+    "reports": "trial -> selected report",
+    "compared_against": "selected report -> task-defined state"
+  },
+  "origins": [
+    "instrument_design",
+    "observed_response",
+    "task_rules",
+    "deterministic_scoring",
+    "estimated"
+  ],
+  "identity": {
+    "concept": "casefold and collapse whitespace only; no punctuation, synonym, sense, or embedding merges",
+    "trial": "run_id + item_id + repeat; run IDs must be globally unique across merged datasets",
+    "configuration": "hash of recorded configuration including system prompt; not a guarantee of provider-side reproducibility",
+    "edge": "hash of endpoints, relation and all attributes; exact duplicate edges suppressed"
+  },
+  "weights": {
+    "evokes": "valid trials mentioning associate / valid trials for SAME cue, context, configuration and run; each list counts once; outgoing weights need not sum to 1",
+    "preferred_similarity": "choice count / valid responses for SAME cue and exact comparison set",
+    "rated_on": "mean raw rating on explicit 0..6 scale; not interchangeable with probability",
+    "scored_as": "measurement value has a metric-specific unit; no generic probability weight"
+  },
+  "missingness": "Unobserved pairs are absent, not zeros. Explicitly offered unchosen SIM candidates have measured zero support. Missing, declined, invalid and API-error trials remain distinct.",
+  "graphdiff": "Not a drop-in graphdiff file. Export a specified layer and context with scalar attributes and a unique (source,type,target) key. Aggregate repeated observations first. Do not flatten provenance or mixed conditions into one edge."
+}

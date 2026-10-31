@@ -1,0 +1,27 @@
+const assert=require('assert'), fs=require('fs');
+const c=require('../viewer/src/app.js');
+const root=require('path').join(__dirname,'../viewer/');
+const ga=JSON.parse(fs.readFileSync(root+'synthetic-A.graph.json')),gb=JSON.parse(fs.readFileSync(root+'synthetic-B.graph.json'));
+const a=c.normalize(ga),b=c.normalize(gb);let checks=0;
+function test(name,f){f();checks++;console.log('PASS '+name)}
+test('28 modules / 1744 valid trials per demo',()=>{for(const p of [a,b]){assert.equal(p.rows.length,1744);assert.equal(p.quality.valid,1744);assert.equal(new Set(p.rows.map(r=>r.module)).size,28)}});
+test('8 domains cover every module exactly once',()=>{const ms=c.CATALOG.domains.flatMap(d=>d.modules);assert.equal(c.CATALOG.domains.length,8);assert.equal(ms.length,28);assert.equal(new Set(ms).size,28)});
+test('All designated metrics exist',()=>{for(const[m,k]of Object.entries(c.CATALOG.primary))assert(a.rows.some(r=>r.module===m&&k in r.metrics))});
+test('Same profile has zero deltas',()=>assert(c.matchCells(a,a).every(x=>x.delta===0)));
+test('Known calibration difference',()=>{const cells=c.matchCells(a,b).filter(x=>x.module==='CAL'&&x.metric==='brier_selected_answer');assert(cells.length);assert(cells.every(x=>x.delta>0))});
+test('Battery mismatch blocks numeric comparisons',()=>assert.equal(c.matchCells(a,{...b,hash:'different'}).length,0));
+test('Invalid trials do not enter means',()=>{assert.equal(c.aggregate([{module:'X',conditions:{},family:'1',status:'invalid',metrics:{v:10}}]).length,0)});
+test('Families weighted equally',()=>{const rows=[1,1,1,0].map((v,i)=>({module:'X',conditions:{},family:i<3?'a':'b',status:'valid',metrics:{v}}));assert.equal(c.aggregate(rows)[0].value,.5)});
+test('Shared item subset only',()=>{const rows=[0,1].map((v,i)=>({item:String(i),module:'X',conditions:{},family:String(i),status:'valid',metrics:{v}}));const p={hash:'h',cells:c.aggregate(rows)},q={hash:'h',cells:c.aggregate(rows.slice(1))};assert.equal(c.matchCells(p,q)[0].a,1)});
+test('Missing semantic edge remains absent, not zero',()=>{const u=c.graphUnion(a,null,'evokes','neutral');assert(u.length);assert(u.every(e=>e.a&&!e.b))});
+test('Directed edge identity includes context',()=>{const neutral=c.graphUnion(a,b,'evokes','neutral');assert(neutral.every(e=>(e.a||e.b).context==='neutral'))});
+test('Duplicate IDs and dangling endpoints rejected',()=>{assert.throws(()=>c.normalize({...ga,nodes:[...ga.nodes,ga.nodes[0]]}));assert.throws(()=>c.normalize({...ga,edges:[...ga.edges,{source:'bad',target:'bad',type:'evokes'}]}))});
+test('Nonfinite metrics rejected',()=>{const g=structuredClone(ga);g.nodes.find(n=>n.kind==='trial').metrics={x:NaN};assert.throws(()=>c.normalize(g))});
+test('Layout and communities cover nodes',()=>{const links=c.graphUnion(a,null,'evokes','neutral'),ids=new Set(links.flatMap(e=>[e.source,e.target])),nodes=[...ids].map(id=>({id}));assert.equal(c.communities(nodes,links).flat().length,nodes.length);assert([...c.layout(nodes,links).values()].every(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)))});
+test('Graph difference direction and magnitude',()=>{assert.deepEqual(c.edgeDifference({a:{weight:.8},b:{weight:.2}}),{category:'a',delta:.2-.8});assert.equal(c.edgeDifference({a:{weight:.2},b:{weight:.8}}).category,'b')});
+test('Tolerance includes identical and boundary values',()=>{assert.equal(c.edgeDifference({a:{weight:.5},b:{weight:.55}},.05).category,'similar');assert.equal(c.edgeDifference({a:{weight:.5},b:{weight:.5}},0).category,'similar')});
+test('One-sided observations never get numeric delta',()=>{assert.deepEqual(c.edgeDifference({a:{weight:0}}),{category:'a-only',delta:null});assert.deepEqual(c.edgeDifference({b:{weight:.6}}),{category:'b-only',delta:null})});
+test('Measured zeros have numeric differences',()=>assert.deepEqual(c.edgeDifference({a:{weight:0},b:{weight:.5}}),{category:'b',delta:.5}));
+test('Ratings use their raw scale',()=>assert.deepEqual(c.edgeDifference({a:{value:4},b:{value:2}},.3),{category:'a',delta:-2}));
+test('Swapping profiles reverses differences',()=>{for(const e of c.graphUnion(a,b,'evokes','neutral')){const x=c.edgeDifference(e),y=c.edgeDifference({a:e.b,b:e.a});if(x.delta!==null)assert.equal(x.delta,-y.delta)}});
+console.log(checks+' checks passed');

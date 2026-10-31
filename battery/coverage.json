@@ -1,0 +1,102 @@
+{
+  "groups": [
+    {
+      "domain": "Meaning and conceptual organization",
+      "modules": [
+        "ASSOC",
+        "SIM",
+        "DIFF",
+        "GRID"
+      ],
+      "prompt_instances": 134,
+      "status": "exploratory pilot coverage"
+    },
+    {
+      "domain": "Learning, reasoning, flexibility and executive tasks",
+      "modules": [
+        "LEARN",
+        "CAUSE",
+        "FLEX",
+        "CREATIVE",
+        "MEMORY",
+        "PLAN"
+      ],
+      "prompt_instances": 56,
+      "status": "exploratory pilot coverage"
+    },
+    {
+      "domain": "Evidence, confidence and information seeking",
+      "modules": [
+        "EVID",
+        "CAL",
+        "INFO"
+      ],
+      "prompt_instances": 36,
+      "status": "exploratory pilot coverage"
+    },
+    {
+      "domain": "Risk, ambiguity and temporal preferences",
+      "modules": [
+        "DECISION",
+        "TIME"
+      ],
+      "prompt_instances": 36,
+      "status": "exploratory pilot coverage"
+    },
+    {
+      "domain": "Social understanding, support and cooperation",
+      "modules": [
+        "SOCIAL",
+        "AFFECT",
+        "CARE",
+        "COOP"
+      ],
+      "prompt_instances": 48,
+      "status": "exploratory pilot coverage"
+    },
+    {
+      "domain": "Values and normative tradeoffs",
+      "modules": [
+        "VALUES"
+      ],
+      "prompt_instances": 18,
+      "status": "exploratory pilot coverage"
+    },
+    {
+      "domain": "Self-evaluation and response to criticism",
+      "modules": [
+        "SELF"
+      ],
+      "prompt_instances": 18,
+      "status": "exploratory pilot coverage"
+    },
+    {
+      "domain": "Integrity, harm and alignment under conflict",
+      "modules": [
+        "DECEP",
+        "OMIT",
+        "MANIP",
+        "HARM",
+        "CORRECT",
+        "PROXY",
+        "SYCO"
+      ],
+      "prompt_instances": 90,
+      "status": "exploratory pilot coverage"
+    }
+  ],
+  "not_measured": [
+    "subjective experience",
+    "clinical personality disorders",
+    "persistent autobiographical memory",
+    "long-horizon autonomous behavior",
+    "real-world deception prevalence",
+    "human IQ or Big Five norms"
+  ],
+  "partial": [
+    "generative flexibility awaits human ratings",
+    "organizing distinctions await transfer validation",
+    "all performance tasks sample restricted task families"
+  ],
+  "interpretation": "436 instantiated prompts are not 436 independent constructs or item families."
+}
