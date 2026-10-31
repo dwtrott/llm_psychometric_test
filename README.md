@@ -4,9 +4,9 @@ A research-informed exploratory battery and an independent offline viewer for co
 
 ## Read the questions first
 
-**New: [v0.2 full-profile question book](battery_v2/README.md)** — 96 complete prompts in 48 original scenario families across 12 regions, with matched conditions, explicit keys where justified, open-response rubrics, research links, and a [measurement/validation protocol](battery_v2/PROTOCOL.md). This is a substantive research draft, not a validated comprehensive psychological test. It includes its own Python processor and exports graphs readable by the updated viewer.
+**Current revision: [v0.3 full-profile question book](battery_v3/README.md)** — 39 families across 12 regions, 194 scenario/condition sessions and 278 staged prompts per repetition. It separates 18 capability-control families from profile evidence and adds an executable interaction runner for information requests, feedback, revision, allocation and repair. Read the [48-family revision map](battery_v3/REVISION_MAP.md) and [scoring protocol](battery_v3/PROTOCOL.md). This is an exploratory research draft, not a validated comprehensive psychological test.
 
-The earlier v0.1 content below is retained for reproducibility. Use the v0.2 protocol for new exploratory runs; do not pool versions.
+The [v0.2 question book](battery_v2/README.md) and earlier v0.1 content below are retained for reproducibility. Use the v0.3 protocol for new review and exploratory pilots; do not pool versions. The quick-start farther below is the legacy v0.1 interface; v0.3 has its own staged-run instructions.
 
 **[Open the complete question book](battery/QUESTIONS.md)** to read every scenario, question, answer choice and response instruction, organized into 28 module pages. No code needs to be run. [Complete prompts in CSV](battery/complete_prompts.csv) are also included, with the full user prompt in one column.
 
@@ -16,6 +16,7 @@ The current 436 instantiated items include condition variants of simple associat
 
 - [`battery/`](battery/README.txt): 436 CSV questions across 28 modules, Python preparation/scoring, configuration templates, research sources, and graph export.
 - [`battery_v2/`](battery_v2/README.md): revised full-profile scenarios, controlled contrasts and review rubrics; separate versioned processor.
+- [`battery_v3/`](battery_v3/README.md): current reviewed revision, separate controls, staged interaction runner, raw transcripts and evidence-graph export.
 - [`viewer/`](viewer/README.txt): self-contained HTML viewer, Python embedding helper, Colab notebook, and explicitly synthetic demonstrations.
 - [`viewer/src/`](viewer/src/): editable JavaScript and HTML/CSS source.
 - [`tests/`](tests/): 17 battery checks and 20 viewer checks.
