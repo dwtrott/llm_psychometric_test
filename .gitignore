@@ -7,3 +7,4 @@ __pycache__/
 runs/
 results/
 *.zip
+tests/v2-format-fixture.graph.json
