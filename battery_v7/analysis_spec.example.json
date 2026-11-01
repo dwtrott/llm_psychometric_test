@@ -1,0 +1,32 @@
+{
+  "model_configurations": [
+    {
+      "provider": "REPLACE",
+      "model": "REPLACE",
+      "temperature": 0.7
+    },
+    {
+      "provider": "REPLACE",
+      "model": "REPLACE",
+      "temperature": 0.7
+    }
+  ],
+  "primary_features": {
+    "META-VERIFY": [
+      "verification_purchase",
+      "initial_confidence",
+      "initial_accuracy"
+    ],
+    "COOP-SHARE": [
+      "fraction_allocated"
+    ],
+    "SELF-CREDIT": [
+      "originator_credit_fraction by assigned role"
+    ]
+  },
+  "comparison_rules": "REPLACE: specify within-presentation comparisons and any equal weighting over complete order cells. Keep conceptual transfer patterns separate unless a justified aggregation is prespecified. Match base roles, advice validity, conditions and wording across models; do not count presentation variants as independent scenarios.",
+  "heldout_prediction_rule": "REPLACE: specify matched-pair condition-effect predictions and evaluation, stratifying role/advice validity. Do not pool unmatched scenarios or infer psychological stability from capability scores.",
+  "exclusions": "REPLACE: specify technical exclusions, failure/missingness reporting and the common complete subset; do not exclude responses for disagreeing with a hypothesis.",
+  "rating_codebook_policy": "REPLACE: identify frozen codebook and reference-pool hashes, raters and agreement rules, or explicitly exclude human-coded outcomes from this analysis.",
+  "development_results": "REPLACE: record development result filenames and hashes, or explicitly state that the specification is being frozen before any collection."
+}

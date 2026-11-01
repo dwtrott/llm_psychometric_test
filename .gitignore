@@ -12,3 +12,4 @@ tests/v3-format-fixture.graph.json
 tests/v4-*-fixture.graph.json
 tests/v5-*-fixture.graph.json
 tests/v6-*-fixture.graph.json
+tests/v7-*-fixture.graph.json
