@@ -1,5 +1,7 @@
 # v0.4 — measuring reproducible response patterns
 
+**Review before administering:** the [2026-11-01 critical review](reviews/CRITICAL_REVIEW_2026-11-01.md) identifies material paraphrase defects, repeated task structures and held-out confounds. Its [96-scenario audit](reviews/v0.4-scenario-audit-2026-11-01.csv) is an AI-authored self-review, not independent validation. The original v0.4 questions and scoring remain unchanged for reproducibility.
+
 This revision reorganizes the **core** around 16 candidate facets across all 12 profile regions. Each facet has six authored scenario forms: **four development forms and two held-out forms**, each crossed with **two paraphrases and two context conditions**. Repetitions are a separate dimension. The association facet elicits four cues in separate conversations per cell.
 
 The aim is to test whether patterns survive wording changes and transfer to new situations. These are candidate psychological interpretations, not validated traits. Authored forms are not automatically statistically independent measures; shared task structures and topic effects remain limitations. The [review sheet](scenario_review.template.csv) is part of the instrument, not completed validation.

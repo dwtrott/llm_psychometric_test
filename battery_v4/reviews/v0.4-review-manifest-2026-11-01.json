@@ -1,0 +1,19 @@
+{
+  "instrument_commit": "6ffce571849c06e2c2e80b2f6b52de02c5ae29c4",
+  "question_csv_sha256": "2df0bf6186020d06eb699453c505ee71f8484d3486f807af8f8f9964063da248",
+  "scenario_forms": 96,
+  "item_definitions": 456,
+  "stage_rows": 600,
+  "paraphrase_review_counts": {
+    "no_obvious_factual_change_on_this_read": 78,
+    "material_information_change_or_omission": 4,
+    "needs_semantic_review": 14
+  },
+  "family_recommendation_counts": {
+    "retain_with_targeted_revision": 7,
+    "capability_control": 2,
+    "rebuild_manipulation": 2,
+    "retain_task_family_redesign_generalization": 5
+  },
+  "provenance": "AI-authored content review; no model experiment, independent expert approval or empirical validation"
+}
