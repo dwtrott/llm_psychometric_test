@@ -4,6 +4,8 @@ A research-informed exploratory battery and an independent offline viewer for co
 
 ## Read the questions first
 
+**Latest: [v0.6 structure-matched revision](battery_v6/README.md)** — redesigns the eight confounded pairs from the v0.5 review, fixes meaning-changing paraphrases and retains all 14 candidate profile facets with separate capability controls. Includes complete CSV/questions, Python scoring and a four-column evaluator comparison. Empirical psychological equivalence remains unverified.
+
 **Latest: [v0.5 matched-context revision](battery_v5/README.md)** — repairs paraphrases, separates capability controls, and pairs development and held-out contexts while preserving stated operations and incentives. Includes role/advice strata in Python scoring and graph evidence. Matching empirical difficulty and psychological validity remain unverified.
 
 **New: [v0.4 scenario-based core](battery_v4/README.md)** — 16 candidate facets across all 12 regions, with four development and two held-out scenario forms per facet, two paraphrases and matched conditions. Includes complete questions, a fixed split manifest, Python scoring that distinguishes repetitions from scenarios, and a held-out analysis-lock workflow. This is a research draft, not a claim that stable psychological fingerprints have already been established.

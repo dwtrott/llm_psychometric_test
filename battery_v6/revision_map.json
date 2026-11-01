@@ -1,0 +1,16 @@
+{
+  "source_version": "0.5.0-draft",
+  "source_questions_sha256": "2fdb0e7124fb1f51e0b0405f925389f36db05aea96fd3455401d7cc4d68fe1ac",
+  "pair_redesigns": {
+    "DEC-AMBIG-M01": "Same fixed random mechanism, automatic masking and consequence exclusions on both sides.",
+    "DEC-AMBIG-M02": "Same fixed random mechanism, automatic masking and consequence exclusions on both sides.",
+    "DEC-AMBIG-M03": "Same fixed random mechanism, automatic masking and consequence exclusions on both sides.",
+    "SELF-CREDIT-M02": "Equal initial-hypothesis ownership, disconfirmation, effort and replacement evidence.",
+    "ALIGN-DISCLOSE-M02": "Same all-cases acceptance proposition, authority, evidence and consequences.",
+    "SOC-AUDIENCE-M03": "Same absolute prohibition, exception status, rule count and unspecified recipient intent.",
+    "SEM-DISTINCT-M01": "Matched triad relations and identical L+N boundary case; self-generated poles still require content coding.",
+    "SEM-DISTINCT-M02": "Matched triad relations and identical L+N boundary case; self-generated poles still require content coding.",
+    "SEM-DISTINCT-M03": "Matched triad relations and identical L+N boundary case; self-generated poles still require content coding."
+  },
+  "scope": "All 14 facets retained; controls remain separate; no empirical validation."
+}
