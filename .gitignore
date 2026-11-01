@@ -10,3 +10,4 @@ results/
 tests/v2-format-fixture.graph.json
 tests/v3-format-fixture.graph.json
 tests/v4-*-fixture.graph.json
+tests/v5-*-fixture.graph.json

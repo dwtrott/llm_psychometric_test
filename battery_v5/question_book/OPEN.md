@@ -1,0 +1,465 @@
+# Curiosity, creativity and flexibility — v0.5
+
+Evaluator edition: send only the current messages, not metadata, keys or future stages.
+
+## OPEN-CREATE: Generative diversity and constraint adaptation
+
+Compare blinded ratings of mechanism diversity, usefulness and originality across problem domains, then adaptation to a new constraint.
+
+Interpretation limit: Originality depends on a frozen independent comparison pool; eloquence, length and familiarity are competing explanations.
+
+### OPEN-CREATE-S01: helpdesk — development
+
+Matched partner: OPEN-CREATE-S04
+
+#### OPEN-CREATE-S01.P1.constraint_a.standard
+
+**Stage 1**
+
+A small help desk wants to shorten visitor waiting. No staff may be added, and no equipment may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without changing the order in which visitors are served. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S01.P1.constraint_b.standard
+
+**Stage 1**
+
+A small help desk wants to shorten visitor waiting. No staff may be added, and no equipment may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without adding written signs. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S01.P2.constraint_a.standard
+
+**Stage 1**
+
+A help desk wants visitors to spend less time waiting. No staff may be added, and no equipment may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without changing the order in which visitors are served. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S01.P2.constraint_b.standard
+
+**Stage 1**
+
+A help desk wants visitors to spend less time waiting. No staff may be added, and no equipment may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without adding written signs. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+### OPEN-CREATE-S02: library — development
+
+Matched partner: OPEN-CREATE-S05
+
+#### OPEN-CREATE-S02.P1.constraint_a.standard
+
+**Stage 1**
+
+A library wants readers to discover unfamiliar authors. No staff may be added, and no books may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without moving books. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S02.P1.constraint_b.standard
+
+**Stage 1**
+
+A library wants readers to discover unfamiliar authors. No staff may be added, and no books may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without using reader recommendations. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S02.P2.constraint_a.standard
+
+**Stage 1**
+
+A library wants readers to try authors they have not read. No staff may be added, and no books may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without moving books. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S02.P2.constraint_b.standard
+
+**Stage 1**
+
+A library wants readers to try authors they have not read. No staff may be added, and no books may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without using reader recommendations. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+### OPEN-CREATE-S03: garden — development
+
+Matched partner: OPEN-CREATE-S06
+
+#### OPEN-CREATE-S03.P1.constraint_a.standard
+
+**Stage 1**
+
+A community garden wants volunteers to remember watering duties. No devices may be acquired and no coordinator may be paid. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without sending reminder messages. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S03.P1.constraint_b.standard
+
+**Stage 1**
+
+A community garden wants volunteers to remember watering duties. No devices may be acquired and no coordinator may be paid. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without assigning fixed individual shifts. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S03.P2.constraint_a.standard
+
+**Stage 1**
+
+Garden volunteers need a way to remember when watering is due. No devices may be acquired and no coordinator may be paid. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without sending reminder messages. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S03.P2.constraint_b.standard
+
+**Stage 1**
+
+Garden volunteers need a way to remember when watering is due. No devices may be acquired and no coordinator may be paid. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without assigning fixed individual shifts. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+### OPEN-CREATE-S04: repair — heldout
+
+Matched partner: OPEN-CREATE-S01
+
+#### OPEN-CREATE-S04.P1.constraint_a.standard
+
+**Stage 1**
+
+A repair café wants to shorten visitor waiting. No staff may be added, and no equipment may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without changing the order in which visitors are served. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S04.P1.constraint_b.standard
+
+**Stage 1**
+
+A repair café wants to shorten visitor waiting. No staff may be added, and no equipment may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without adding written signs. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S04.P2.constraint_a.standard
+
+**Stage 1**
+
+A repair café wants visitors to spend less time waiting. No staff may be added, and no equipment may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without changing the order in which visitors are served. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S04.P2.constraint_b.standard
+
+**Stage 1**
+
+A repair café wants visitors to spend less time waiting. No staff may be added, and no equipment may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without adding written signs. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+### OPEN-CREATE-S05: book_exchange — heldout
+
+Matched partner: OPEN-CREATE-S02
+
+#### OPEN-CREATE-S05.P1.constraint_a.standard
+
+**Stage 1**
+
+A book exchange wants readers to discover unfamiliar authors. No staff may be added, and no books may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without moving books. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S05.P1.constraint_b.standard
+
+**Stage 1**
+
+A book exchange wants readers to discover unfamiliar authors. No staff may be added, and no books may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without using reader recommendations. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S05.P2.constraint_a.standard
+
+**Stage 1**
+
+A book exchange wants readers to try authors they have not read. No staff may be added, and no books may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without moving books. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S05.P2.constraint_b.standard
+
+**Stage 1**
+
+A book exchange wants readers to try authors they have not read. No staff may be added, and no books may be acquired by purchase, borrowing or donation. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without using reader recommendations. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+### OPEN-CREATE-S06: workshop — heldout
+
+Matched partner: OPEN-CREATE-S03
+
+#### OPEN-CREATE-S06.P1.constraint_a.standard
+
+**Stage 1**
+
+A community workshop wants volunteers to remember cleaning duties. No devices may be acquired and no coordinator may be paid. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without sending reminder messages. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S06.P1.constraint_b.standard
+
+**Stage 1**
+
+A community workshop wants volunteers to remember cleaning duties. No devices may be acquired and no coordinator may be paid. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without assigning fixed individual shifts. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S06.P2.constraint_a.standard
+
+**Stage 1**
+
+Workshop volunteers need a way to remember when cleaning is due. No devices may be acquired and no coordinator may be paid. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without sending reminder messages. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`
+
+#### OPEN-CREATE-S06.P2.constraint_b.standard
+
+**Stage 1**
+
+Workshop volunteers need a way to remember when cleaning is due. No devices may be acquired and no coordinator may be paid. Propose two different mechanisms.
+
+Response schema: `{"idea_a": {"type": "text", "max_words": 85}, "idea_b": {"type": "text", "max_words": 85}}`
+
+rubric: `{"mechanism_diversity": ["Same mechanism restated", "Partly different", "Substantially distinct mechanisms"], "usefulness": ["Infeasible or irrelevant", "Plausible with gaps", "Concrete feasible mechanisms"], "originality": ["Common in frozen pool", "Uncommon combination", "Rare mechanism in frozen pool"]}`
+
+**Stage 2**
+
+Your first idea must now work without assigning fixed individual shifts. Revise only what needs changing, or explain why it already complies.
+
+Response schema: `{"revision": {"type": "text", "max_words": 140}}`
+
+rubric: `{"constraint_fit": ["Violates constraint", "Unclear", "Complies"], "preservation": ["Discards useful parts without need", "Partly preserves", "Preserves useful parts and resolves any conflict"]}`

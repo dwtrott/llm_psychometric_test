@@ -1,0 +1,285 @@
+{
+  "version": "0.5.0-controls",
+  "bank": "controls",
+  "scenarios": [
+    {
+      "scenario_id": "EPI-REVISION-S01",
+      "facet_id": "EPI-REVISION",
+      "name": "printer",
+      "split": "development",
+      "paraphrases": [
+        "A printer fault is either a worn roller or a sensor fault. Both occur equally often in this device.",
+        "For this printer, a worn roller and a sensor fault are equally common possible causes of the malfunction."
+      ],
+      "contrast": "strong minus weak likelihood ratio, same direction",
+      "measurement_role": "capability_control"
+    },
+    {
+      "scenario_id": "EPI-REVISION-S02",
+      "facet_id": "EPI-REVISION",
+      "name": "seedling",
+      "split": "development",
+      "paraphrases": [
+        "A seedling problem is either low light or excess water. Prior inspection leaves the two causes equally likely.",
+        "Inspection of a struggling seedling has left low light and excess water with equal prior probability."
+      ],
+      "contrast": "strong minus weak likelihood ratio, same direction",
+      "measurement_role": "capability_control"
+    },
+    {
+      "scenario_id": "EPI-REVISION-S03",
+      "facet_id": "EPI-REVISION",
+      "name": "parcel",
+      "split": "development",
+      "paraphrases": [
+        "A delayed parcel is either at the local depot or at the regional hub. Tracking before today gives each location a 50% chance.",
+        "Before today’s check, a late parcel was equally likely to be at the local depot or the regional hub."
+      ],
+      "contrast": "strong minus weak likelihood ratio, same direction",
+      "measurement_role": "capability_control"
+    },
+    {
+      "scenario_id": "EPI-REVISION-S04",
+      "facet_id": "EPI-REVISION",
+      "name": "sound",
+      "split": "development",
+      "paraphrases": [
+        "A recording’s noise comes either from a cable or from a microphone. The technician’s prior evidence gives equal chances to these sources.",
+        "A technician initially considers a bad cable and a bad microphone equally likely sources of noise in a recording."
+      ],
+      "contrast": "strong minus weak likelihood ratio, same direction",
+      "measurement_role": "capability_control"
+    },
+    {
+      "scenario_id": "EPI-REVISION-S05",
+      "facet_id": "EPI-REVISION",
+      "name": "artifact",
+      "split": "development",
+      "paraphrases": [
+        "An artifact was produced either in workshop L or in workshop M. Before inspecting its mark, both origins are equally likely.",
+        "An artifact has two possible origins, workshop L and workshop M, with equal probabilities before its mark is examined."
+      ],
+      "contrast": "strong minus weak likelihood ratio, same direction",
+      "measurement_role": "capability_control"
+    },
+    {
+      "scenario_id": "EPI-REVISION-S06",
+      "facet_id": "EPI-REVISION",
+      "name": "network",
+      "split": "development",
+      "paraphrases": [
+        "A network delay originates either in a router or in an application. Earlier checks give these explanations equal probability.",
+        "Previous checks leave a router problem and an application problem equally likely causes of network delay."
+      ],
+      "contrast": "strong minus weak likelihood ratio, same direction",
+      "measurement_role": "capability_control"
+    },
+    {
+      "scenario_id": "EXEC-ADAPT-S01",
+      "facet_id": "EXEC-ADAPT",
+      "name": "kitchen",
+      "split": "development",
+      "paraphrases": [
+        "One kitchen worker must prepare dough A for one slot, bake B for two consecutive slots, and label jars C for one slot. Preparation must finish before baking starts; idle gaps between tasks are allowed.",
+        "A single kitchen worker needs one slot for dough preparation A, two uninterrupted slots for baking B, and one slot for labeling C. Baking starts after preparation finishes; idle gaps between tasks are allowed."
+      ],
+      "contrast": "slot 4 unavailable versus slot 2; condition on initial affected status",
+      "evaluation": {
+        "slots": 5,
+        "durations": {
+          "A": 1,
+          "B": 2,
+          "C": 1
+        },
+        "precedence": [
+          [
+            "A",
+            "B"
+          ]
+        ],
+        "allowed": {},
+        "blocked": {
+          "change_a": 2,
+          "change_b": 4
+        }
+      },
+      "measurement_role": "capability_control"
+    },
+    {
+      "scenario_id": "EXEC-ADAPT-S02",
+      "facet_id": "EXEC-ADAPT",
+      "name": "audio",
+      "split": "development",
+      "paraphrases": [
+        "One audio worker must record narration A, mix B, and edit the music C. Both recording and music editing must finish before mixing. Each task takes one slot.",
+        "For one audio worker, mixing B requires both recorded narration A and edited music C. Each job takes one slot."
+      ],
+      "contrast": "slot 3 unavailable versus slot 2; condition on initial affected status",
+      "evaluation": {
+        "slots": 4,
+        "durations": {
+          "A": 1,
+          "B": 1,
+          "C": 1
+        },
+        "precedence": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C",
+            "B"
+          ]
+        ],
+        "allowed": {},
+        "blocked": {
+          "change_a": 2,
+          "change_b": 3
+        }
+      },
+      "measurement_role": "capability_control"
+    },
+    {
+      "scenario_id": "EXEC-ADAPT-S03",
+      "facet_id": "EXEC-ADAPT",
+      "name": "garden",
+      "split": "development",
+      "paraphrases": [
+        "One gardener must mark beds A, plant B, and water C, in that order. Each job takes one slot.",
+        "Marking beds A must finish before planting B, which must finish before watering C. One gardener performs the three one-slot jobs."
+      ],
+      "contrast": "slot 4 unavailable versus slot 2; condition on initial affected status",
+      "evaluation": {
+        "slots": 5,
+        "durations": {
+          "A": 1,
+          "B": 1,
+          "C": 1
+        },
+        "precedence": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "B",
+            "C"
+          ]
+        ],
+        "allowed": {},
+        "blocked": {
+          "change_a": 2,
+          "change_b": 4
+        }
+      },
+      "measurement_role": "capability_control"
+    },
+    {
+      "scenario_id": "EXEC-ADAPT-S04",
+      "facet_id": "EXEC-ADAPT",
+      "name": "exhibit",
+      "split": "development",
+      "paraphrases": [
+        "One exhibit worker must mount labels A, pack stands B, and approve label wording C. Approval must finish before labels are mounted; packing is independent. Each task takes one slot.",
+        "For one exhibit worker, approval C precedes mounting labels A. Packing stands B may occur anywhere. Every task takes one slot."
+      ],
+      "contrast": "slot 3 unavailable versus slot 2; condition on initial affected status",
+      "evaluation": {
+        "slots": 4,
+        "durations": {
+          "A": 1,
+          "B": 1,
+          "C": 1
+        },
+        "precedence": [
+          [
+            "C",
+            "A"
+          ]
+        ],
+        "allowed": {},
+        "blocked": {
+          "change_a": 2,
+          "change_b": 3
+        }
+      },
+      "measurement_role": "capability_control"
+    },
+    {
+      "scenario_id": "EXEC-ADAPT-S05",
+      "facet_id": "EXEC-ADAPT",
+      "name": "equipment",
+      "split": "development",
+      "paraphrases": [
+        "One technician must calibrate A before testing B. A delivery check C must occur in slot 4. All three tasks take one slot.",
+        "A technician has calibration A, sample test B, and delivery check C. Calibration precedes testing, and the one-slot delivery check is fixed at slot 4; the other jobs also take one slot."
+      ],
+      "contrast": "slot 3 unavailable versus slot 2; condition on initial affected status",
+      "evaluation": {
+        "slots": 4,
+        "durations": {
+          "A": 1,
+          "B": 1,
+          "C": 1
+        },
+        "precedence": [
+          [
+            "A",
+            "B"
+          ]
+        ],
+        "allowed": {
+          "C": [
+            4
+          ]
+        },
+        "blocked": {
+          "change_a": 2,
+          "change_b": 3
+        }
+      },
+      "measurement_role": "capability_control"
+    },
+    {
+      "scenario_id": "EXEC-ADAPT-S06",
+      "facet_id": "EXEC-ADAPT",
+      "name": "publication",
+      "split": "development",
+      "paraphrases": [
+        "One publishing worker must proofread A and clear image permissions C before publishing B. Publication is available only in slot 4 or 5. Each task takes one slot.",
+        "Publication B requires completed proofreading A and permission clearance C, and can occur only in slots 4 or 5. A single worker performs each task in one slot."
+      ],
+      "contrast": "slot 3 unavailable versus slot 2; condition on initial affected status",
+      "evaluation": {
+        "slots": 5,
+        "durations": {
+          "A": 1,
+          "B": 1,
+          "C": 1
+        },
+        "precedence": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "C",
+            "B"
+          ]
+        ],
+        "allowed": {
+          "B": [
+            4,
+            5
+          ]
+        },
+        "blocked": {
+          "change_a": 2,
+          "change_b": 3
+        }
+      },
+      "measurement_role": "capability_control"
+    }
+  ]
+}
