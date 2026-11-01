@@ -1,5 +1,12 @@
 PSYCHOMETRIC KG VIEWER — exploratory version 0.1
 
+V0.7 DESIGN-AWARE ANALYSIS
+For the current battery, start with ../analyzer/README.md and
+../analyzer/Psychometric_Analysis.ipynb. The new Python-only analyzer generates
+an offline HTML/SVG report with presentation sensitivity, matched-model effects,
+held-out transfer and aligned concept differences. This legacy viewer remains
+available for interactive pan/zoom exploration and earlier graph formats.
+
 START HERE
 Open demo.html in a modern desktop browser for two explicitly SYNTHETIC profiles.
 Open viewer.html for an empty viewer, then select processor graph.json exports.

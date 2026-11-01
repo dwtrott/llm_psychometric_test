@@ -1,5 +1,7 @@
 # v0.7: distinct wordings and balanced presentations
 
+For the new design-aware results report, use the [Python analyzer and Colab notebook](../analyzer/README.md). It analyzes the existing v0.7 exports without changing these questions or their scoring rules.
+
 All 14 candidate profile facets remain, with 84 scenario forms across 11 regions and capability controls separate. v0.6 is unchanged. The revision addresses its [duplicate-wording and presentation review](../battery_v6/reviews/REVIEW.md), not empirical psychological validation.
 
 Read the full [question CSV](questions.csv), [question book](question_book/), or open [the side-by-side comparison](side-by-side.html) locally. Every presentation is already rendered as an actual question; no hidden prompt-generation step is required to read the battery.

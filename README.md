@@ -2,6 +2,8 @@
 
 A research-informed exploratory battery and an independent offline viewer for comparing LLM response profiles. **Not a validated personality test or a clinical diagnostic instrument.**
 
+**Analyze v0.7 results:** use the new [Python analysis and visualization tool](analyzer/README.md), with a [Colab notebook](analyzer/Psychometric_Analysis.ipynb). It shows the full profile, evidence coverage, wording/order/transfer effects, matched model differences, and aligned concept graphs. The battery questions remain frozen.
+
 ## Read the questions first
 
 **Latest: [v0.7 balanced presentations](battery_v7/README.md)** — fixes duplicate paraphrases and explicitly counterbalances substantive choice order and conceptual transfer patterns across all 14 profile facets. Includes full rendered questions, presentation-aware Python scoring and side-by-side comparisons. Capability controls remain separate; larger presentation counts do not mean more independent psychological scenarios.

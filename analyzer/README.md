@@ -1,0 +1,61 @@
+# Design-aware analysis and visualization for v0.7
+
+The battery is frozen. This software uses its existing dimensions to analyze actual response evidence. It does not propose another questionnaire revision.
+
+`psychometric.py` is a single-file, **Python standard-library-only** analyzer and report generator. Its HTML report uses inline SVG and browser-native expandable sections: no JavaScript, CDN, server, API key or additional plotting library. The report is portable and works offline. The existing interactive graph viewer remains available separately for pan/zoom exploration and older formats.
+
+## Inputs and outputs
+
+Input: one or more `graph.json` exports produced by `battery_v7/processor.py process`. You do not need raw response files alongside those graphs: prompts, responses, task features and presentation metadata are embedded in the export. Supply only one run per exact model configuration and partition. Old battery graphs and capability-control banks are intentionally rejected rather than silently pooled with profile evidence.
+
+```sh
+python analyzer/psychometric.py results/model-a-dev/graph.json results/model-b-dev/graph.json --out results/analysis
+```
+
+Open `results/analysis/report.html`. The same directory contains complete `analysis.json`, per-profile cell and sensitivity CSVs, and matched-comparison cell/effect CSVs. HTML tables display bounded previews for large designs; the JSON/CSV outputs retain every computed row.
+
+To examine held-out transfer, include the same model configuration's held-out graph:
+
+```sh
+python analyzer/psychometric.py results/model-a-dev/graph.json results/model-b-dev/graph.json results/model-a-held/graph.json --out results/analysis
+```
+
+## What the report shows
+
+1. **Full profile and coverage graph.** All 14 catalog facets stay visible, including those with missing or unrated evidence. Research-defined region-to-facet links show the measurement design. Colors show evidence coverage, not trait strength. Counts distinguish scenarios from presentation variants and trials. Unselected facets show no supplied observations; they are not assigned zero scores.
+2. **Behavioral measurements.** Means and repeat standard deviations remain conditional on scenario, condition, wording, base role/advice stratum, option order, conceptual transfer pattern and cue. Standard deviation is undefined with one valid repeat. Human-coded content is explicitly marked as not imported; it is not automatically rated from choice features.
+3. **Design sensitivity.** Separate matched contrasts for condition, P1/P2 wording, option/label-position order, and conceptual transfer pattern. Other factors stay fixed. A transfer-pattern effect is not automatically instability: the patterns may differ in difficulty or meaning.
+4. **Between-model differences.** Comparisons require the same battery hash and partition, and use shared valid feature/cell/repeat indices. Configuration differences are visible. Scenario means receive equal weight within each fixed design cell. There is no cross-condition, cross-role or cross-presentation pooling. Bars show B minus A; blue/orange mean greater/lower, not good/bad.
+5. **Held-out transfer.** Identical configurations are joined by matched-pair ID instead of scenario ID. The held-out graph must have a lock identity. The report shows both feature-level changes and changes in within-scenario condition effects. It does not claim that a lock proves secrecy, or automatically score the study's frozen prediction rule.
+6. **Aligned concept graphs.** A, B and a difference graph share positions. Association rates are recomputed from common valid exposures, with scenario weighting within cue. Gray difference links have equal observed rates; blue/orange indicate differences. At most 26 nodes/50 candidate links are drawn, with the truncation disclosed. Missing links mean no mentions in those observed exposures, not absence of conceptual knowledge. Layout distance is illustrative.
+7. **Evidence inspection.** Expand a facet and trial to inspect its actual messages, status and derived task features. CSV/JSON evidence IDs identify the corresponding records. Model text is escaped; it is never executed as HTML or script.
+
+## Statistical boundaries
+
+These are descriptive summaries, not reliability certification, significance tests, latent factors or a global similarity score. Low observed wording/order effects do not establish a stable psychological trait. Repeat indices align the supplied design only; they do not imply coupled random draws across models. Missing, refused, invalid and error responses are excluded from numerical contrasts and retained in coverage counts. A comparison uses a common valid subset, which can still be selective; excluded observations are counted.
+
+Condition-effect changes use repeat indices present in all four arms, avoiding differences based on unrelated missingness subsets. Evidence references and per-scenario results remain available. No automatic ratings, human norms, Dark Triad diagnoses or independence assumptions for presentation variants are introduced.
+
+Coverage reflects the supplied graph/plan, not a reconstruction of the entire possible battery. This release does not import completed human-review forms, compute confidence intervals or automatically choose robust facets. Keeping those gaps visible is preferable to turning unrated content into inferred traits.
+
+## Colab
+
+Open [Psychometric_Analysis.ipynb](Psychometric_Analysis.ipynb) in Colab. It downloads the Python analyzer from this repository, lets you upload v0.7 graph exports, creates the report and downloads a ZIP of the results. Uploading places those files in your Colab session. No model calls are made. The analysis itself uses only the standard library; the notebook uses Colab's built-in upload/download and display helpers. Live Colab execution has not been verified here.
+
+You can also copy `psychometric.py` alone into a notebook environment and call:
+
+```python
+import psychometric
+report = psychometric.build(["model-a-graph.json", "model-b-graph.json"], "analysis-output")
+```
+
+## Synthetic demonstration and tests
+
+```sh
+python scripts/demo_analysis.py
+python -m unittest discover -s tests -p test_analysis.py
+```
+
+The demo creates two synthetic configurations and one synthetic held-out run, processes their actual staged response envelopes through v0.7, and builds `results/analysis-demo/report.html`. Its constructed differences illustrate order effects, role attribution, allocation and concept-link differences. They are not results about any real model. Generated response data/reports stay under ignored `results/`; they are not published as research findings.
+
+Browser automation could not open the local `file:` report because of its URL policy. Output generation, escaping, SVG structure and analysis behavior are checked programmatically; visual browser QA remains unverified.
