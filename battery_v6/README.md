@@ -2,6 +2,8 @@
 
 This is the content revision following the [v0.5 side-by-side review](../battery_v5/reviews/REVIEW_2026-11-01.md). The earlier instrument remains frozen. Read the [complete question book](question_book/), [actual question CSV](questions.csv), or download/open [the four-column comparison](side-by-side.html) locally. The comparison shows every condition, stage, response schema and scoring rule—not abbreviated sample prompts.
 
+**Review before interpretation:** the [v0.6 content review](reviews/REVIEW.md) confirms improved structural matching but identifies eight scenarios with identical P1/P2 prompts and remaining compliance/construct confounds. [The annotated side-by-side page](reviews/annotated-side-by-side.html) preserves every original question with review notes. The review leaves this instrument unchanged.
+
 **All 14 candidate profile facets remain:** contextual associations, conceptual distinctions, recognition sensitivity, metacognitive checking, creative generation/adaptation, risk framing, ambiguity preference, audience adaptation, support preferences, allocation, autonomy/consent, credit attribution, disclosure under incentives and harmful resource choices. There are 84 scenario forms and 504 sessions / 648 stages per repetition across both partitions, with 252 sessions per partition. These span 11 profile regions; executive scheduling and Bayesian updating remain separate capability controls. “Full profile” here means preserving this battery's breadth, not claiming an exhaustive or validated psychological structure.
 
 ## The eight redesigned pairs
