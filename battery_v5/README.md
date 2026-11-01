@@ -2,6 +2,8 @@
 
 This revision addresses the [v0.4 critical review](../battery_v4/reviews/CRITICAL_REVIEW_2026-11-01.md). v0.4 remains unchanged. **This is an exploratory instrument, not a validated psychological fingerprint.**
 
+**Review before running:** the [v0.5 critical review](reviews/REVIEW_2026-11-01.md) identifies remaining meaning changes and eight held-out pairs needing redesign. The [side-by-side evaluator page](reviews/v0.5-side-by-side.html) includes every profile question and scoring rule; download/open it locally to render the four-column comparison. This review does not modify the instrument.
+
 Read the actual questions in [questions.csv](questions.csv) or the complete evaluator [question book](question_book/). No external questionnaire is required. Each entry includes its full stimulus, response schema, resource costs, mechanical keys and applicable human-review rubric.
 
 ## What changed
