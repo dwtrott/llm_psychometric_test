@@ -1,5 +1,13 @@
 # Local browser verification — 2026-11-01
 
+## Response findings and typed KG revision
+
+- A's risk region reports gain-framed risky choices at 100% and loss-framed choices at 0%, with a -100 percentage-point matched condition effect across three scenarios.
+- The finding's evidence chain opens fixed-design measurements and the actual prompt/assistant answer. Inspected response `DEC-RISK-S01.P1.gain.standard.order01-transfernone:r000` submits `RISK`.
+- Model comparisons now display full-region behavior values and matched difference ranges, with wording/order checks alongside them. Concept-association graphs remain separately expandable.
+- Automated checks cover opposite effects across scenarios, missingness without zero imputation, A/B's different order sensitivity, explicit unrated facets, unique KG node IDs, valid edge endpoints, candidate-facet status and held-out comparison provenance.
+- All 12 analyzer tests pass. The fixture is synthetic; this verifies software, not psychological validity.
+
 ## Profile-first layout revision
 
 Verified the redesigned report in a fresh localhost browser tab:

@@ -55,6 +55,19 @@ class Analysis(unittest.TestCase):
   with tempfile.TemporaryDirectory() as d:
    path=pathlib.Path(d)/'test.csv';a.save_csv(path,[dict(name='=1+1',value=-.2)])
    self.assertIn("'=1+1",path.read_text(encoding='utf-8-sig'));self.assertIn(',-0.2',path.read_text(encoding='utf-8-sig'))
+ def test_findings_preserve_reversals_and_missingness(self):
+  p=profile();p['catalog']={'modules':{'DEC-RISK':{}}}
+  for r in p['rows']:
+   r['facet']='DEC-RISK'
+   r['features']={'risky_choice':int((r['condition']=='cheap')==(r['scenario']=='S1'))}
+  report={'cells':a.cell_table(p),'contrasts':{axis:a.contrast(p,axis) for axis in ['condition','wording','order']}}
+  f=a.response_findings(p,report)[0]
+  self.assertEqual((f['effects'][0]['min'],f['effects'][0]['max']),(-1,1))
+  self.assertEqual(f['n_scenarios'],2)
+  for r in p['rows']:r.update(status='missing',features={})
+  report={'cells':a.cell_table(p),'contrasts':{axis:a.contrast(p,axis) for axis in ['condition','wording','order']}}
+  f=a.response_findings(p,report)[0]
+  self.assertEqual(f['status'],'unmeasured');self.assertFalse(f['conditions']);self.assertFalse(f['effects'])
  def test_actual_v7_exports_report_and_svg(self):
   spec=importlib.util.spec_from_file_location('synthetic_analysis_fixture',ROOT/'scripts/demo_analysis.py');demo=importlib.util.module_from_spec(spec);spec.loader.exec_module(demo)
   battery=demo.p.load()
@@ -79,4 +92,20 @@ class Analysis(unittest.TestCase):
    comparison=next(c for c in data['comparisons'] if c['mode']=='model_comparison')
    risk=[r for r in comparison['scenario_balanced'] if r['facet']=='DEC-RISK']
    self.assertEqual({r['delta'] for r in risk},{-1,0,1})
+   aa,bb=data['profiles'][:2]
+   ar=next(f for f in aa['findings'] if f['facet']=='DEC-RISK')
+   br=next(f for f in bb['findings'] if f['facet']=='DEC-RISK')
+   self.assertIn('gain 100%',ar['headline']);self.assertIn('loss 0%',ar['headline'])
+   self.assertEqual(ar['checks']['order']['changed'],0)
+   self.assertEqual(br['checks']['order']['changed'],12)
+   self.assertEqual(ar['effects'][0]['min'],-1)
+   self.assertEqual(br['effects'][0]['min'],0)
+   self.assertEqual(next(f for f in aa['findings'] if f['facet']=='OPEN-CREATE')['status'],'unrated')
+   kg=json.loads(report.with_name('knowledge_graph.json').read_text(encoding='utf-8'))
+   ids={n['id'] for n in kg['nodes']};self.assertEqual(len(ids),len(kg['nodes']))
+   self.assertTrue(all(e['source'] in ids and e['target'] in ids for e in kg['edges']))
+   self.assertTrue({'qualified_by','supported_by','observed_under','elicited_in','informs_hypothesis','compares_a'} <= {e['type'] for e in kg['edges']})
+   self.assertTrue(all(n['epistemic_status']=='not_validated_as_latent_trait' for n in kg['nodes'] if n['kind']=='candidate_facet'))
+   self.assertTrue(any(n['mode']=='heldout_transfer' for n in kg['nodes'] if n['kind']=='matched_comparison'))
+   self.assertIn('Psychological behavior differences by region',text)
 if __name__=='__main__':unittest.main()

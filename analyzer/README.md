@@ -20,11 +20,19 @@ To examine held-out transfer, include the same model configuration's held-out gr
 python analyzer/psychometric.py results/model-a-dev/graph.json results/model-b-dev/graph.json results/model-a-held/graph.json --out results/analysis
 ```
 
-## What the report shows
+## Response-derived findings and evidence KG
 
-The opening view presents **one model at a time** in a full-profile map. Select a model, then click a region to open its explanation, observed choices and wording/order checks. All 11 regions and 14 facets remain available. The map shows evidence availability, not inferred trait strength.
+The opening map now shows observed behavior in each region, not just coverage. Condition-specific choice/response ranges and presentation effects remain separate. The first comparison view shows those behaviors across all regions; concept-association graphs are a separate expandable view. Interpretation gaps remain explicit.
 
-**Compare models** jumps directly to visible aligned concept graphs and the difference graph. Expand the region summaries below them to compare the full psychological profile. Concept associations are only one part of that profile. Detailed measurement tables, held-out comparisons and raw responses are grouped in a collapsed **Detailed analysis & response evidence** section. Model switching and disclosures use native HTML/CSS; no JavaScript or new Python dependencies are required.
+The report exports `knowledge_graph.json`: typed model-run, region, candidate-facet, finding, measurement, context, scenario, response, presentation-check and comparison nodes, joined by explicit evidence relationships. Expand a region's evidence chain to inspect original responses. This is a candidate behavioral fingerprint, not a validated psychological fingerprint. See [the evidence model and validation boundaries](EVIDENCE_MODEL.md).
+
+The analysis schema is now `psychometric-analysis-2` (additive findings/KG fields); the independent KG schema is `psychometric-evidence-kg-1`. Existing cell and comparison calculations and CSV formats are unchanged. Keep the complete output directory together when opening the report so its KG download link resolves; in Colab, download and extract the results ZIP.
+
+## Detailed report components
+
+The opening view presents **one model at a time** in a full-profile map. Select a model, then click a region to open its response-derived findings, observed choices and wording/order checks. All 11 regions and 14 facets remain available. The map shows measured behavior and interpretation gaps, not inferred trait strength.
+
+**Compare models** jumps directly to regional behavior comparisons with visible A/B values and matched differences. Expand the concept graphs for a separate view of associations. Detailed measurement tables, held-out comparisons and raw responses are grouped in a collapsed **Detailed analysis & response evidence** section. Model switching and disclosures use native HTML/CSS; no JavaScript or new Python dependencies are required.
 
 1. **Full profile and coverage graph.** All 14 catalog facets stay visible, including those with missing or unrated evidence. Research-defined region-to-facet links show the measurement design. Colors show evidence coverage, not trait strength. Counts distinguish scenarios from presentation variants and trials. Unselected facets show no supplied observations; they are not assigned zero scores.
 2. **Behavioral measurements.** Means and repeat standard deviations remain conditional on scenario, condition, wording, base role/advice stratum, option order, conceptual transfer pattern and cue. Standard deviation is undefined with one valid repeat. Human-coded content is explicitly marked as not imported; it is not automatically rated from choice features.
