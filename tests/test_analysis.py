@@ -108,4 +108,19 @@ class Analysis(unittest.TestCase):
    self.assertTrue(all(n['epistemic_status']=='not_validated_as_latent_trait' for n in kg['nodes'] if n['kind']=='candidate_facet'))
    self.assertTrue(any(n['mode']=='heldout_transfer' for n in kg['nodes'] if n['kind']=='matched_comparison'))
    self.assertIn('Psychological behavior differences by region',text)
+   hypotheses=[e for e in kg['edges'] if e['type']=='hypothesized_relationship']
+   self.assertEqual(len(hypotheses),8)
+   self.assertTrue(all(e['status']=='untested' and e['strength'] is None and not e['directed'] for e in hypotheses))
+   atlases=[ET.fromstring(svg) for svg in svgs if 'class="psychology-graph"' in svg]
+   self.assertEqual(len(atlases),4)
+   layouts=[]
+   for atlas in atlases:
+    self.assertEqual(sum('data-region' in e.attrib for e in atlas.iter()),11)
+    layout={e.attrib['data-facet']:(e.attrib['x'],e.attrib['y']) for e in atlas.iter() if 'data-facet' in e.attrib}
+    self.assertEqual(len(layout),14);layouts.append(layout)
+   self.assertTrue(all(layout==layouts[0] for layout in layouts))
+   for p in data['profiles']:
+    exported=report.with_name('profile-'+p['id']+'.svg')
+    ET.fromstring(exported.read_text(encoding='utf-8'))
+    self.assertIn('href="report.html#hypothesis-H2"',exported.read_text(encoding='utf-8'))
 if __name__=='__main__':unittest.main()

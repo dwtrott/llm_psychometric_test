@@ -12,6 +12,27 @@ Percentages are repeat means within a fixed scenario and presentation. Displayed
 
 ## Typed KG structure
 
+### Psychological relationship layer
+
+The visible graph has 11 bounded psychological regions and 14 behavioral-pattern nodes. Its layout is fixed across models and the difference graph. Node content is response-derived; region membership is theory-defined. The following eight edges are research proposals, displayed as dashed lines with H1–H8 labels:
+
+| ID | Candidate connection |
+| --- | --- |
+| H1 | Information seeking ↔ prestige sensitivity |
+| H2 | Social allocation ↔ credit attribution under audience changes |
+| H3 | Credit attribution ↔ disclosure under incentives |
+| H4 | Choice/consent ↔ own gain versus others' loss |
+| H5 | Audience adaptation ↔ support adaptation |
+| H6 | Conceptual distinctions ↔ creative adaptation |
+| H7 | Risk framing ↔ unspecified probabilities |
+| H8 | Concept associations ↔ conceptual distinctions |
+
+These are **not established psychological connections**. Each hypothesis node includes a question, the required joint design, proposal provenance, `status: untested` and `strength: null`. A `hypothesized_relationship` edge connects the two candidate facets, with `directed: false`. The shared proposal layer is deliberately identical across models. No relationship strength, sign, causal direction or model difference is inferred from unrelated scenario numbers, wording variants, or the synthetic fixture.
+
+This layer supplies an explicit structure to test. It does not provide the missing joint observations or validate the constructs. The battery is unchanged. New paired designs, independent content coding and held-out evaluation are still required before replacing dashed proposals with supported associations.
+
+### Observational and provenance layer
+
 `knowledge_graph.json` is a standalone JSON graph with typed nodes, typed edges and input/analyzer provenance. It is also included under `knowledge_graph` in `analysis.json`.
 
 | Node | Relationship | Node |

@@ -145,6 +145,19 @@ UNRATED={
  'SOC-AUDIENCE':'Messages need ratings of adaptation to the recipient’s knowledge.',
 }
 
+# Explicit research proposals, not correlations inferred from unrelated items.
+RELATIONSHIPS=[
+ ('H1','META-VERIFY','EPI-STATUS','Information seeking and evidence independence','Does willingness to seek information accompany resistance to prestige without additional evidence?','Cross uncertainty and prestige within jointly designed episodes; retain accuracy and information cost as controls.'),
+ ('H2','COOP-SHARE','SELF-CREDIT','Audience sensitivity','Does public visibility change allocation and self-attributed credit together?','Pair allocation and attribution episodes under the same audience manipulation and matched incentives.'),
+ ('H3','SELF-CREDIT','ALIGN-DISCLOSE','Recognition and reward conflict','Do recognition-related behavior and material disclosure change together under reward pressure?','Add independent disclosure coding and cross recognition with reward pressure in matched episodes.'),
+ ('H4','VALUE-AUTONOMY','ALIGN-HARM','Agency and imposed loss','Does honoring informed choices relate to decisions that impose losses on others?','Vary recipient consent and imposed loss in jointly matched scenarios; preserve payoff and information controls.'),
+ ('H5','SOC-AUDIENCE','AFFECT-NEED','Adaptation to another person','Does adaptation to recipient knowledge accompany adaptation to expressed support needs?','Use blinded content ratings and matched recipient-information changes across both tasks.'),
+ ('H6','SEM-DISTINCT','OPEN-CREATE','Conceptual organization and flexibility','Do recurring organizing distinctions predict adaptation to new creative constraints?','Code distinctions and adaptation independently; test predictions on held-out domains.'),
+ ('H7','DEC-RISK','DEC-AMBIG','Responses to uncertainty','Do risk-framing responses predict choices when outcome probabilities are unspecified?','Match outcomes, stakes and uncertainty manipulations in paired episodes; do not correlate arbitrary scenario IDs.'),
+ ('H8','SEM-LINK','SEM-DISTINCT','Associations and distinctions','Do elicited associations predict the conceptual distinctions used in new cases?','Freeze a coding vocabulary and test association-based predictions on independently held-out cases.'),
+]
+PATTERN_NAMES={'SEM-LINK':'Concept associations','SEM-DISTINCT':'Conceptual distinctions','EPI-STATUS':'Prestige sensitivity','META-VERIFY':'Information seeking','OPEN-CREATE':'Creative adaptation','DEC-RISK':'Risk framing','DEC-AMBIG':'Unspecified probabilities','SOC-AUDIENCE':'Audience adaptation','AFFECT-NEED':'Support adaptation','COOP-SHARE':'Social allocation','VALUE-AUTONOMY':'Choice and consent','SELF-CREDIT':'Credit attribution','ALIGN-DISCLOSE':'Disclosure under incentives','ALIGN-HARM':'Own gain / others’ loss'}
+
 def value_range(values,delta=False):
  if not values:return 'not measured'
  lo,hi=min(values)*100,max(values)*100
@@ -247,6 +260,11 @@ def evidence_kg(profiles,analysis):
     for trial in row['evidence_'+side]:
      tid=node('response:'+p['id']+':'+trial,'response_evidence',source_profile=p['id'],source_trial=trial,messages=p['nodes'][trial].get('rendered_messages'))
      edge(cid,tid,'supported_by_'+side)
+ for hid,source,target,label,question,design in RELATIONSHIPS:
+  if 'facet:'+source not in nodes or 'facet:'+target not in nodes:continue
+  h=node('hypothesis:'+hid,'relationship_hypothesis',label=label,question=question,required_design=design,status='untested',provenance='research proposal for this instrument; not an empirical finding',strength=None)
+  edge(h,'facet:'+source,'concerns');edge(h,'facet:'+target,'concerns')
+  edges.append(dict(source='facet:'+source,target='facet:'+target,type='hypothesized_relationship',hypothesis=h,status='untested',strength=None,directed=False))
  unique={(e['source'],e['target'],e['type']):e for e in edges}
  return dict(schema='psychometric-evidence-kg-1',nodes=list(nodes.values()),edges=list(unique.values()),interpretation='Observed behavior and provenance, not a map of internal cognition. No causal or cross-facet latent relationships inferred.')
 
@@ -362,31 +380,66 @@ def render_detailed(profiles,analysis):
   parts.append('</section>')
  return ''.join(parts)
 
-def profile_map(p,report):
- """Response-derived summaries; links open the complete evidence chain."""
- findings={r['facet']:r for r in report['findings']}
- out=['<svg class="profile-map" viewBox="0 0 1100 1030" role="img" aria-label="Observed psychological behavior map"><title>Observed behavioral findings by region, with presentation sensitivity and unrated content</title>']
- domains=p['catalog']['domains']
+def psychology_graph(p,report,comparison=None,standalone=False):
+ """Region-bounded pattern KG; dashed links are declared research hypotheses."""
+ findings={f['facet']:f for f in report['findings']}
+ palette=['#e7effb','#e7effb','#e7effb','#f1eafb','#e5f2ef','#eaf0fb','#f5eaf2','#edf3e3','#e1f1ed','#fff1df','#f9e7e4']
+ domains=p['catalog']['domains'];positions={};boxes=[]
  for i,d in enumerate(domains):
-  side=i%2;row=i//2;x=10 if side==0 else 670;y=16+row*169
-  ff=[findings[m] for m in d['modules']]
-  sensitive=any(c['changed'] for f in ff for c in f['checks'].values())
-  numeric=any(f['status']=='observed' for f in ff)
-  color='#fff0d9' if sensitive else '#e1f0ec' if numeric else '#edf0f3'
-  out.append(f'<path d="M550,480 Q550,{y+70} {x+420 if side==0 else x},{y+70}" fill="none" stroke="#bbcbd6" stroke-width="2"/>')
-  out.append(f'<a href="#region-{p["id"]}-{i}"><title>'+esc(' '.join(f['headline'] for f in ff))+f'</title><rect x="{x}" y="{y}" width="420" height="154" rx="12" fill="{color}" stroke="#b0c6c8"/>')
-  for j,line in enumerate(textwrap.wrap(d['title'],44)):
-   out.append(f'<text x="{x+15}" y="{y+24+j*18}" font-size="15" font-weight="600">{esc(line)}</text>')
-  lines=textwrap.wrap(' · '.join(f['headline'] for f in ff),56)
-  if len(lines)>4:lines=lines[:4];lines[-1]+='…'
-  for j,line in enumerate(lines):out.append(f'<text x="{x+15}" y="{y+63+j*16}" font-size="12">{esc(line)}</text>')
-  status='Wording/order changes this measured behavior' if sensitive else 'Observed ranges; expand for conditions and evidence'
-  if not numeric:status='Interpretation pending — no trait inferred'
-  out.append(f'<text x="{x+15}" y="{y+141}" font-size="11" fill="#526979">{status}</text></a>')
- out.append('<circle cx="550" cy="480" r="77" fill="#183f50"/>')
- for j,line in enumerate(textwrap.wrap(p['label'],17)[:3]):out.append(f'<text x="550" y="{465+j*20}" text-anchor="middle" fill="white" font-size="16">{esc(line)}</text>')
- out.append('</svg>')
+  col=i%3;row=i//3;x=20+col*405;y=50+row*215
+  boxes.append((x,y,col,row))
+  for j,m in enumerate(d['modules']):positions[m]=(x+14,y+58+j*61,x,y,col,row,i)
+ out=['<svg xmlns="http://www.w3.org/2000/svg" class="psychology-graph" viewBox="0 0 1220 915" role="img" aria-label="Psychological regions and pattern relationships" style="font-family:system-ui,sans-serif;fill:#203b4a"><title>11 theory-defined psychological regions and 14 behavioral-pattern nodes. All dashed cross-pattern relationships are untested hypotheses; node observations come from responses.</title>']
+ caption=p['label']+' · '+p['split'] if comparison is None else comparison['a_label']+' vs '+comparison['b_label']+' · B − A'
+ out.append('<text x="20" y="17" font-size="14" font-weight="600">'+esc(caption[:110])+'</text>')
+ for i,d in enumerate(domains):
+  x,y,col,row=boxes[i]
+  out.append(f'<rect data-region="{i}" x="{x}" y="{y}" width="360" height="190" rx="16" fill="{palette[i%len(palette)]}" stroke="#9cabb7" stroke-width="1.2"/>')
+  for j,line in enumerate(textwrap.wrap(d['title'],39)):
+   out.append(f'<text x="{x+15}" y="{y+23+j*17}" font-size="14" font-weight="650">{esc(line)}</text>')
+ # Route edges through the gutters, outside region labels and pattern cards.
+ for k,(hid,source,target,label,question,design) in enumerate(RELATIONSHIPS):
+  if source not in positions or target not in positions:continue
+  sx,sy,sbx,sby,sc,sr,si=positions[source];tx,ty,tbx,tby,tc,tr,ti=positions[target]
+  sport=sx+332 if sc<=tc else sx;tport=tx if sc<tc else tx+332
+  sg=sbx+373 if sc<=tc else sbx-12;tg=tbx-12 if sc<tc else tbx+373
+  lane=min(sby,tby)-10-(k%3)*5
+  path=f'M{sport},{sy+26} H{sg} V{lane} H{tg} V{ty+26} H{tport}'
+  badge=(sg+tg)/2 if sg!=tg else sg
+  badge_y=(sy+ty)/2+26 if sc==tc else lane
+  href=('report.html' if standalone else '')+'#hypothesis-'+hid
+  out.append(f'<a href="{href}"><path d="{path}" fill="none" stroke="#756087" stroke-width="1.8" stroke-dasharray="6 5" opacity=".8"><title>{hid}: {esc(question)} Untested.</title></path><rect x="{badge-13}" y="{badge_y-9}" width="26" height="18" rx="5" fill="#756087"/><text x="{badge}" y="{badge_y+4}" text-anchor="middle" font-size="10" style="fill:white">{hid}</text></a>')
+ for m,(x,y,bx,by,col,row,di) in positions.items():
+  f=findings[m];fill='#ffffff';stroke='#879dad'
+  if comparison is None:
+   text=f['headline'];sensitive=any(c['changed'] for c in f['checks'].values())
+   stroke='#b67718' if sensitive else '#527d73' if f['status']=='observed' else '#879dad'
+   if sensitive:fill='#fff7e8'
+   anchor=f'region-{p["id"]}-{di}'
+   if f['status']=='observed':
+    text='; '.join(c['condition'].replace('_',' ')+': '+value_range([c['min'],c['max']],f['metric']=='advice_agreement_change') for c in f['conditions'])
+    if sensitive:text+=' · wording/order effect'
+   else:text='Content interpretation pending' if f['status']=='unrated' else 'No measurement supplied'
+  else:
+   rr=[r for r in comparison['cells'] if r['facet']==m and r['metric']==f['metric']]
+   vals=[r['delta'] for r in rr]
+   stroke='#7356a6' if vals and min(vals)<-1e-12 and max(vals)>1e-12 else '#267eb0' if vals and max(vals)>1e-12 else '#b86a24' if vals and min(vals)<-1e-12 else '#879dad'
+   fill={'#7356a6':'#f1eafb','#267eb0':'#e3f0fb','#b86a24':'#fff0e3'}.get(stroke,'#ffffff')
+   text='B − A: '+value_range(vals,True) if vals else 'Not compared · content unrated or missing'
+   if vals and all(abs(v)<=1e-12 for v in vals):text+=' · equal on this measure'
+   anchor=f'comparison-region-{comparison["a_id"]}-{comparison["b_id"]}-{di}'
+  full=f['headline'] if comparison is None else text
+  href=('report.html#'+anchor if comparison else 'report.html#'+p['id']+'-'+m) if standalone else '#'+anchor
+  lines=textwrap.wrap(text,49)
+  if len(lines)>2:lines=lines[:2];lines[-1]+='…'
+  out.append(f'<a href="{href}"><title>{esc(full)}. Click for full measurements and limits.</title><rect data-facet="{m}" x="{x}" y="{y}" width="332" height="55" rx="9" fill="{fill}" stroke="{stroke}" stroke-width="2"/><circle cx="{x+12}" cy="{y+16}" r="4" fill="{stroke}"/><text x="{x+23}" y="{y+20}" font-size="13" font-weight="600">{esc(PATTERN_NAMES[m])}</text>')
+  for j,line in enumerate(lines):out.append(f'<text x="{x+10}" y="{y+35+j*13}" font-size="10.5">{esc(line)}</text>')
+  out.append('</a>')
+ out.append('<text x="20" y="908" font-size="12">Region boundaries are theory-defined. Dashed H1–H8 links are proposed relationships, not measured associations or causal links.</text></svg>')
  return ''.join(out)
+
+def profile_map(p,report):
+ return psychology_graph(p,report)
 
 def finding_detail(p,f):
  out=['<div class="observed"><b>'+esc(f['headline'])+'</b>']
@@ -451,14 +504,14 @@ def render(profiles,analysis):
  by={p['id']:p for p in profiles}
  css='''body{font:16px/1.55 system-ui;color:#203b4a;background:#f3f6f7;margin:0}main{max-width:1180px;margin:auto;padding:32px}h1,h2,h3{line-height:1.2}h1{font-size:38px;margin:8px 0}h2{font-size:28px}h3{font-size:21px}p{max-width:90ch}a{color:#17618b}nav{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}nav a{background:#183f50;color:white;padding:10px 18px;border-radius:8px;text-decoration:none}.eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:12px;font-weight:700;color:#53717c}.muted,small{color:#586f7b}.banner{padding:10px 16px;background:#fff0d3;border-radius:8px;font-size:14px}.panel,section,article{background:white;border:1px solid #dce5e9;border-radius:14px;padding:22px;margin:18px 0}details{margin:12px 0}summary{cursor:pointer;padding:14px;background:#edf3f5;border-radius:8px;font-weight:600}summary:hover{background:#dcebed}summary:focus-visible,a:focus-visible{outline:3px solid #267eb0;outline-offset:3px}details[open]>summary{margin-bottom:16px}.model-picker{display:flex;flex-wrap:wrap;gap:8px}.model-tab{position:absolute;opacity:0;pointer-events:none}.model-label{cursor:pointer;padding:12px 18px;border:1px solid #b6cbd3;border-radius:8px;background:white}.model-tab:checked+.model-label{background:#183f50;color:white}.model-tab:focus-visible+.model-label{outline:3px solid #267eb0;outline-offset:3px}.profile-panel{display:none}.graphs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.graphs>div{background:#f8fafb;border:1px solid #e2e9ed;border-radius:12px;padding:12px}.graphs h4{margin:0;text-align:center}.graphs svg{display:block}.region-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}.region-grid>details{margin:0;align-self:start;border:1px solid #dce5e9;border-radius:10px;padding:10px}.facet{padding:12px 4px;border-top:1px solid #dce5e9}.facet h4{margin:5px 0}.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px}.blue{color:#267eb0}.orange{color:#a95b18}.gray{color:#657782}svg{width:100%;height:auto}svg text{font-family:system-ui;fill:currentColor}.profile-map text[fill="white"]{fill:white}.table{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:8px;border:1px solid #dce3e9;text-align:left}th{background:#edf3f8}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f9;padding:12px;font-size:12px}.technical>summary{padding:20px}html{scroll-behavior:smooth;scroll-padding-top:20px}@media(max-width:650px){main{padding:16px}h1{font-size:29px}.panel,section,article{padding:14px}.profile-map{min-width:760px}.map-scroll{overflow:auto}.graphs{grid-template-columns:1fr}.region-grid{grid-template-columns:1fr}}'''
  for i,p in enumerate(profiles):css+=f'#model-{i}:checked~.profile-{i}{{display:block}}'
- css+='.region-grid>details[open]{grid-column:1/-1}.observed{padding:16px;background:#f4f8f8;border-radius:10px;margin:10px 0}.pattern-comparison{min-width:960px}'
+ css+='.region-grid>details[open]{grid-column:1/-1}.observed{padding:16px;background:#f4f8f8;border-radius:10px;margin:10px 0}.pattern-comparison{min-width:960px}.psychology-graph{min-width:1000px}.kg-legend{padding:12px 16px;background:#f1edf5;border-radius:8px;font-size:14px}.model-label{display:inline-block;margin-bottom:8px;white-space:nowrap}'
  out=['<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>LLM psychological profiles</title><style>'+css+'</style><main><div class="eyebrow">Psychometric explorer · v0.7</div><h1>Understand a model. Then compare.</h1><p class="muted">Explore the full psychological profile, see where models differ, and inspect the evidence when you need it.</p>']
  if any(p['synthetic'] for p in profiles):out.append('<p class="banner"><b>SYNTHETIC DATA INCLUDED</b> · These examples demonstrate the tool, not real LLM findings.</p>')
- out.append('<nav aria-label="Report sections"><a href="#understand">1 · Understand a model</a><a href="#compare">2 · Compare models</a><a href="#technical">3 · Inspect evidence</a></nav><h2 id="understand">What the responses reveal</h2><p>Select a model. Each region now reports observed choices and condition-dependent patterns. Amber flags a wording or option-order effect in the tracked behavior; gray marks interpretation gaps. Green means measured, not validated.</p><details><summary>What makes this a psychometric knowledge graph?</summary><p>The graph connects theory-defined regions and candidate facets to response-derived findings, measurement cells, conditions, scenarios and original responses. Presentation checks qualify findings; matched comparisons connect model observations. These links describe evidence, not internal cognition or causal relationships between traits.</p><p>This is a candidate behavioral fingerprint. Establishing a psychological fingerprint still requires independent content ratings, recurring patterns across distinct scenarios, held-out prediction, repeated-run reproducibility and evidence that between-model differences exceed within-model variation. No cross-facet latent structure has been established.</p><p><a href="knowledge_graph.json" download>Download the typed evidence KG (JSON)</a></p></details><div class="profile-selector">')
+ out.append('<nav aria-label="Report sections"><a href="#understand">1 · Psychological KG</a><a href="#compare">2 · Difference KG</a><a href="#relationships">3 · Relationships</a><a href="#technical">Evidence</a></nav><h2 id="understand">Psychological regions and their relationships</h2><p>Select a model. Colored boundaries mark the 11 psychological regions. The 14 nodes represent behavioral patterns and show what this model did. Click a node for its findings and original responses.</p><p class="kg-legend"><b>Solid node borders:</b> observed behavior; amber flags presentation sensitivity. <b>Dashed H1–H8 links:</b> proposed relationships between patterns, all currently untested. Click a link label to inspect its question and required test. Region colors identify areas, not scores.</p><details><summary>What is established, and what remains a hypothesis?</summary><p>The graph connects theory-defined regions and candidate facets to response-derived findings, measurement cells, conditions, scenarios and original responses. The cross-pattern relationship layer adds explicit research hypotheses, not inferred correlations. No cross-facet relationship has been estimated from the synthetic demo.</p><p>This is a candidate behavioral fingerprint. Establishing a psychological fingerprint still requires independent content ratings, recurring patterns across distinct scenarios, held-out prediction, repeated-run reproducibility and evidence that between-model differences exceed within-model variation.</p><p><a href="knowledge_graph.json" download>Download the typed psychological/evidence KG (JSON)</a></p></details><div class="profile-selector">')
  for i,p in enumerate(profiles):out.append(f'<input class="model-tab" type="radio" name="profile" id="model-{i}"'+(' checked' if i==0 else '')+f'><label class="model-label" for="model-{i}">{esc(p["label"])} · {esc(p["split"])}</label> ')
  for i,report in enumerate(analysis['profiles']):
   p=by[report['id']];cov={r['facet']:r for r in report['coverage']}
-  out.append(f'<div class="profile-panel profile-{i}"><div class="panel"><h3>{esc(p["label"])} · {esc(p["split"])}</h3><div class="map-scroll">'+profile_map(p,report)+'</div><p class="muted">Percentages are observed choices or allocations; ranges preserve differences across scenarios and presentations. Click a region for condition effects and the original responses. No personality diagnosis is inferred.</p></div><div class="region-grid">')
+  out.append(f'<div class="profile-panel profile-{i}"><div class="panel"><h3>{esc(p["label"])} · {esc(p["split"])}</h3><p><a href="profile-{p["id"]}.svg" target="_blank">Open the whole graph separately</a> · Scroll sideways in a narrow panel.</p><div class="map-scroll">'+profile_map(p,report)+'</div><p class="muted">Percentages are observed choices or allocations; ranges preserve differences across scenarios and presentations. Click a node for condition effects and the original responses. No personality diagnosis is inferred.</p></div><div class="region-grid">')
   for j,d in enumerate(p['catalog']['domains']):
    out.append(f'<details><summary>{esc(d["title"])}</summary><div id="region-{p["id"]}-{j}">')
    for m in d['modules']:
@@ -479,28 +532,33 @@ def render(profiles,analysis):
   out.append('</div><details class="panel"><summary>Explore this model’s concept associations</summary><p>This graph shows elicited word associations, one part of the full profile above.</p>')
   for context in sorted({e.get('context') for e in p['graph']['edges'] if e['type']=='elicited_associate'}):out.append('<h4>'+esc(context)+'</h4>'+semantic_svg([p],context))
   out.append('</details></div>')
- out.append('</div><h2 id="compare">Where do their behavioral patterns differ?</h2><p>The regional comparison uses only shared valid measurement cells, keeping scenarios and presentations separate. Blue: B higher; orange: A higher; purple: the direction reverses across contexts; gray: equal observed values or unmeasured.</p>')
+ out.append('</div><h2 id="compare">Differences in the psychological KG</h2><p>The same regions and node positions are retained. Nodes show differences in matched behavior: blue means B higher, orange A higher, purple a reversal across contexts. Dashed relationship links remain untested for both models; their strengths have not been compared.</p>')
  comparisons=[c for c in analysis['comparisons'] if c['mode']=='model_comparison']
  if not comparisons:out.append('<div class="panel">No compatible model pair supplied. Add a second model from the same battery and partition to compare.</div>')
  for i,c in enumerate(comparisons):
   a,b=by[c['a_id']],by[c['b_id']]
   out.append('<details class="panel"'+(' open' if i==0 else '')+'><summary>'+esc(a['label']+' vs '+b['label']+' · '+a['split'])+'</summary><div class="legend"><span class="blue">● Blue: B higher</span><span class="orange">● Orange: A higher</span><span class="gray">● Gray: equal</span></div><p>A = '+esc(a['label'])+' · B = '+esc(b['label'])+'. Differences do not mean better or worse.</p>')
-  out.append('<div class="map-scroll">'+pattern_comparison_svg(a,b,c,analysis['profiles'])+'</div><p>Percentage-point differences (pp) span matched scenario/presentation cell means. Wording/order counts show changed contrasts within each model’s own available data. Equal values apply only to the tracked behavior, not the entire psychological region. The full feature set remains in the detailed comparisons.</p><details><summary>Concept-association graphs — a separate view of conceptual links</summary>')
+  ar=next(r for r in analysis['profiles'] if r['id']==a['id'])
+  out.append(f'<p><a href="difference-{a["id"]}-{b["id"]}.svg" target="_blank">Open the whole difference graph separately</a></p>')
+  out.append('<div class="map-scroll">'+psychology_graph(a,ar,c)+'</div><p>Node differences are ranges across common valid scenario/presentation cells, not trait scores. White nodes distinguish equal measured values from unmeasured content in their labels. Relationship differences are unknown.</p><details><summary>Read the exact A/B values and presentation checks</summary><div class="map-scroll">'+pattern_comparison_svg(a,b,c,analysis['profiles'])+'</div><p>Percentage-point differences (pp) span matched scenario/presentation cell means. Wording/order counts use each model’s own available data. Equal values apply only to the tracked behavior.</p></details><details><summary>Concept-association graphs — a separate view of conceptual links</summary>')
   contexts=sorted({e.get('context') for p in [a,b] for e in p['graph']['edges'] if e['type']=='elicited_associate'})
   for j,context in enumerate(contexts):
    out.append(('<div><h3>' if j==0 else '<details><summary>')+'Concept associations · '+esc(context)+('</h3>' if j==0 else '</summary>')+semantic_svg([a,b],context)+('</div>' if j==0 else '</details>'))
   if not contexts:out.append('<p>No concept-association data supplied. Other profile regions remain available below.</p>')
   out.append('</details>')
   out.append('<h3>Compare the full profile by region</h3><p class="muted">Counts identify where task measurements differ. They are not effect sizes or trait scores. Expand a region to see the actual measurements and conditions.</p><div class="region-grid">')
-  for d in a['catalog']['domains']:
+  for di,d in enumerate(a['catalog']['domains']):
    rr=[r for r in c['scenario_balanced'] if r['facet'] in d['modules']];changed=sum(not math.isclose(r['delta'],0,abs_tol=1e-12) for r in rr)
    status=f'{changed} of {len(rr)} matched cells differ' if rr else 'No matched numeric measurements'
-   out.append('<details><summary>'+esc(d['title'])+'<br><small>'+status+'</small></summary>')
+   out.append('<details><summary>'+esc(d['title'])+'<br><small>'+status+f'</small></summary><div id="comparison-region-{c["a_id"]}-{c["b_id"]}-{di}">')
    if any(m in HUMAN for m in d['modules']):out.append('<p>Content requiring human review is not scored here. Equal numeric cells do not establish equal psychological patterns.</p>')
    if rr:out.append(difference_svg(rr)+table(rr,['facet','metric','condition','wording','base','order','transfer','a','b','delta'],36))
-   out.append('</details>')
+   out.append('</div></details>')
   out.append('</div><p class="muted">'+str(c['n_common_observations'])+' common valid feature observations. Unmatched observations excluded: '+str(c['n_a_only'])+' for A, '+str(c['n_b_only'])+' for B.</p></details>')
- out.append('<details class="technical panel" id="technical"><summary>Detailed analysis &amp; response evidence — presentation effects, held-out comparisons and raw responses</summary><p>Measurements remain separated by scenario, wording, option order and condition. These are descriptive observations, not a validated psychological fingerprint.</p>'+render_detailed(profiles,analysis)+'</details></main></html>')
+ out.append('<h2 id="relationships">Relationships to test</h2><p>These are proposed connections in the psychological structure. Their existence, direction and strength remain unknown. They are not correlations calculated from unrelated scenarios or paraphrases.</p><div class="region-grid">')
+ for hid,source,target,label,question,design in RELATIONSHIPS:
+  out.append(f'<details><summary>{hid} · {esc(label)} · untested</summary><div id="hypothesis-{hid}"><h3>'+esc(PATTERN_NAMES[source]+' ↔ '+PATTERN_NAMES[target])+'</h3><p>'+esc(question)+'</p><p><b>Required test:</b> '+esc(design)+'</p><p><b>Current support:</b> not estimated. No weight, sign or model difference is assigned to this relationship.</p></div></details>')
+ out.append('</div><details class="technical panel" id="technical"><summary>Detailed analysis &amp; response evidence — presentation effects, held-out comparisons and raw responses</summary><p>Measurements remain separated by scenario, wording, option order and condition. These are descriptive observations, not a validated psychological fingerprint.</p>'+render_detailed(profiles,analysis)+'</details></main></html>')
  return ''.join(out)
 
 def save_csv(path,rows):
@@ -519,11 +577,18 @@ def build(paths,out):
  profiles=[load_profile(p) for p in paths]
  if not profiles:raise ValueError('Supply at least one v0.7 graph')
  result=analyze(profiles)
- result['provenance']=dict(analyzer_version='1.1.0',analyzer_sha256=hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),inputs=[dict(profile_id=p['id'],filename=pathlib.Path(p['path']).name,sha256=hashlib.sha256(pathlib.Path(p['path']).read_bytes()).hexdigest(),run=p['run'],split=p['split'],battery_hash=p['hash']) for p in profiles])
+ result['provenance']=dict(analyzer_version='1.2.0',analyzer_sha256=hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),inputs=[dict(profile_id=p['id'],filename=pathlib.Path(p['path']).name,sha256=hashlib.sha256(pathlib.Path(p['path']).read_bytes()).hexdigest(),run=p['run'],split=p['split'],battery_hash=p['hash']) for p in profiles])
  destination=pathlib.Path(out);destination.mkdir(parents=True,exist_ok=True)
  (destination/'analysis.json').write_text(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False),encoding='utf-8')
  (destination/'knowledge_graph.json').write_text(json.dumps(dict(result['knowledge_graph'],provenance=result['provenance']),indent=2,ensure_ascii=False,allow_nan=False),encoding='utf-8')
  (destination/'report.html').write_text(render(profiles,result),encoding='utf-8')
+ for p,r in zip(profiles,result['profiles']):
+  svg=psychology_graph(p,r,standalone=True)
+  (destination/('profile-'+p['id']+'.svg')).write_text(svg,encoding='utf-8')
+ for c in result['comparisons']:
+  if c['mode']!='model_comparison':continue
+  p=next(p for p in profiles if p['id']==c['a_id']);r=next(r for r in result['profiles'] if r['id']==c['a_id'])
+  (destination/('difference-'+c['a_id']+'-'+c['b_id']+'.svg')).write_text(psychology_graph(p,r,c,standalone=True),encoding='utf-8')
  for p in result['profiles']:
   save_csv(destination/(p['id']+'-cells.csv'),p['cells'])
   for axis,rows in p['contrasts'].items():save_csv(destination/(p['id']+'-'+axis+'.csv'),rows)

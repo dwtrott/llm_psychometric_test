@@ -1,5 +1,11 @@
 # Local browser verification — 2026-11-01
 
+## Psychological KG layout — 2026-11-02
+
+The main graph now contains 11 bounded, labeled regions and 14 pattern nodes. Eight dashed, clickable H1–H8 hypotheses connect the patterns; the difference graph retains the same positions. Standalone SVGs are exported alongside the report. Node observations and proposed relationships have distinct visual and data semantics. Automated verification checks region/node counts, identical model/difference geometry, SVG validity, graph endpoint integrity and untested/null-weight relationship status. All 12 analyzer tests pass.
+
+Browser checks verified model selection, H2 and H6 labels opening their hypothesis details, and the risk node in the difference graph opening its matched region measurements. The standalone model SVG renders the whole graph. Two overlapping hypothesis badges were moved apart and rechecked. Narrow-screen model labels wrap without overlap, while the graph scrolls horizontally. No captured console warnings/errors. Screenshot: `results/analysis-demo/psychological-kg-browser.jpg` (local, ignored).
+
 ## Response findings and typed KG revision
 
 - A's risk region reports gain-framed risky choices at 100% and loss-framed choices at 0%, with a -100 percentage-point matched condition effect across three scenarios.

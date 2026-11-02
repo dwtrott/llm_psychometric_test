@@ -22,7 +22,11 @@ python analyzer/psychometric.py results/model-a-dev/graph.json results/model-b-d
 
 ## Response-derived findings and evidence KG
 
-The opening map now shows observed behavior in each region, not just coverage. Condition-specific choice/response ranges and presentation effects remain separate. The first comparison view shows those behaviors across all regions; concept-association graphs are a separate expandable view. Interpretation gaps remain explicit.
+The main view is now a **region-bounded psychological KG**: 11 labeled areas contain 14 behavioral-pattern nodes. Eight dashed links connect candidate patterns across or within regions. These are explicitly untested research hypotheses, not correlations estimated from the demo. Click H1–H8 for the question and the design needed to test it. The hypotheses are included in the JSON graph with `status: untested`, `strength: null` and no inferred direction.
+
+The **Difference KG** preserves the same regions, node positions and proposed links. Node colors and labels show matched behavioral differences; relationship differences remain unknown. Exact A/B values are expandable beneath the graph. Each model graph and difference graph is also exported as a standalone SVG with links back into the report. On narrow screens, scroll the graph horizontally or open its standalone SVG. No model or validation calls are made.
+
+The opening graph shows observed behavior in each region, not just coverage. Condition-specific choice/response ranges and presentation effects remain separate. Concept-association graphs remain a separate expandable view. Interpretation gaps remain explicit.
 
 The report exports `knowledge_graph.json`: typed model-run, region, candidate-facet, finding, measurement, context, scenario, response, presentation-check and comparison nodes, joined by explicit evidence relationships. Expand a region's evidence chain to inspect original responses. This is a candidate behavioral fingerprint, not a validated psychological fingerprint. See [the evidence model and validation boundaries](EVIDENCE_MODEL.md).
 
