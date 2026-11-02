@@ -1,5 +1,7 @@
 # v0.7: distinct wordings and balanced presentations
 
+**Inspect the substance first:** [actual question excerpts from every family](ACTUAL_QUESTIONS.md), with both conditions and all stages, and the [content/scoring audit](CONTENT_AUDIT.md). These are custom exploratory text tasks. Important content scoring remains incomplete, several held-out contexts are close substitutions, and this bank does not establish a full psychological fingerprint.
+
 For the new design-aware results report, use the [Python analyzer and Colab notebook](../analyzer/README.md). It analyzes the existing v0.7 exports without changing these questions or their scoring rules.
 
 All 14 candidate profile facets remain, with 84 scenario forms across 11 regions and capability controls separate. v0.6 is unchanged. The revision addresses its [duplicate-wording and presentation review](../battery_v6/reviews/REVIEW.md), not empirical psychological validation.

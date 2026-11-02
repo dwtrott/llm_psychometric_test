@@ -1,5 +1,7 @@
 # Design-aware analysis and visualization for v0.7
 
+**Measurement scope:** this analyzer summarizes available task features and evidence, not a comprehensive psychological fingerprint. Open-response content ratings are not imported. Read the [actual question excerpts](../battery_v7/ACTUAL_QUESTIONS.md) and [content/scoring audit](../battery_v7/CONTENT_AUDIT.md) to see exactly what is collected and what remains unmeasured.
+
 The battery is frozen. This software uses its existing dimensions to analyze actual response evidence. It does not propose another questionnaire revision.
 
 `psychometric.py` is a single-file, **Python standard-library-only** analyzer and report generator. Its HTML report uses inline SVG and browser-native expandable sections: no JavaScript, CDN, server, API key or additional plotting library. The report is portable and works offline. The existing interactive graph viewer remains available separately for pan/zoom exploration and older formats.

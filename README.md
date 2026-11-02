@@ -2,6 +2,12 @@
 
 A research-informed exploratory battery and an independent offline viewer for comparing LLM response profiles. **Not a validated personality test or a clinical diagnostic instrument.**
 
+## Start here: actual questions and measurement gaps
+
+**[Read verbatim v0.7 questions from all 14 task families](battery_v7/ACTUAL_QUESTIONS.md)**, including both conditions, follow-up stages, response requirements and optional resource contents. Read the accompanying **[content and scoring audit](battery_v7/CONTENT_AUDIT.md)** before interpreting results.
+
+The current instrument contains custom text tasks, not a demonstrated full psychological fingerprint. Its 1,224 sessions expand 84 scenario forms through presentation and condition changes; some held-out forms are close context substitutions. Important content (including conceptual distinctions, supportive replies and disclosure reports) still requires ratings that the analyzer does not import. The network atlas below uses 66 illustrative variables and invented links, not 66 dimensions measured by this battery. No real-model validation is supplied by the demos.
+
 ## New: psychological network atlas and difference view
 
 The [network atlas guide](network_atlas/README.md) explains the connected-landscape visualizer, with screenshots, a single-graph walkthrough, comparison controls and interpretation rules. It organizes many smaller behavioral-pattern nodes into soft psychological regions, with connections crossing their boundaries.
@@ -14,7 +20,7 @@ Download/extract the repository and open [`network_atlas/network-comparison.html
 
 ## Analyze actual battery outputs
 
-**Analyze v0.7 results:** use the new [Python analysis and visualization tool](analyzer/README.md), with a [Colab notebook](analyzer/Psychometric_Analysis.ipynb). It shows the full profile, evidence coverage, wording/order/transfer effects, matched model differences, and aligned concept graphs. The battery questions remain frozen.
+**Analyze v0.7 results:** use the [Python analysis and visualization tool](analyzer/README.md), with a [Colab notebook](analyzer/Psychometric_Analysis.ipynb). It shows available task features, evidence coverage, wording/order/presentation effects, matched model differences, and elicited concept associations. Its transfer-variant comparison does not score conceptual transfer performance. These are partial response profiles, not a measured full psychology. The battery questions remain frozen.
 
 ## Read the questions first
 
@@ -34,7 +40,7 @@ The [v0.2 question book](battery_v2/README.md) and v0.1 content below are retain
 
 **[Open the complete question book](battery/QUESTIONS.md)** to read every scenario, question, answer choice and response instruction, organized into 28 module pages. No code needs to be run. [Complete prompts in CSV](battery/complete_prompts.csv) are also included, with the full user prompt in one column.
 
-The current 436 instantiated items include condition variants of simple association, reasoning and fictional decision tasks. They are a pilot sampling of response patterns, **not a complete psychological profile**, nor 436 independent validated psychological questions. Research references explain the background; they are not pointers to missing question content. Making these prompts readable does not resolve limitations in task depth, ambiguity, coverage or validation.
+The legacy v0.1 bank has 436 instantiated items, including condition variants of simple association, reasoning and fictional decision tasks. They are a pilot sampling of response patterns, **not a complete psychological profile**, nor 436 independent validated psychological questions. Research references explain the background; they are not pointers to missing question content. Making these prompts readable does not resolve limitations in task depth, ambiguity, coverage or validation.
 
 ## Components
 
