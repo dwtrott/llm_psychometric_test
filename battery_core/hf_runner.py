@@ -53,9 +53,10 @@ def records_at(path):
     return records
 
 
-def prepare_run(config,run_dir,run_id,repeats=1,facets=None):
+def prepare_run(config,run_dir,run_id,repeats=1,facets=None,battery_dir=None):
     out=Path(run_dir);out.mkdir(parents=True,exist_ok=True)
-    b=processor.load()
+    source=Path(battery_dir) if battery_dir is not None else ROOT/'battery_core'
+    b=processor.load(source)
     proposed=processor.prepare(b,config,run_id,repeats,facets)
     path=out/'plan.json'
     if path.exists():
@@ -67,6 +68,11 @@ def prepare_run(config,run_dir,run_id,repeats=1,facets=None):
         if (out/'responses.jsonl').exists():raise ValueError('Response journal exists without its plan; do not overwrite this run.')
         plan=proposed;atomic_json(path,plan)
         atomic_json(out/'config.json',plan['config'])
+    instrument=out/'instrument';instrument.mkdir(exist_ok=True)
+    for name in ['battery.json','prompts.csv']:
+        target=instrument/name;data=(source/name).read_bytes()
+        if target.exists() and target.read_bytes()!=data:raise ValueError('Saved instrument differs; use a new run label')
+        if not target.exists():target.write_bytes(data)
     return b,plan
 
 
@@ -113,7 +119,7 @@ def collect(b,plan,run_dir,generate,progress=None):
 
 def export(run_dir):
     """Export even a partial run. The notebook can call this after an interruption."""
-    out=Path(run_dir);b=processor.load();plan=processor.read(out/'plan.json')
+    out=Path(run_dir);b=processor.load(out/'instrument' if (out/'instrument').exists() else None);plan=processor.read(out/'plan.json')
     records=records_at(out/'responses.jsonl')
     rows,summary,graph,review=processor.score(b,plan,records)
     result=out/'results';result.mkdir(exist_ok=True)
@@ -143,9 +149,16 @@ def export(run_dir):
     atomic_json(result/'scores.json',summary)
     analysis=module('hf_analysis',ROOT/'analyzer/psychometric.py')
     viewer=module('hf_viewer',ROOT/'viewer/viewer.py')
-    report=analysis.build([result/'graph.json'],result/'analysis')
-    viewer.build_viewer([result/'graph.json'],result/'viewer.html')
-    return dict(summary=summary,audit=str(audit_path),start=str(out/'START_HERE.html'),report=str(report),graph=str(result/'graph.json'),viewer=str(result/'viewer.html'))
+    graphs=[result/'graph.json']
+    if plan['split']=='all':
+        graphs=[]
+        for split in ['development','heldout']:
+            _,_,partition,partition_review=processor.score(b,plan,records,split=split)
+            path=result/f'graph-{split}.json';atomic_json(path,partition);graphs.append(path)
+            processor.lines(result/f'human_review-{split}.template.jsonl',partition_review)
+    report=analysis.build(graphs,result/'analysis')
+    viewer.build_viewer(graphs,result/'viewer.html')
+    return dict(summary=summary,audit=str(audit_path),start=str(out/'START_HERE.html'),report=str(report),graph=str(result/'graph.json'),graphs=[str(p) for p in graphs],viewer=str(result/'viewer.html'))
 
 
 class TransformersGenerator:

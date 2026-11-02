@@ -15,7 +15,8 @@ def fingerprint(x):return hashlib.sha256(stable(x).encode()).hexdigest()
 
 def load_profile(path):
  path=pathlib.Path(path);g=json.loads(path.read_text(encoding='utf-8-sig'))
- if g.get('battery_version') not in ['0.7.0-draft','0.8.0-core','0.8.1-core'] or g.get('bank')!='profile':raise ValueError('Use v0.7 or compact-core profile graphs; capability controls remain separate.')
+ if g.get('battery_version') not in ['0.7.0-draft','0.8.0-core','0.8.1-core','0.9.0-expanded'] or g.get('bank')!='profile':raise ValueError('Use a supported profile graph; capability controls remain separate.')
+ if g.get('analysis_split')=='all':raise ValueError('Load graph-development.json and graph-heldout.json separately; do not pool partitions.')
  if not g.get('battery_hash') or not isinstance(g.get('profile_catalog'),dict):raise ValueError('Missing battery identity or catalog')
  nodes={}
  for n in g['nodes']:

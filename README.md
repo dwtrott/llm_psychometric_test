@@ -4,11 +4,13 @@ A research-informed exploratory battery and an independent offline viewer for co
 
 ## Start here: prompts and categories
 
-**[Read the 50 actual prompt cards, grouped by category](battery_core/PROMPTS.md)** · **[CSV](battery_core/prompts.csv)** · **[Run and analyze them](battery_core/README.md)**
+**[Read the expanded questions, grouped by category](battery_full/PROMPTS.md)** · **[CSV](battery_full/prompts.csv)** · **[Run and analyze them](battery_full/README.md)**
 
 **[Open the A100 Colab notebook](https://colab.research.google.com/github/dwtrott/llm_psychometric_test/blob/main/battery_core/Run_HuggingFace_A100.ipynb)** to download a Hugging Face model, run the full battery, and download responses, scores, graphs and reports. Defaults to Qwen2.5-7B-Instruct; the model is configurable. No paid model API is used.
 
-The compact core contains text-only probes across 11 categories and 22 facets, including concepts, belief revision, curiosity, decisions, social understanding, support, trust, reciprocity, values, self-attribution and integrity. There are 50 cards / 60 stages, with no missing images or external stimuli. Automatic task features and explicitly reviewed content can enter the existing analyzer and KG viewer. This is exploratory measurement; psychological stability and validity still require real-model studies.
+The notebook now defaults to the **expanded v0.9 battery: 240 conversation cards / 280 question stages**, across all 11 categories and 22 facets. It includes distinct scenario contexts, two task-instruction wordings, and 120 development plus 120 matched held-out cards. Scenario facts, incentives, response fields and scoring remain fixed across wording pairs. All questions are text-only. Completion is reported by facet, partition and wording; rejected responses and missing stages are explicit.
+
+Results include separate development and held-out graphs for the existing analyzer and viewer. Capability controls remain separate from behavioral features, and open-response content still requires review. This is an exploratory instrument, not a validated full psychological fingerprint. The [design guide](battery_full/README.md) explains near-transfer limits, fixed option order and why repeated wordings are not independent scenarios. The [50-card compact release](battery_core/PROMPTS.md) remains available for earlier-run reproducibility.
 
 ## Earlier v0.7: actual questions and measurement gaps
 
@@ -52,6 +54,7 @@ The legacy v0.1 bank has 436 instantiated items, including condition variants of
 
 ## Components
 
+- [`battery_full/`](battery_full/README.md): expanded default, 240 cards / 280 stages, scenario and wording comparisons plus prespecified held-out transfer.
 - [`battery_core/`](battery_core/README.md): compact prompt list and CSV, 50 cards / 22 facets / 11 categories, standard-library runner, reviewed-content workflow and existing-harness compatibility.
 - [`network_atlas/`](network_atlas/README.md): connected-network design prototype, single/difference views, Python generators, illustrative data, and screenshot/interpretation guide.
 - [`analyzer/`](analyzer/README.md): response-based v0.7 analysis, findings/evidence KG exports, matched comparisons and a Colab notebook; separate from the illustrative atlas.

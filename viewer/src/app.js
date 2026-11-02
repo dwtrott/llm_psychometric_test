@@ -39,7 +39,7 @@ function normalize(graph,filename='profile.json'){
  const edges=graph.edges.filter(e=>['evokes','preferred_similarity'].includes(e.type)||(e.type==='rated_on'&&nodes.get(e.target).kind==='semantic_axis'));
  for(const e of edges){const v=e.type==='rated_on'?e.value:e.weight;if(typeof v!=='number'||!Number.isFinite(v))throw Error('Invalid semantic edge value.');if(e.type!=='rated_on'&&(v<0||v>1))throw Error('Probability weights must be in [0,1].');}
  const quality={};for(const r of rows)quality[r.status]=(quality[r.status]||0)+1;
- const config=configs[0],run=runs[0];const label=(config.display_name||config.model||filename)+' · '+run.id.replace(/^run:/,'');
+ const config=configs[0],run=runs[0];const label=(config.display_name||config.model||filename)+' · '+run.id.replace(/^run:/,'')+(graph.analysis_split?' · '+graph.analysis_split:'');
  const p={graph,filename,nodes,rows,edges,anchors,quality,config,run,label,hash:graph.battery_hash,synthetic:!!(graph.synthetic||config.synthetic)};
  p.cells=aggregate(rows);return p;
 }
@@ -289,7 +289,7 @@ if(typeof document==='undefined'){
  function csv(rows){if(!rows.length)return '';const keys=Object.keys(rows[0]),cell=v=>{let s=typeof v==='object'?JSON.stringify(v):String(v??'');if(/^[=+@\-]/.test(s)&&typeof v!=='number')s="'"+s;return '"'+s.replaceAll('"','""')+'"';};return keys.map(cell).join(',')+'\r\n'+rows.map(r=>keys.map(k=>cell(r[k])).join(',')).join('\r\n');}
  function download(name,type,text){const url=URL.createObjectURL(new Blob([text],{type})),link=document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),2000);}
  async function importFiles(files){
-  let added=0;for(const file of files){try{if(file.size>80*1024*1024)throw Error(file.name+': maximum file size is 80 MiB.');const graph=JSON.parse(await file.text());const p=normalize(graph,file.name);if(profiles.some(x=>x.run.id===p.run.id&&x.config.id===p.config.id))throw Error('This run is already loaded: '+p.label);profiles.push(p);added++;}catch(e){error(e);}}
+  let added=0;for(const file of files){try{if(file.size>80*1024*1024)throw Error(file.name+': maximum file size is 80 MiB.');const graph=JSON.parse(await file.text());const p=normalize(graph,file.name);if(profiles.some(x=>x.run.id===p.run.id&&x.config.id===p.config.id&&x.graph.analysis_split===p.graph.analysis_split))throw Error('This run is already loaded: '+p.label);profiles.push(p);added++;}catch(e){error(e);}}
   if(added){if(bIndex<0&&profiles.length>1)bIndex=profiles.length-1;$('notice').textContent=added+' profile(s) loaded locally.';render();}
  }
  $('files').onchange=e=>importFiles([...e.target.files]);

@@ -32,7 +32,7 @@ def audit(b,plan,records):
             events=by_stage[t['trial_id'],n]
             status='accepted' if n in accepted else 'rejected' if events and state['status']=='invalid' else 'declined' if events and state['status']=='declined' else 'incomplete' if events else 'no_response_recorded'
             stages.append(dict(stage=n,prompt=s['prompt'],fields=s['fields'],status=status,events=events))
-        cards.append(dict(trial_id=t['trial_id'],item_id=t['item_id'],facet=t['module'],title=t.get('scenario_name',t['item_id']),
+        cards.append(dict(trial_id=t['trial_id'],item_id=t['item_id'],facet=t['module'],split=t.get('split','development'),wording=t.get('paraphrase','original'),title=t.get('scenario_name',t['item_id']),
                           status=state['status'],error=state.get('error',''),stages=stages))
     counts=collections.Counter(c['status'] for c in cards)
     stats=dict(cards_planned=len(cards),cards_attempted=sum(any(s['events'] for s in c['stages']) for c in cards),
@@ -45,30 +45,35 @@ def audit(b,plan,records):
                calls=len(records),token_limit_hits=sum(bool(r.get('generation',{}).get('hit_token_limit')) for r in records),
                generation_seconds=sum(r.get('wall_seconds',0) for r in records))
     stats['complete']=stats['cards_valid']==stats['cards_planned'] and stats['stages_accepted']==stats['stages_planned']
+    stats['scope_complete']=set(plan['facets'])==set(b['modules'])
+    stats['instrument_cards']=len(b['items'])*plan['repeats']
     coverage=[]
     for mid,meta in b['modules'].items():
         selected=[c for c in cards if c['facet']==mid]
         coverage.append(dict(facet=mid,title=meta['title'],category=next(d['title'] for d in b['domains'] if d['id']==meta['domain']),
             cards_planned=len(selected),cards_valid=sum(c['status']=='valid' for c in selected),
+            partitions={split:{wording:dict(planned=sum(c['split']==split and c['wording']==wording for c in selected),accepted=sum(c['split']==split and c['wording']==wording and c['status']=='valid' for c in selected)) for wording in sorted({t['paraphrase'] for t in b['items']})} for split in sorted({t['split'] for t in b['items']})},
             content_review_required=bool(meta.get('content_review'))))
-    return dict(coverage=coverage,battery_version=b['version'],battery_hash=plan['battery_hash'],model=plan['config']['model'],summary=stats,cards=cards)
+    return dict(design=b.get('measurement_design'),coverage=coverage,battery_version=b['version'],battery_hash=plan['battery_hash'],model=plan['config']['model'],summary=stats,cards=cards)
 
 
 def write_report(data,out):
     out=Path(out);out.mkdir(parents=True,exist_ok=True)
     (out/'run_audit.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
     s=data['summary'];esc=html.escape
-    title='All planned responses accepted' if s['complete'] else 'Run incomplete: some questions are missing or were rejected'
+    title=('Full instrument: all responses accepted' if s['scope_complete'] else 'Selected subset only: all planned responses accepted') if s['complete'] else 'Run incomplete: some questions are missing or were rejected'
     parts=['<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Battery run audit</title><style>body{font:17px/1.5 system-ui;max-width:1050px;margin:32px auto;padding:0 20px;color:#1f3440}h1{line-height:1.2}article{border:1px solid #ccd7dc;border-radius:10px;padding:18px;margin:18px 0}.warning{background:#fff1d8;padding:18px;border-radius:8px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f7;padding:12px}table{border-collapse:collapse;width:100%;margin:20px 0}th,td{padding:9px;border:1px solid #cbd5da;text-align:left}summary{cursor:pointer;font-weight:600}.muted{color:#596a73}.rejected,.invalid{color:#a23320}</style>',
         '<h1>'+esc(title)+'</h1><p>'+esc(data['model'])+' · '+esc(data['battery_version'])+'</p>',
         '<div class="warning">A finished collection loop is not a complete evaluation. Acceptance below means response-format validity, not a correct answer or an established psychological finding. Written content may still need review.</div>',
         '<table><tr><th>Measure</th><th>Count</th></tr>']
     for label,value in [('Cards attempted',f"{s['cards_attempted']} / {s['cards_planned']}"),('Cards fully accepted',f"{s['cards_valid']} / {s['cards_planned']}"),('Cards rejected',s['cards_invalid']),('Question stages with a saved model response',f"{s['stages_with_response']} / {s['stages_planned']}"),('Question stages accepted',f"{s['stages_accepted']} / {s['stages_planned']}"),('Stages with no saved response',s['stages_without_response']),('Generation token-limit hits',s['token_limit_hits'])]:
         parts.append('<tr><td>'+esc(label)+'</td><td>'+esc(str(value))+'</td></tr>')
-    parts+=['</table><h2>Category and facet coverage</h2><p>This is a short exploratory battery, not a full validated psychological fingerprint. Two scenarios per non-association facet do not establish stable traits. It contains no paraphrase, option-order or held-out robustness tests. Accepted means format-valid; written responses marked for review still require content ratings.</p>',
-        '<table><tr><th>Category</th><th>Facet</th><th>Accepted / planned cards</th><th>Content review required</th></tr>']
+    description=('Expanded exploratory battery: scenario transfer and task-instruction paraphrases are included. The tables below separate partitions and wordings. This is not a validated personality inventory, and agreement is not proof of a stable trait.' if data.get('design') else 'Compact exploratory battery: no paraphrase, option-order or held-out robustness tests.')
+    parts+=['</table><h2>Category and facet coverage</h2><p>'+description+' Accepted means format-valid; written responses marked for review still require content ratings.</p>',
+        '<table><tr><th>Category</th><th>Facet</th><th>Accepted / planned cards</th><th>Partition / wording coverage</th><th>Content review required</th></tr>']
     for c in data['coverage']:
-        parts.append('<tr><td>'+esc(c['category'])+'</td><td>'+esc(c['title'])+'</td><td>'+str(c['cards_valid'])+' / '+str(c['cards_planned'])+'</td><td>'+('Yes' if c['content_review_required'] else 'No')+'</td></tr>')
+        cells='<br>'.join(esc(split+' / '+wording)+f': {v["accepted"]}/{v["planned"]}' for split,words in c['partitions'].items() for wording,v in words.items())
+        parts.append('<tr><td>'+esc(c['category'])+'</td><td>'+esc(c['title'])+'</td><td>'+str(c['cards_valid'])+' / '+str(c['cards_planned'])+'</td><td>'+cells+'</td><td>'+('Yes' if c['content_review_required'] else 'No')+'</td></tr>')
     parts+=['</table><h2>Questions with problems</h2>']
     failed=[c for c in data['cards'] if c['status']!='valid']
     if not failed:parts.append('<p>None failed the format checks.</p>')
@@ -102,6 +107,8 @@ def audit_zip(path,out):
     names={'plan.json':'plan.json','responses.jsonl':'responses.jsonl',
            'source/battery_core/battery.json':'battery.json','source/battery_core/prompts.csv':'prompts.csv'}
     with zipfile.ZipFile(path) as z:
+        if 'instrument/battery.json' in z.namelist():
+            names={'plan.json':'plan.json','responses.jsonl':'responses.jsonl','instrument/battery.json':'battery.json','instrument/prompts.csv':'prompts.csv'}
         for name,target in names.items():
             if z.namelist().count(name)!=1:raise ValueError('Missing or duplicate archive member: '+name)
             if z.getinfo(name).file_size>50*1024*1024:raise ValueError('Oversized archive data file')

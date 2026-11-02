@@ -61,6 +61,10 @@ def load(base=None):
                 condition='base',split='development',paraphrase='original',cue=r['cue'],stratum='standard',
                 matched_pair=sid,presentation=dict(base_stratum='standard',order_id='original',transfer_pattern='none'),
                 features=json.loads(r['features']),control_features=json.loads(r['capability_controls']),stages=[]))
+            if 'split' in r:
+                for key in ['scenario','matched_pair','split','paraphrase','condition']:
+                    if t['stages'] and t[key]!=r[key]:raise ValueError('Inconsistent design metadata')
+                    t[key]=r[key]
             if t['module']!=mid or int(r['stage'])!=len(t['stages']):raise ValueError('Inconsistent stages')
             for key,col in [('features','features'),('control_features','capability_controls')]:
                 if t[key]!=json.loads(r[col]):raise ValueError('Inconsistent scoring definitions')
@@ -71,6 +75,10 @@ def load(base=None):
             t['stages'].append(s)
     b['items']=list(items.values())
     if set(b['modules'])!={t['module'] for t in b['items']}:raise ValueError('Empty facet')
+    if b.get('design_lock'):
+        with (base/'prompts.csv').open(encoding='utf-8-sig',newline='') as f:locked=list(csv.DictReader(f))
+        for r in locked:r['stage']=int(r['stage'])
+        if digest(locked)!=b['design_lock']['content_sha256']:raise ValueError('Expanded stimulus file differs from its design lock')
     return b
 
 
@@ -79,7 +87,8 @@ def prepare(b,config,run_id,repeats=1,facets=None):
     if not chosen or not chosen<=b['modules'].keys():raise ValueError('Unknown facet selection')
     subset=dict(b,items=[t for t in b['items'] if t['module'] in chosen])
     p=engine.prepare(subset,config,run_id,repeats)
-    p.update(battery_hash=digest(b),facets=sorted(chosen),split='development')
+    splits=sorted({t['split'] for t in subset['items']})
+    p.update(battery_hash=digest(b),facets=sorted(chosen),split=splits[0] if len(splits)==1 else 'all')
     p.pop('plan_hash');p['plan_hash']=digest(p)
     return p
 
@@ -112,10 +121,23 @@ def measure(rule,state,t):
     raise ValueError('Unknown feature operation: '+op)
 
 
-def score(b,p,records):
+def score(b,p,records,split=None):
     validate(b,p)
     rows,summary,g,review=engine.score(b,p,records)
     states=engine.replay(b,p,records);trials={t['trial_id']:t for t in p['trials']}
+    if split is not None:
+        if split not in {t['split'] for t in trials.values()}:raise ValueError('Unknown partition')
+        excluded=[t for t in trials.values() if t['split']!=split]
+        prefixes=['trial:'+t['trial_id'] for t in excluded]+['item:'+t['item_id'] for t in excluded]
+        def keep(n):return not any(n['id']==x or n['id'].startswith(x+':') for x in prefixes)
+        g['nodes']=[n for n in g['nodes'] if keep(n)]
+        ids={n['id'] for n in g['nodes']}
+        g['edges']=[e for e in g['edges'] if e['source'] in ids and e['target'] in ids]
+        rows=[r for r in rows if trials[r['trial_id']]['split']==split]
+        review=[r for r in review if trials[r['trial_id']]['split']==split]
+        summary['quality']=dict(collections.Counter(r['status'] for r in rows))
+        # Do not carry pooled summary estimates into a partition export.
+        summary.pop('estimates',None)
     nodes={n['id']:n for n in g['nodes']}
     def node(nid,kind,**attrs):
         if nid not in nodes:
@@ -144,24 +166,30 @@ def score(b,p,records):
             cue=node('concept:'+t['cue'],'concept',label=t['cue'])
             for rank,word in enumerate(st['submissions'][0]['answer']['associates'],1):
                 normalized=' '.join(word.casefold().split());target=node('concept:'+normalized,'concept',label=normalized)
-                edge(tn['id'],'elicited_associate',target,cue=cue,rank=rank,context='development|base',origin='observed_response')
+                edge(tn['id'],'elicited_associate',target,cue=cue,rank=rank,context=t['split']+'|'+t['paraphrase'],origin='observed_response')
                 edge(cue,'evokes_in_response',target,evidence=[tn['id']],rank=rank,origin='observed_response')
     # The catalog carries metric meanings so the existing analyzer need not guess.
     g['profile_catalog']['modules']={k:dict(v) for k,v in b['modules'].items()}
     g['profile_catalog']['primary']={k:'feature_'+v['primary_metric'] for k,v in b['modules'].items() if v['primary_metric']}
     observations=collections.defaultdict(list);exposures=collections.Counter()
     for row in rows:
-        if row['module']=='SEM-LINK' and row['status']=='valid':exposures[row['cue']]+=1
+        if row['module']=='SEM-LINK' and row['status']=='valid':exposures[row['cue'],row['split']+'|'+row['paraphrase']]+=1
     for e in list(g['edges']):
-        if e['type']=='elicited_associate':observations[e['cue'],e['target']].append(e['source'])
-    for (cue,target),evidence in observations.items():
-        edge(cue,'evokes',target,context='development|base',weight=len(evidence)/exposures[cue.removeprefix('concept:')],
-             n_valid=exposures[cue.removeprefix('concept:')],evidence=evidence,origin='observed_association_frequency')
+        if e['type']=='elicited_associate':observations[e['cue'],e['target'],e['context']].append(e['source'])
+    for (cue,target,context),evidence in observations.items():
+        count=exposures[cue.removeprefix('concept:'),context]
+        edge(cue,'evokes',target,context=context,weight=len(evidence)/count,
+             n_valid=count,evidence=evidence,origin='observed_association_frequency')
     for d in g['profile_catalog']['domains']:
         d['description']='Text-only compact core: actual response evidence.'
         d['limit']='Two scenarios per non-association facet; stability and generalization are not established.'
     g.update(bank='profile',analysis_split='development',analysis_lock_hash=None,
              measurement_design=dict(kind='compact_prompt_list',wording_effects='not tested',order_effects='not tested',heldout='not supplied'))
+    if b.get('measurement_design'):
+        g.update(analysis_split=split or p['split'],analysis_lock_hash=digest(b['design_lock']),measurement_design=b['measurement_design'])
+        for d in g['profile_catalog']['domains']:
+            d['description']='Distinct scenarios, task-instruction wordings and prespecified transfer situations.'
+            d['limit']='Descriptive agreement and differences; no human norms or established latent personality traits.'
     g['review_contract']=review
     summary.update(version=b['version'],warning='Descriptive task features. Capability controls stay separate. Content ratings require review. No stability or latent-trait claim.')
     return rows,summary,g,review
