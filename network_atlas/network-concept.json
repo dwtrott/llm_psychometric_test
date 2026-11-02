@@ -1,0 +1,1528 @@
+{
+  "status": "illustrative_design_only",
+  "nodes": [
+    {
+      "id": "n0",
+      "label": "Association breadth",
+      "region": 0,
+      "x": 288,
+      "y": 160,
+      "color": "#4773b9"
+    },
+    {
+      "id": "n1",
+      "label": "Category boundaries",
+      "region": 0,
+      "x": 360,
+      "y": 121,
+      "color": "#4773b9"
+    },
+    {
+      "id": "n2",
+      "label": "Analogy use",
+      "region": 0,
+      "x": 435,
+      "y": 158,
+      "color": "#4773b9"
+    },
+    {
+      "id": "n3",
+      "label": "Conceptual distance",
+      "region": 0,
+      "x": 296,
+      "y": 235,
+      "color": "#4773b9"
+    },
+    {
+      "id": "n4",
+      "label": "Distinction reuse",
+      "region": 0,
+      "x": 373,
+      "y": 202,
+      "color": "#4773b9"
+    },
+    {
+      "id": "n5",
+      "label": "Contextual meaning",
+      "region": 0,
+      "x": 435,
+      "y": 242,
+      "color": "#4773b9"
+    },
+    {
+      "id": "n6",
+      "label": "Evidence seeking",
+      "region": 1,
+      "x": 588,
+      "y": 135,
+      "color": "#407d9c"
+    },
+    {
+      "id": "n7",
+      "label": "Prestige sensitivity",
+      "region": 1,
+      "x": 660,
+      "y": 96,
+      "color": "#407d9c"
+    },
+    {
+      "id": "n8",
+      "label": "Belief revision",
+      "region": 1,
+      "x": 735,
+      "y": 133,
+      "color": "#407d9c"
+    },
+    {
+      "id": "n9",
+      "label": "Counterevidence",
+      "region": 1,
+      "x": 596,
+      "y": 210,
+      "color": "#407d9c"
+    },
+    {
+      "id": "n10",
+      "label": "Source trust",
+      "region": 1,
+      "x": 673,
+      "y": 177,
+      "color": "#407d9c"
+    },
+    {
+      "id": "n11",
+      "label": "Justification depth",
+      "region": 1,
+      "x": 735,
+      "y": 217,
+      "color": "#407d9c"
+    },
+    {
+      "id": "n12",
+      "label": "Confidence calibration",
+      "region": 2,
+      "x": 908,
+      "y": 190,
+      "color": "#437f92"
+    },
+    {
+      "id": "n13",
+      "label": "Unknown recognition",
+      "region": 2,
+      "x": 980,
+      "y": 151,
+      "color": "#437f92"
+    },
+    {
+      "id": "n14",
+      "label": "Verification",
+      "region": 2,
+      "x": 1055,
+      "y": 188,
+      "color": "#437f92"
+    },
+    {
+      "id": "n15",
+      "label": "Error recognition",
+      "region": 2,
+      "x": 916,
+      "y": 265,
+      "color": "#437f92"
+    },
+    {
+      "id": "n16",
+      "label": "Certainty language",
+      "region": 2,
+      "x": 993,
+      "y": 232,
+      "color": "#437f92"
+    },
+    {
+      "id": "n17",
+      "label": "Uncertainty tolerance",
+      "region": 2,
+      "x": 1055,
+      "y": 272,
+      "color": "#437f92"
+    },
+    {
+      "id": "n18",
+      "label": "Novelty preference",
+      "region": 3,
+      "x": 108,
+      "y": 380,
+      "color": "#8570b0"
+    },
+    {
+      "id": "n19",
+      "label": "Idea diversity",
+      "region": 3,
+      "x": 180,
+      "y": 341,
+      "color": "#8570b0"
+    },
+    {
+      "id": "n20",
+      "label": "Alternative search",
+      "region": 3,
+      "x": 255,
+      "y": 378,
+      "color": "#8570b0"
+    },
+    {
+      "id": "n21",
+      "label": "Constraint adaptation",
+      "region": 3,
+      "x": 116,
+      "y": 455,
+      "color": "#8570b0"
+    },
+    {
+      "id": "n22",
+      "label": "Exploration",
+      "region": 3,
+      "x": 193,
+      "y": 422,
+      "color": "#8570b0"
+    },
+    {
+      "id": "n23",
+      "label": "Strategy switching",
+      "region": 3,
+      "x": 255,
+      "y": 462,
+      "color": "#8570b0"
+    },
+    {
+      "id": "n24",
+      "label": "Risk preference",
+      "region": 4,
+      "x": 1148,
+      "y": 405,
+      "color": "#47948b"
+    },
+    {
+      "id": "n25",
+      "label": "Ambiguity preference",
+      "region": 4,
+      "x": 1220,
+      "y": 366,
+      "color": "#47948b"
+    },
+    {
+      "id": "n26",
+      "label": "Loss framing",
+      "region": 4,
+      "x": 1295,
+      "y": 403,
+      "color": "#47948b"
+    },
+    {
+      "id": "n27",
+      "label": "Delay preference",
+      "region": 4,
+      "x": 1156,
+      "y": 480,
+      "color": "#47948b"
+    },
+    {
+      "id": "n28",
+      "label": "Tradeoff consistency",
+      "region": 4,
+      "x": 1233,
+      "y": 447,
+      "color": "#47948b"
+    },
+    {
+      "id": "n29",
+      "label": "Decision deferral",
+      "region": 4,
+      "x": 1295,
+      "y": 487,
+      "color": "#47948b"
+    },
+    {
+      "id": "n30",
+      "label": "Audience adaptation",
+      "region": 5,
+      "x": 288,
+      "y": 550,
+      "color": "#717bb8"
+    },
+    {
+      "id": "n31",
+      "label": "Perspective taking",
+      "region": 5,
+      "x": 360,
+      "y": 511,
+      "color": "#717bb8"
+    },
+    {
+      "id": "n32",
+      "label": "Intent attribution",
+      "region": 5,
+      "x": 435,
+      "y": 548,
+      "color": "#717bb8"
+    },
+    {
+      "id": "n33",
+      "label": "Knowledge tracking",
+      "region": 5,
+      "x": 296,
+      "y": 625,
+      "color": "#717bb8"
+    },
+    {
+      "id": "n34",
+      "label": "Audience sensitivity",
+      "region": 5,
+      "x": 373,
+      "y": 592,
+      "color": "#717bb8"
+    },
+    {
+      "id": "n35",
+      "label": "Pragmatic inference",
+      "region": 5,
+      "x": 435,
+      "y": 632,
+      "color": "#717bb8"
+    },
+    {
+      "id": "n36",
+      "label": "Need clarification",
+      "region": 6,
+      "x": 183,
+      "y": 810,
+      "color": "#aa709b"
+    },
+    {
+      "id": "n37",
+      "label": "Support matching",
+      "region": 6,
+      "x": 255,
+      "y": 771,
+      "color": "#aa709b"
+    },
+    {
+      "id": "n38",
+      "label": "Emotion recognition",
+      "region": 6,
+      "x": 330,
+      "y": 808,
+      "color": "#aa709b"
+    },
+    {
+      "id": "n39",
+      "label": "Validation style",
+      "region": 6,
+      "x": 191,
+      "y": 885,
+      "color": "#aa709b"
+    },
+    {
+      "id": "n40",
+      "label": "Response restraint",
+      "region": 6,
+      "x": 268,
+      "y": 852,
+      "color": "#aa709b"
+    },
+    {
+      "id": "n41",
+      "label": "Affective framing",
+      "region": 6,
+      "x": 330,
+      "y": 892,
+      "color": "#aa709b"
+    },
+    {
+      "id": "n42",
+      "label": "Resource sharing",
+      "region": 7,
+      "x": 638,
+      "y": 465,
+      "color": "#699260"
+    },
+    {
+      "id": "n43",
+      "label": "Reciprocity",
+      "region": 7,
+      "x": 710,
+      "y": 426,
+      "color": "#699260"
+    },
+    {
+      "id": "n44",
+      "label": "Trust calibration",
+      "region": 7,
+      "x": 785,
+      "y": 463,
+      "color": "#699260"
+    },
+    {
+      "id": "n45",
+      "label": "Competition",
+      "region": 7,
+      "x": 646,
+      "y": 540,
+      "color": "#699260"
+    },
+    {
+      "id": "n46",
+      "label": "Conflict repair",
+      "region": 7,
+      "x": 723,
+      "y": 507,
+      "color": "#699260"
+    },
+    {
+      "id": "n47",
+      "label": "Commitment keeping",
+      "region": 7,
+      "x": 785,
+      "y": 547,
+      "color": "#699260"
+    },
+    {
+      "id": "n48",
+      "label": "Consent sensitivity",
+      "region": 8,
+      "x": 968,
+      "y": 710,
+      "color": "#539886"
+    },
+    {
+      "id": "n49",
+      "label": "Autonomy protection",
+      "region": 8,
+      "x": 1040,
+      "y": 671,
+      "color": "#539886"
+    },
+    {
+      "id": "n50",
+      "label": "Fairness",
+      "region": 8,
+      "x": 1115,
+      "y": 708,
+      "color": "#539886"
+    },
+    {
+      "id": "n51",
+      "label": "Harm tradeoffs",
+      "region": 8,
+      "x": 976,
+      "y": 785,
+      "color": "#539886"
+    },
+    {
+      "id": "n52",
+      "label": "Rule flexibility",
+      "region": 8,
+      "x": 1053,
+      "y": 752,
+      "color": "#539886"
+    },
+    {
+      "id": "n53",
+      "label": "Value consistency",
+      "region": 8,
+      "x": 1115,
+      "y": 792,
+      "color": "#539886"
+    },
+    {
+      "id": "n54",
+      "label": "Credit attribution",
+      "region": 9,
+      "x": 538,
+      "y": 835,
+      "color": "#ad8750"
+    },
+    {
+      "id": "n55",
+      "label": "Role identification",
+      "region": 9,
+      "x": 610,
+      "y": 796,
+      "color": "#ad8750"
+    },
+    {
+      "id": "n56",
+      "label": "Recognition seeking",
+      "region": 9,
+      "x": 685,
+      "y": 833,
+      "color": "#ad8750"
+    },
+    {
+      "id": "n57",
+      "label": "Responsibility",
+      "region": 9,
+      "x": 546,
+      "y": 910,
+      "color": "#ad8750"
+    },
+    {
+      "id": "n58",
+      "label": "Goal persistence",
+      "region": 9,
+      "x": 623,
+      "y": 877,
+      "color": "#ad8750"
+    },
+    {
+      "id": "n59",
+      "label": "Self-correction",
+      "region": 9,
+      "x": 685,
+      "y": 917,
+      "color": "#ad8750"
+    },
+    {
+      "id": "n60",
+      "label": "Material disclosure",
+      "region": 10,
+      "x": 868,
+      "y": 940,
+      "color": "#ad7068"
+    },
+    {
+      "id": "n61",
+      "label": "Omission tendency",
+      "region": 10,
+      "x": 940,
+      "y": 901,
+      "color": "#ad7068"
+    },
+    {
+      "id": "n62",
+      "label": "Reward sensitivity",
+      "region": 10,
+      "x": 1015,
+      "y": 938,
+      "color": "#ad7068"
+    },
+    {
+      "id": "n63",
+      "label": "Honesty under conflict",
+      "region": 10,
+      "x": 876,
+      "y": 1015,
+      "color": "#ad7068"
+    },
+    {
+      "id": "n64",
+      "label": "Imposed loss",
+      "region": 10,
+      "x": 953,
+      "y": 982,
+      "color": "#ad7068"
+    },
+    {
+      "id": "n65",
+      "label": "Oversight sensitivity",
+      "region": 10,
+      "x": 1015,
+      "y": 1022,
+      "color": "#ad7068"
+    }
+  ],
+  "edges": [
+    {
+      "source": "n0",
+      "target": "n1",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n1",
+      "target": "n2",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n2",
+      "target": "n5",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n5",
+      "target": "n4",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n4",
+      "target": "n3",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n3",
+      "target": "n0",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n0",
+      "target": "n4",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n1",
+      "target": "n4",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n2",
+      "target": "n4",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n1",
+      "target": "n3",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n6",
+      "target": "n7",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n7",
+      "target": "n8",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n8",
+      "target": "n11",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n11",
+      "target": "n10",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n10",
+      "target": "n9",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n9",
+      "target": "n6",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n6",
+      "target": "n10",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n7",
+      "target": "n10",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n8",
+      "target": "n10",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n7",
+      "target": "n9",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n12",
+      "target": "n13",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n13",
+      "target": "n14",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n14",
+      "target": "n17",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n17",
+      "target": "n16",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n16",
+      "target": "n15",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n15",
+      "target": "n12",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n12",
+      "target": "n16",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n13",
+      "target": "n16",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n14",
+      "target": "n16",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n13",
+      "target": "n15",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n18",
+      "target": "n19",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n19",
+      "target": "n20",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n20",
+      "target": "n23",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n23",
+      "target": "n22",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n22",
+      "target": "n21",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n21",
+      "target": "n18",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n18",
+      "target": "n22",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n19",
+      "target": "n22",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n20",
+      "target": "n22",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n19",
+      "target": "n21",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n24",
+      "target": "n25",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n25",
+      "target": "n26",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n26",
+      "target": "n29",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n29",
+      "target": "n28",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n28",
+      "target": "n27",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n27",
+      "target": "n24",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n24",
+      "target": "n28",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n25",
+      "target": "n28",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n26",
+      "target": "n28",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n25",
+      "target": "n27",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n30",
+      "target": "n31",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n31",
+      "target": "n32",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n32",
+      "target": "n35",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n35",
+      "target": "n34",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n34",
+      "target": "n33",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n33",
+      "target": "n30",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n30",
+      "target": "n34",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n31",
+      "target": "n34",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n32",
+      "target": "n34",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n31",
+      "target": "n33",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n36",
+      "target": "n37",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n37",
+      "target": "n38",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n38",
+      "target": "n41",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n41",
+      "target": "n40",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n40",
+      "target": "n39",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n39",
+      "target": "n36",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n36",
+      "target": "n40",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n37",
+      "target": "n40",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n38",
+      "target": "n40",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n37",
+      "target": "n39",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n42",
+      "target": "n43",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n43",
+      "target": "n44",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n44",
+      "target": "n47",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n47",
+      "target": "n46",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n46",
+      "target": "n45",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n45",
+      "target": "n42",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n42",
+      "target": "n46",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n43",
+      "target": "n46",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n44",
+      "target": "n46",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n43",
+      "target": "n45",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n48",
+      "target": "n49",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n49",
+      "target": "n50",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n50",
+      "target": "n53",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n53",
+      "target": "n52",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n52",
+      "target": "n51",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n51",
+      "target": "n48",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n48",
+      "target": "n52",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n49",
+      "target": "n52",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n50",
+      "target": "n52",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n49",
+      "target": "n51",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n54",
+      "target": "n55",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n55",
+      "target": "n56",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n56",
+      "target": "n59",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n59",
+      "target": "n58",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n58",
+      "target": "n57",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n57",
+      "target": "n54",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n54",
+      "target": "n58",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n55",
+      "target": "n58",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n56",
+      "target": "n58",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n55",
+      "target": "n57",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n60",
+      "target": "n61",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n61",
+      "target": "n62",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n62",
+      "target": "n65",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n65",
+      "target": "n64",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n64",
+      "target": "n63",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n63",
+      "target": "n60",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n60",
+      "target": "n64",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n61",
+      "target": "n64",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n62",
+      "target": "n64",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n61",
+      "target": "n63",
+      "kind": "within_region",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n6",
+      "target": "n14",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n6",
+      "target": "n20",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n9",
+      "target": "n59",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n8",
+      "target": "n23",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n5",
+      "target": "n33",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n4",
+      "target": "n21",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n2",
+      "target": "n19",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n17",
+      "target": "n25",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n14",
+      "target": "n29",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n12",
+      "target": "n24",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n10",
+      "target": "n44",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n7",
+      "target": "n56",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n34",
+      "target": "n54",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n34",
+      "target": "n42",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n30",
+      "target": "n36",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n31",
+      "target": "n37",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n32",
+      "target": "n44",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n46",
+      "target": "n40",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n42",
+      "target": "n50",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n47",
+      "target": "n57",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n43",
+      "target": "n48",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n49",
+      "target": "n64",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n51",
+      "target": "n64",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n53",
+      "target": "n63",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n56",
+      "target": "n62",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n57",
+      "target": "n60",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n59",
+      "target": "n15",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n58",
+      "target": "n65",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n29",
+      "target": "n48",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    },
+    {
+      "source": "n1",
+      "target": "n52",
+      "kind": "bridge",
+      "status": "illustrative_only",
+      "weight": null
+    }
+  ],
+  "regions": [
+    "Meaning & concepts",
+    "Evidence & belief",
+    "Uncertainty & self-monitoring",
+    "Curiosity & flexibility",
+    "Risk & decision",
+    "Social understanding",
+    "Support & emotional understanding",
+    "Cooperation & trust",
+    "Values & agency",
+    "Self-attribution & motivation",
+    "Integrity & alignment"
+  ]
+}

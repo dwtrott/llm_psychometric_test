@@ -2,6 +2,18 @@
 
 A research-informed exploratory battery and an independent offline viewer for comparing LLM response profiles. **Not a validated personality test or a clinical diagnostic instrument.**
 
+## New: psychological network atlas and difference view
+
+The [network atlas guide](network_atlas/README.md) explains the connected-landscape visualizer, with screenshots, a single-graph walkthrough, comparison controls and interpretation rules. It organizes many smaller behavioral-pattern nodes into soft psychological regions, with connections crossing their boundaries.
+
+**This is a design prototype using invented graphs, not measured LLM psychology.** It has Graph A, Graph B and Difference graph views on the same layout. Gray links are shared, orange dashed links occur only in A, and blue links occur only in B. Click a node to inspect its neighborhood, or hide shared connections to isolate the differences.
+
+![Psychological network comparison with shared connections hidden](network_atlas/screenshots/differences-only.jpg)
+
+Download/extract the repository and open [`network_atlas/network-comparison.html`](network_atlas/network-comparison.html) in your browser. GitHub shows HTML source rather than running it. The prototype works offline, uses Python standard-library generators and native HTML/CSS, and has no JavaScript or external assets. It does **not yet import real response graphs**. See the guide for the [single-network screenshot and interpretation table](network_atlas/README.md#how-to-read-the-visualizer), local-server/Colab instructions, and the distinction between illustrative connections and evidence-supported relationships.
+
+## Analyze actual battery outputs
+
 **Analyze v0.7 results:** use the new [Python analysis and visualization tool](analyzer/README.md), with a [Colab notebook](analyzer/Psychometric_Analysis.ipynb). It shows the full profile, evidence coverage, wording/order/transfer effects, matched model differences, and aligned concept graphs. The battery questions remain frozen.
 
 ## Read the questions first
@@ -26,6 +38,8 @@ The current 436 instantiated items include condition variants of simple associat
 
 ## Components
 
+- [`network_atlas/`](network_atlas/README.md): connected-network design prototype, single/difference views, Python generators, illustrative data, and screenshot/interpretation guide.
+- [`analyzer/`](analyzer/README.md): response-based v0.7 analysis, findings/evidence KG exports, matched comparisons and a Colab notebook; separate from the illustrative atlas.
 - [`battery/`](battery/README.txt): 436 CSV questions across 28 modules, Python preparation/scoring, configuration templates, research sources, and graph export.
 - [`battery_v2/`](battery_v2/README.md): revised full-profile scenarios, controlled contrasts and review rubrics; separate versioned processor.
 - [`battery_v3/`](battery_v3/README.md): broader supplementary tasks, separate controls, staged interaction runner, raw transcripts and evidence-graph export.
@@ -52,9 +66,11 @@ python viewer/viewer.py results/modelA/graph.json --out results/modelA/viewer.ht
 
 The processor prepares prompts and scores collected responses; it does **not** call a model API. Never send scoring keys, construct labels or the full plan to the tested model. See the battery guide for response formats and counterbalancing.
 
-## Graph comparison
+## Graph comparison in the legacy viewer
 
 Select two profiles and open **Graph comparison**. A, B and difference panels share node positions, pan/zoom and selection. Gray indicates differences within a descriptive tolerance, teal stronger in A, orange stronger in B. Dashed links indicate one-sided observations; missing links are not zeros. Inspect a concept for the supporting trials.
+
+This paragraph describes `viewer/`, not the new `network_atlas/` prototype. Their legends differ: the atlas currently compares unweighted edge presence, not relationship strength. Use the legend and interpretation guide for the component you are viewing.
 
 Comparisons require the same battery hash. Scores are matched by item and condition; generation settings and missingness can confound differences. Semantic regions are exploratory and researcher-defined domains are organizing hypotheses, not validated latent traits.
 
