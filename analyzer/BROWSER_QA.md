@@ -1,5 +1,17 @@
 # Local browser verification — 2026-11-01
 
+## Profile-first layout revision
+
+Verified the redesigned report in a fresh localhost browser tab:
+
+- Switching to Synthetic B hides the other profile panels and displays B's map.
+- Clicking the risk region in A's map opens the corresponding region explanation automatically, including observed-choice disclosures and separate wording/order summaries.
+- The comparison navigation opens a section with all three aligned concept graphs visible immediately.
+- The detailed analysis and raw-evidence container is collapsed by default.
+- Screenshots of the revised profile and comparison views are retained in the ignored local results directory. Computation and export formats are unchanged.
+
+## Underlying analysis checks
+
 Tested the generated synthetic report in the in-app browser over a localhost HTTP server, using `results/analysis-demo/report.html`.
 
 | Check | Observed result |

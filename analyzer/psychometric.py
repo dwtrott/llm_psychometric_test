@@ -192,10 +192,8 @@ def semantic_svg(profiles,context):
   out.append('</svg></div>')
  out.append(f'</div><p>{len(keys)} common valid exposures; at most 26 nodes/50 links shown. Identical positions across panels; proximity has no psychological meaning. Blue: B greater; orange: A greater; gray: equal on observed exposures. Absence of a link is zero mentions here, not absence of knowledge. Hover for directed endpoints and values.</p>');return ''.join(out)
 
-def render(profiles,analysis):
- by={p['id']:p for p in profiles};parts=['<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Psychometric profile analysis</title><style>body{font:16px/1.5 system-ui;color:#18324a;background:#f5f7fa;margin:0}main{max-width:1400px;margin:auto;padding:30px}h1,h2,h3{line-height:1.2}section,article{background:white;border:1px solid #d5dfe8;border-radius:12px;padding:22px;margin:22px 0}nav{display:flex;gap:20px;flex-wrap:wrap}a{color:#17618b}summary{cursor:pointer;padding:12px;background:#edf3f8}details{margin:12px 0}.table{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:8px;border:1px solid #dce3e9;text-align:left}th{background:#edf3f8}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f9;padding:12px;font-size:12px}.banner{padding:18px;background:#fff1cb}.graphs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}svg{width:100%;height:auto}small{color:#526979}</style><main><h1>Psychometric profile analysis</h1><p>Behavioral evidence, design sensitivity and matched comparisons. Questions remain frozen at v0.7.</p><nav><a href="#profiles">Full profiles</a><a href="#comparisons">Model comparisons & transfer</a><a href="#evidence">Response evidence</a></nav>']
- if any(p['synthetic'] for p in profiles):parts.append('<p class="banner"><b>SYNTHETIC DATA INCLUDED.</b> Demonstration/test responses, not findings about real LLMs.</p>')
- parts.append('<p>No global personality score. Unknown, missing and unrated are not zero. All effects are descriptive; a small wording/order difference does not establish psychological stability. Capability controls remain separate.</p><h2 id="profiles">Full profiles</h2>')
+def render_detailed(profiles,analysis):
+ by={p['id']:p for p in profiles};parts=['<h2 id="profiles">Detailed profiles</h2>']
  for report in analysis['profiles']:
   p=by[report['id']];parts.append('<section><h2>'+esc(p['label']+' · '+p['split'])+'</h2><p>Region links below describe the battery design. Colors show available evidence, not favorable or unfavorable traits. Counts cover the supplied plan only.</p>'+coverage_svg(report,p['catalog']))
   for cov in report['coverage']:
@@ -234,7 +232,79 @@ def render(profiles,analysis):
     node=p['nodes'][r['trial']];parts.append('<details><summary>'+esc(r['trial']+' · '+r['status'])+'</summary><pre>'+esc(json.dumps(dict(design={k:r[k] for k in AXES},features=r['features'],messages=node.get('rendered_messages'),error=node.get('error')),indent=2,ensure_ascii=False))+'</pre></details>')
    parts.append('</details>')
   parts.append('</section>')
- parts.append('</main></html>');return ''.join(parts)
+ return ''.join(parts)
+
+def profile_map(p,report):
+ """Compact full-profile map: regions are design links, never inferred traits."""
+ cov={r['facet']:r for r in report['coverage']}
+ out=['<svg class="profile-map" viewBox="0 0 1100 630" role="img" aria-label="Full psychological profile map"><title>Full profile: regions connect to the model; color shows evidence availability, not trait strength</title>']
+ domains=p['catalog']['domains']
+ for i,d in enumerate(domains):
+  side=i%2;row=i//2;x=20 if side==0 else 730;y=16+row*102
+  valid=sum(cov[m]['status'].get('valid',0) for m in d['modules'])
+  numeric=sum(cov[m]['n_numeric_trials'] for m in d['modules'])
+  color='#e1f0ec' if numeric else '#fff0d9' if valid else '#edf0f3'
+  out.append(f'<path d="M550,305 Q550,{y+40} {x+350 if side==0 else x},{y+40}" fill="none" stroke="#bbcbd6" stroke-width="2"/>')
+  out.append(f'<a href="#region-{p["id"]}-{i}"><rect x="{x}" y="{y}" width="350" height="82" rx="12" fill="{color}" stroke="#b0c6c8"/>')
+  for j,line in enumerate(textwrap.wrap(d['title'],36)):
+   out.append(f'<text x="{x+15}" y="{y+24+j*18}" font-size="15" font-weight="600">{esc(line)}</text>')
+  status='Task measurements available' if numeric else 'Responses awaiting interpretation' if valid else 'No valid responses supplied'
+  out.append(f'<text x="{x+15}" y="{y+69}" font-size="12" fill="#526979">{status}</text></a>')
+ out.append('<circle cx="550" cy="305" r="77" fill="#183f50"/>')
+ for j,line in enumerate(textwrap.wrap(p['label'],17)[:3]):out.append(f'<text x="550" y="{290+j*20}" text-anchor="middle" fill="white" font-size="16">{esc(line)}</text>')
+ out.append('</svg>')
+ return ''.join(out)
+
+def render(profiles,analysis):
+ by={p['id']:p for p in profiles}
+ css='''body{font:16px/1.55 system-ui;color:#203b4a;background:#f3f6f7;margin:0}main{max-width:1180px;margin:auto;padding:32px}h1,h2,h3{line-height:1.2}h1{font-size:38px;margin:8px 0}h2{font-size:28px}h3{font-size:21px}p{max-width:90ch}a{color:#17618b}nav{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}nav a{background:#183f50;color:white;padding:10px 18px;border-radius:8px;text-decoration:none}.eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:12px;font-weight:700;color:#53717c}.muted,small{color:#586f7b}.banner{padding:10px 16px;background:#fff0d3;border-radius:8px;font-size:14px}.panel,section,article{background:white;border:1px solid #dce5e9;border-radius:14px;padding:22px;margin:18px 0}details{margin:12px 0}summary{cursor:pointer;padding:14px;background:#edf3f5;border-radius:8px;font-weight:600}summary:hover{background:#dcebed}summary:focus-visible,a:focus-visible{outline:3px solid #267eb0;outline-offset:3px}details[open]>summary{margin-bottom:16px}.model-picker{display:flex;flex-wrap:wrap;gap:8px}.model-tab{position:absolute;opacity:0;pointer-events:none}.model-label{cursor:pointer;padding:12px 18px;border:1px solid #b6cbd3;border-radius:8px;background:white}.model-tab:checked+.model-label{background:#183f50;color:white}.model-tab:focus-visible+.model-label{outline:3px solid #267eb0;outline-offset:3px}.profile-panel{display:none}.graphs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.graphs>div{background:#f8fafb;border:1px solid #e2e9ed;border-radius:12px;padding:12px}.graphs h4{margin:0;text-align:center}.graphs svg{display:block}.region-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}.region-grid>details{margin:0;align-self:start;border:1px solid #dce5e9;border-radius:10px;padding:10px}.facet{padding:12px 4px;border-top:1px solid #dce5e9}.facet h4{margin:5px 0}.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px}.blue{color:#267eb0}.orange{color:#a95b18}.gray{color:#657782}svg{width:100%;height:auto}svg text{font-family:system-ui;fill:currentColor}.profile-map text[fill="white"]{fill:white}.table{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:8px;border:1px solid #dce3e9;text-align:left}th{background:#edf3f8}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f9;padding:12px;font-size:12px}.technical>summary{padding:20px}html{scroll-behavior:smooth;scroll-padding-top:20px}@media(max-width:650px){main{padding:16px}h1{font-size:29px}.panel,section,article{padding:14px}.profile-map{min-width:760px}.map-scroll{overflow:auto}.graphs{grid-template-columns:1fr}.region-grid{grid-template-columns:1fr}}'''
+ for i,p in enumerate(profiles):css+=f'#model-{i}:checked~.profile-{i}{{display:block}}'
+ out=['<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>LLM psychological profiles</title><style>'+css+'</style><main><div class="eyebrow">Psychometric explorer · v0.7</div><h1>Understand a model. Then compare.</h1><p class="muted">Explore the full psychological profile, see where models differ, and inspect the evidence when you need it.</p>']
+ if any(p['synthetic'] for p in profiles):out.append('<p class="banner"><b>SYNTHETIC DATA INCLUDED</b> · These examples demonstrate the tool, not real LLM findings.</p>')
+ out.append('<nav aria-label="Report sections"><a href="#understand">1 · Understand a model</a><a href="#compare">2 · Compare models</a><a href="#technical">3 · Inspect evidence</a></nav><h2 id="understand">The full psychological profile</h2><p>Select a model. The map covers every region of the battery; choose a region to learn what its questions measure. Color indicates available evidence, not a personality score.</p><div class="profile-selector">')
+ for i,p in enumerate(profiles):out.append(f'<input class="model-tab" type="radio" name="profile" id="model-{i}"'+(' checked' if i==0 else '')+f'><label class="model-label" for="model-{i}">{esc(p["label"])} · {esc(p["split"])}</label> ')
+ for i,report in enumerate(analysis['profiles']):
+  p=by[report['id']];cov={r['facet']:r for r in report['coverage']}
+  out.append(f'<div class="profile-panel profile-{i}"><div class="panel"><h3>{esc(p["label"])} · {esc(p["split"])}</h3><div class="map-scroll">'+profile_map(p,report)+'</div><p class="muted">Read this as a map of measured questions, not established traits. Response content that needs human interpretation remains unrated.</p></div><div class="region-grid">')
+  for j,d in enumerate(p['catalog']['domains']):
+   out.append(f'<details><summary>{esc(d["title"])}</summary><div id="region-{p["id"]}-{j}">')
+   for m in d['modules']:
+    meta=p['catalog']['modules'][m];c=cov[m]
+    out.append('<div class="facet"><h4>'+esc(meta['title'])+'</h4><p>'+esc(meta['scoring'])+'</p><p class="muted">'+str(c['n_scenarios'])+' scenarios · '+str(c['status'].get('valid',0))+' valid responses. '+('Content interpretation still needs human review.' if m in HUMAN else 'Task-choice measurements available; no validated trait score.')+'</p>')
+    cells=[r for r in report['cells'] if r['facet']==m]
+    if cells:
+     out.append('<details><summary>What this model actually chose</summary><p>Observed task values, kept separate by scenario and presentation. The first 12 design-sorted cells are shown; the detailed analysis retains every cell.</p>'+table(cells,['scenario','metric','condition','wording','base','order','transfer','value'],12)+'</details>')
+    for axis,label in [('wording','Wording'),('order','Option order')]:
+     contrasts=[r for r in report['contrasts'][axis] if r['facet']==m]
+     if contrasts:
+      changed=sum(not math.isclose(r['delta'],0,abs_tol=1e-12) for r in contrasts)
+      out.append('<p class="muted">'+label+f': {changed} of {len(contrasts)} matched contrasts change. This is a presentation check, not proof of trait stability.</p>')
+    out.append('<details><summary>Interpretation limits</summary><p>'+esc(meta['limit'])+'</p></details></div>')
+   out.append('</div></details>')
+  out.append('</div><details class="panel"><summary>Explore this model’s concept associations</summary><p>This graph shows elicited word associations, one part of the full profile above.</p>')
+  for context in sorted({e.get('context') for e in p['graph']['edges'] if e['type']=='elicited_associate'}):out.append('<h4>'+esc(context)+'</h4>'+semantic_svg([p],context))
+  out.append('</details></div>')
+ out.append('</div><h2 id="compare">Where do models differ?</h2><p>Compare the same questions under matched conditions. The graphs show concept associations; the region summaries below cover the broader psychological profile.</p>')
+ comparisons=[c for c in analysis['comparisons'] if c['mode']=='model_comparison']
+ if not comparisons:out.append('<div class="panel">No compatible model pair supplied. Add a second model from the same battery and partition to compare.</div>')
+ for i,c in enumerate(comparisons):
+  a,b=by[c['a_id']],by[c['b_id']]
+  out.append('<details class="panel"'+(' open' if i==0 else '')+'><summary>'+esc(a['label']+' vs '+b['label']+' · '+a['split'])+'</summary><div class="legend"><span class="blue">● Blue: B higher</span><span class="orange">● Orange: A higher</span><span class="gray">● Gray: equal</span></div><p>A = '+esc(a['label'])+' · B = '+esc(b['label'])+'. Differences do not mean better or worse.</p>')
+  contexts=sorted({e.get('context') for p in [a,b] for e in p['graph']['edges'] if e['type']=='elicited_associate'})
+  for j,context in enumerate(contexts):
+   out.append(('<div><h3>' if j==0 else '<details><summary>')+'Concept associations · '+esc(context)+('</h3>' if j==0 else '</summary>')+semantic_svg([a,b],context)+('</div>' if j==0 else '</details>'))
+  if not contexts:out.append('<p>No concept-association data supplied. Other profile regions remain available below.</p>')
+  out.append('<h3>Compare the full profile by region</h3><p class="muted">Counts identify where task measurements differ. They are not effect sizes or trait scores. Expand a region to see the actual measurements and conditions.</p><div class="region-grid">')
+  for d in a['catalog']['domains']:
+   rr=[r for r in c['scenario_balanced'] if r['facet'] in d['modules']];changed=sum(not math.isclose(r['delta'],0,abs_tol=1e-12) for r in rr)
+   status=f'{changed} of {len(rr)} matched cells differ' if rr else 'No matched numeric measurements'
+   out.append('<details><summary>'+esc(d['title'])+'<br><small>'+status+'</small></summary>')
+   if any(m in HUMAN for m in d['modules']):out.append('<p>Content requiring human review is not scored here. Equal numeric cells do not establish equal psychological patterns.</p>')
+   if rr:out.append(difference_svg(rr)+table(rr,['facet','metric','condition','wording','base','order','transfer','a','b','delta'],36))
+   out.append('</details>')
+  out.append('</div><p class="muted">'+str(c['n_common_observations'])+' common valid feature observations. Unmatched observations excluded: '+str(c['n_a_only'])+' for A, '+str(c['n_b_only'])+' for B.</p></details>')
+ out.append('<details class="technical panel" id="technical"><summary>Detailed analysis &amp; response evidence — presentation effects, held-out comparisons and raw responses</summary><p>Measurements remain separated by scenario, wording, option order and condition. These are descriptive observations, not a validated psychological fingerprint.</p>'+render_detailed(profiles,analysis)+'</details></main></html>')
+ return ''.join(out)
 
 def save_csv(path,rows):
  if not rows:path.write_text('no_rows\n',encoding='utf-8');return
