@@ -2,11 +2,17 @@
 
 A research-informed exploratory battery and an independent offline viewer for comparing LLM response profiles. **Not a validated personality test or a clinical diagnostic instrument.**
 
-## Start here: actual questions and measurement gaps
+## Start here: prompts and categories
+
+**[Read the 50 actual prompt cards, grouped by category](battery_core/PROMPTS.md)** · **[CSV](battery_core/prompts.csv)** · **[Run and analyze them](battery_core/README.md)**
+
+The compact core contains text-only probes across 11 categories and 22 facets, including concepts, belief revision, curiosity, decisions, social understanding, support, trust, reciprocity, values, self-attribution and integrity. There are 50 cards / 60 stages, with no missing images or external stimuli. Automatic task features and explicitly reviewed content can enter the existing analyzer and KG viewer. This is exploratory measurement; psychological stability and validity still require real-model studies.
+
+## Earlier v0.7: actual questions and measurement gaps
 
 **[Read verbatim v0.7 questions from all 14 task families](battery_v7/ACTUAL_QUESTIONS.md)**, including both conditions, follow-up stages, response requirements and optional resource contents. Read the accompanying **[content and scoring audit](battery_v7/CONTENT_AUDIT.md)** before interpreting results.
 
-The current instrument contains custom text tasks, not a demonstrated full psychological fingerprint. Its 1,224 sessions expand 84 scenario forms through presentation and condition changes; some held-out forms are close context substitutions. Important content (including conceptual distinctions, supportive replies and disclosure reports) still requires ratings that the analyzer does not import. The network atlas below uses 66 illustrative variables and invented links, not 66 dimensions measured by this battery. No real-model validation is supplied by the demos.
+The earlier v0.7 instrument contains custom text tasks, not a demonstrated full psychological fingerprint. Its 1,224 sessions expand 84 scenario forms through presentation and condition changes; some held-out forms are close context substitutions. The audit records the scoring gaps at that release. A subsequent content-rating importer now supports agreed ordinal ratings; the compact core documents that workflow. The network atlas below uses 66 illustrative variables and invented links, not 66 dimensions measured by a battery. No real-model validation is supplied by the demos.
 
 ## New: psychological network atlas and difference view
 
@@ -44,6 +50,7 @@ The legacy v0.1 bank has 436 instantiated items, including condition variants of
 
 ## Components
 
+- [`battery_core/`](battery_core/README.md): compact prompt list and CSV, 50 cards / 22 facets / 11 categories, standard-library runner, reviewed-content workflow and existing-harness compatibility.
 - [`network_atlas/`](network_atlas/README.md): connected-network design prototype, single/difference views, Python generators, illustrative data, and screenshot/interpretation guide.
 - [`analyzer/`](analyzer/README.md): response-based v0.7 analysis, findings/evidence KG exports, matched comparisons and a Colab notebook; separate from the illustrative atlas.
 - [`battery/`](battery/README.txt): 436 CSV questions across 28 modules, Python preparation/scoring, configuration templates, research sources, and graph export.

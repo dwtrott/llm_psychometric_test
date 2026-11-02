@@ -15,7 +15,7 @@ def fingerprint(x):return hashlib.sha256(stable(x).encode()).hexdigest()
 
 def load_profile(path):
  path=pathlib.Path(path);g=json.loads(path.read_text(encoding='utf-8-sig'))
- if g.get('battery_version')!='0.7.0-draft' or g.get('bank')!='profile':raise ValueError('Use v0.7 profile graphs; older instruments and capability controls remain in the legacy viewer.')
+ if g.get('battery_version') not in ['0.7.0-draft','0.8.0-core'] or g.get('bank')!='profile':raise ValueError('Use v0.7 or compact-core profile graphs; capability controls remain separate.')
  if not g.get('battery_hash') or not isinstance(g.get('profile_catalog'),dict):raise ValueError('Missing battery identity or catalog')
  nodes={}
  for n in g['nodes']:
@@ -110,8 +110,8 @@ def analyze(profiles):
   coverage=[]
   for facet,meta in p['catalog']['modules'].items():
    rr=[r for r in p['rows'] if r['facet']==facet];status=dict(collections.Counter(r['status'] for r in rr))
-   coverage.append(dict(facet=facet,title=meta['title'],status=status,n_scenarios=len({r['scenario'] for r in rr}),n_presentations=len({(r['order'],r['transfer']) for r in rr}),n_numeric_trials=sum(bool(r['features']) for r in rr),human_content='not imported / requires review' if facet in HUMAN else 'task-choice features only',scope='supplied plan only; no claim that unselected facets were tested'))
-  reports.append(dict(id=p['id'],label=p['label'],split=p['split'],synthetic=p['synthetic'],battery_hash=p['hash'],coverage=coverage,cells=cell_table(p),contrasts={axis:contrast(p,axis) for axis in ['condition','wording','order','transfer']},evidence_status='Behavioral observations only. Human ratings are not imported; psychological stability unestablished.'))
+   coverage.append(dict(facet=facet,title=meta['title'],status=status,n_scenarios=len({r['scenario'] for r in rr}),n_presentations=len({(r['order'],r['transfer']) for r in rr}),n_numeric_trials=sum(bool(r['features']) for r in rr),human_content=content_status(p,facet,rr),scope='supplied plan only; no claim that unselected facets were tested'))
+  reports.append(dict(id=p['id'],label=p['label'],split=p['split'],synthetic=p['synthetic'],battery_hash=p['hash'],coverage=coverage,cells=cell_table(p),contrasts={axis:contrast(p,axis) for axis in ['condition','wording','order','transfer']},evidence_status='Behavioral observations; imported content ratings are identified separately. Psychological stability unestablished.'))
  comparisons=[];skipped=[]
  for a,b in itertools.combinations(profiles,2):
   transfer=a['config']==b['config'] and a['split']!=b['split']
@@ -158,6 +158,17 @@ RELATIONSHIPS=[
 ]
 PATTERN_NAMES={'SEM-LINK':'Concept associations','SEM-DISTINCT':'Conceptual distinctions','EPI-STATUS':'Prestige sensitivity','META-VERIFY':'Information seeking','OPEN-CREATE':'Creative adaptation','DEC-RISK':'Risk framing','DEC-AMBIG':'Unspecified probabilities','SOC-AUDIENCE':'Audience adaptation','AFFECT-NEED':'Support adaptation','COOP-SHARE':'Social allocation','VALUE-AUTONOMY':'Choice and consent','SELF-CREDIT':'Credit attribution','ALIGN-DISCLOSE':'Disclosure under incentives','ALIGN-HARM':'Own gain / others’ loss'}
 
+def behavior(profile,facet):
+ meta=profile['catalog']['modules'][facet]
+ if 'primary_metric' in meta:return meta['primary_metric'],meta.get('primary_label',meta['title'])
+ return BEHAVIORS.get(facet,(None,'Content interpretation pending'))
+
+def content_status(profile,facet,rows):
+ meta=profile['catalog']['modules'][facet]
+ if not meta.get('content_review',facet in HUMAN):return 'task-choice features only'
+ rated=sum(any(k.startswith('rating_') for k in r['features']) for r in rows)
+ return f'{rated} trials with imported content ratings; inspect missing criteria' if rated else 'not imported / requires review'
+
 def value_range(values,delta=False):
  if not values:return 'not measured'
  lo,hi=min(values)*100,max(values)*100
@@ -168,16 +179,18 @@ def response_findings(p,report):
  """Summarize observed ranges without pooling conditions or inventing latent traits."""
  out=[]
  for facet in p['catalog']['modules']:
-  metric,label=BEHAVIORS.get(facet,(None,None))
+  metric,label=behavior(p,facet)
   cells=[r for r in report['cells'] if r['facet']==facet and r['metric']==metric]
   fid='finding:'+p['id']+':'+facet
   if not cells:
-   out.append(dict(id=fid,facet=facet,metric=metric,status='unrated' if facet in UNRATED else 'unmeasured',headline=UNRATED.get(facet,'No valid measurements of this behavior supplied.'),conditions=[],effects=[],checks={},evidence=[],n_scenarios=0));continue
+   needs_review=bool(metric and metric.startswith('rating_'))
+   headline='Content rating not supplied.' if needs_review else UNRATED.get(facet,'No valid measurements of this behavior supplied.')
+   out.append(dict(id=fid,facet=facet,metric=metric,status='unrated' if needs_review or facet in UNRATED else 'unmeasured',headline=headline,conditions=[],effects=[],checks={},evidence=[],n_scenarios=0));continue
   conditions=[]
   for condition in sorted({r['condition'] for r in cells}):
    rr=[r for r in cells if r['condition']==condition]
    conditions.append(dict(condition=condition,min=min(r['value'] for r in rr),max=max(r['value'] for r in rr),n_cells=len(rr),n_scenarios=len({r['scenario'] for r in rr}),evidence=sorted({t for r in rr for t in r['evidence']})))
-  headline=label+': '+ '; '.join(c['condition'].replace('_',' ')+' '+value_range([c['min'],c['max']],metric=='advice_agreement_change') for c in conditions)
+  headline=label+': '+ '; '.join(c['condition'].replace('_',' ')+' '+value_range([c['min'],c['max']],metric in ['advice_agreement_change','advice_shift','belief_change']) for c in conditions)
   effects=[]
   rows=[r for r in report['contrasts']['condition'] if r['facet']==facet and r['metric']==metric]
   for levels in sorted({(r['level_a'],r['level_b']) for r in rows}):
@@ -188,7 +201,7 @@ def response_findings(p,report):
   for axis in ['wording','order']:
    rr=[r for r in report['contrasts'][axis] if r['facet']==facet and r['metric']==metric]
    checks[axis]=dict(n=len(rr),changed=sum(abs(r['delta'])>1e-12 for r in rr),max_absolute_change=max((abs(r['delta']) for r in rr),default=None))
-  out.append(dict(id=fid,facet=facet,metric=metric,status='observed',headline=headline,conditions=conditions,effects=effects,checks=checks,evidence=sorted({t for r in cells for t in r['evidence']}),n_scenarios=len({r['scenario'] for r in cells}),content_unrated=facet in HUMAN,cells=cells))
+  out.append(dict(id=fid,facet=facet,metric=metric,status='observed',headline=headline,conditions=conditions,effects=effects,checks=checks,evidence=sorted({t for r in cells for t in r['evidence']}),n_scenarios=len({r['scenario'] for r in cells}),content_unrated=facet in HUMAN and not (metric or '').startswith('rating_'),cells=cells))
  return out
 
 def evidence_kg(profiles,analysis):
@@ -254,7 +267,8 @@ def evidence_kg(profiles,analysis):
     finding='finding:'+c[side+'_id']+':'+row['facet']
     edge(cid,'profile:'+c[side+'_id'],'model_'+side)
     edge(cid,'facet:'+row['facet'],'within_facet')
-    if row['metric']==BEHAVIORS.get(row['facet'],(None,None))[0]:edge(cid,finding,'compares_'+side)
+    selected_profile=next(p for p in profiles if p['id']==c[side+'_id'])
+    if row['metric']==behavior(selected_profile,row['facet'])[0]:edge(cid,finding,'compares_'+side)
     # Some secondary metrics are not in the headline; retain their evidence too.
     p=next(p for p in profiles if p['id']==c[side+'_id'])
     for trial in row['evidence_'+side]:
@@ -265,6 +279,12 @@ def evidence_kg(profiles,analysis):
   h=node('hypothesis:'+hid,'relationship_hypothesis',label=label,question=question,required_design=design,status='untested',provenance='research proposal for this instrument; not an empirical finding',strength=None)
   edge(h,'facet:'+source,'concerns');edge(h,'facet:'+target,'concerns')
   edges.append(dict(source='facet:'+source,target='facet:'+target,type='hypothesized_relationship',hypothesis=h,status='untested',strength=None,directed=False))
+ for p in profiles:
+  for r in p['graph'].get('content_review',{}).get('results',[]):
+   target='response:'+p['id']+':trial:'+r['trial_id']
+   if target not in nodes:continue
+   review=node('review:'+p['id']+':'+fingerprint(r)[:20],'content_review',**r)
+   edge(target,review,'has_content_review')
  unique={(e['source'],e['target'],e['type']):e for e in edges}
  return dict(schema='psychometric-evidence-kg-1',nodes=list(nodes.values()),edges=list(unique.values()),interpretation='Observed behavior and provenance, not a map of internal cognition. No causal or cross-facet latent relationships inferred.')
 
@@ -349,7 +369,7 @@ def render_detailed(profiles,analysis):
    for axis,rows in report['contrasts'].items():
     rr=[r for r in rows if r['facet']==facet]
     explanation='Second listed level minus first, with other design factors fixed. Missing arms are omitted, never set to zero.'
-    if axis=='transfer':explanation+=' These numeric features describe first-stage choices made before the fourth case was shown. This checks balance across transfer variants, not transfer performance. Application of the distinction requires human-coded evidence, which is not imported here.'
+    if axis=='transfer':explanation+=' These numeric features describe first-stage choices made before the fourth case was shown. This checks balance across transfer variants, not transfer performance. Inspect separately imported content ratings for application of the distinction; the transfer-variant contrast alone does not measure it.'
     parts.append('<details><summary>'+esc({'condition':'Condition effects','wording':'Paraphrase sensitivity','order':'Option / label-position sensitivity','transfer':'Transfer-pattern balance checks'}[axis])+f' ({len(rr)} matched contrasts)</summary><p>'+explanation+'</p>'+table(rr,['pair','metric','base','condition','wording','order','transfer','level_a','level_b','delta','n_repeat_pairs'],100)+'</details>')
    parts.append('</article>')
   contexts=sorted({e.get('context') for e in p['graph']['edges'] if e['type']=='elicited_associate'})
@@ -385,16 +405,18 @@ def psychology_graph(p,report,comparison=None,standalone=False):
  findings={f['facet']:f for f in report['findings']}
  palette=['#e7effb','#e7effb','#e7effb','#f1eafb','#e5f2ef','#eaf0fb','#f5eaf2','#edf3e3','#e1f1ed','#fff1df','#f9e7e4']
  domains=p['catalog']['domains'];positions={};boxes=[]
+ box_height=max(190,75+61*max(len(d['modules']) for d in domains));row_height=box_height+25
+ total_height=55+math.ceil(len(domains)/3)*row_height
  for i,d in enumerate(domains):
-  col=i%3;row=i//3;x=20+col*405;y=50+row*215
+  col=i%3;row=i//3;x=20+col*405;y=50+row*row_height
   boxes.append((x,y,col,row))
   for j,m in enumerate(d['modules']):positions[m]=(x+14,y+58+j*61,x,y,col,row,i)
- out=['<svg xmlns="http://www.w3.org/2000/svg" class="psychology-graph" viewBox="0 0 1220 915" role="img" aria-label="Psychological regions and pattern relationships" style="font-family:system-ui,sans-serif;fill:#203b4a"><title>11 theory-defined psychological regions and 14 behavioral-pattern nodes. All dashed cross-pattern relationships are untested hypotheses; node observations come from responses.</title>']
+ out=[f'<svg xmlns="http://www.w3.org/2000/svg" class="psychology-graph" viewBox="0 0 1220 {total_height}" role="img" aria-label="Psychological regions and pattern relationships" style="font-family:system-ui,sans-serif;fill:#203b4a"><title>{len(domains)} theory-defined psychological regions and {len(positions)} behavioral-pattern nodes. All dashed cross-pattern relationships are untested hypotheses; node observations come from responses.</title>']
  caption=p['label']+' · '+p['split'] if comparison is None else comparison['a_label']+' vs '+comparison['b_label']+' · B − A'
  out.append('<text x="20" y="17" font-size="14" font-weight="600">'+esc(caption[:110])+'</text>')
  for i,d in enumerate(domains):
   x,y,col,row=boxes[i]
-  out.append(f'<rect data-region="{i}" x="{x}" y="{y}" width="360" height="190" rx="16" fill="{palette[i%len(palette)]}" stroke="#9cabb7" stroke-width="1.2"/>')
+  out.append(f'<rect data-region="{i}" x="{x}" y="{y}" width="360" height="{box_height}" rx="16" fill="{palette[i%len(palette)]}" stroke="#9cabb7" stroke-width="1.2"/>')
   for j,line in enumerate(textwrap.wrap(d['title'],39)):
    out.append(f'<text x="{x+15}" y="{y+23+j*17}" font-size="14" font-weight="650">{esc(line)}</text>')
  # Route edges through the gutters, outside region labels and pattern cards.
@@ -432,10 +454,10 @@ def psychology_graph(p,report,comparison=None,standalone=False):
   href=('report.html#'+anchor if comparison else 'report.html#'+p['id']+'-'+m) if standalone else '#'+anchor
   lines=textwrap.wrap(text,49)
   if len(lines)>2:lines=lines[:2];lines[-1]+='…'
-  out.append(f'<a href="{href}"><title>{esc(full)}. Click for full measurements and limits.</title><rect data-facet="{m}" x="{x}" y="{y}" width="332" height="55" rx="9" fill="{fill}" stroke="{stroke}" stroke-width="2"/><circle cx="{x+12}" cy="{y+16}" r="4" fill="{stroke}"/><text x="{x+23}" y="{y+20}" font-size="13" font-weight="600">{esc(PATTERN_NAMES[m])}</text>')
+  out.append(f'<a href="{href}"><title>{esc(full)}. Click for full measurements and limits.</title><rect data-facet="{m}" x="{x}" y="{y}" width="332" height="55" rx="9" fill="{fill}" stroke="{stroke}" stroke-width="2"/><circle cx="{x+12}" cy="{y+16}" r="4" fill="{stroke}"/><text x="{x+23}" y="{y+20}" font-size="13" font-weight="600">{esc(PATTERN_NAMES.get(m,p['catalog']['modules'][m]['title']))}</text>')
   for j,line in enumerate(lines):out.append(f'<text x="{x+10}" y="{y+35+j*13}" font-size="10.5">{esc(line)}</text>')
   out.append('</a>')
- out.append('<text x="20" y="908" font-size="12">Region boundaries are theory-defined. Dashed H1–H8 links are proposed relationships, not measured associations or causal links.</text></svg>')
+ out.append(f'<text x="20" y="{total_height-8}" font-size="12">Region boundaries are theory-defined. Dashed H1–H8 links are proposed relationships, not measured associations or causal links.</text></svg>')
  return ''.join(out)
 
 def profile_map(p,report):
@@ -444,6 +466,10 @@ def profile_map(p,report):
 def finding_detail(p,f):
  out=['<div class="observed"><b>'+esc(f['headline'])+'</b>']
  if f['status']!='observed':return ''.join(out)+'</div>'
+ if (f.get('metric') or '').startswith('rating_'):
+  out.append('<p>Content ratings use anchored ordinal rubrics. Display percentages are fractions of the rubric maximum, not probabilities, behavioral frequencies or human percentiles.</p>')
+  reviews=[r for r in p['graph'].get('content_review',{}).get('results',[]) if 'trial:'+r['trial_id'] in f['evidence'] and 'rating_'+r['criterion']==f['metric']]
+  out.append('<details><summary>Content-rating evidence and rater agreement</summary><pre>'+esc(json.dumps(reviews,ensure_ascii=False,indent=2))+'</pre></details>')
  out.append('<p>Ranges span separate scenario/presentation cell means; conditions are not pooled. '+str(f['n_scenarios'])+' distinct scenarios supplied. Rewordings and repeats are not additional scenarios.</p>')
  for e in f['effects']:
   out.append('<p><b>Condition response:</b> '+esc(e['level_b']+' minus '+e['level_a'])+' changes this measure by '+value_range([e['min'],e['max']],True)+f'. Across {e["n_scenarios"]} scenarios: {e["positive"]} positive, {e["negative"]} negative and {e["zero"]} unchanged matched contrasts. Counts include presentation variants, not independent replications.</p>')
@@ -476,7 +502,7 @@ def pattern_comparison_svg(a,b,c,reports):
  findings={r['id']:{f['facet']:f for f in r['findings']} for r in reports}
  out=[f'<svg class="pattern-comparison" viewBox="0 0 1120 {60+len(facets)*105}" role="img" aria-label="Psychological behavior differences by region"><text x="15" y="25" font-size="16">Region / observed behavior</text><text x="410" y="25" font-size="16">{esc(a["label"])}</text><text x="650" y="25" font-size="16">{esc(b["label"])}</text><text x="885" y="25" font-size="16">B − A · matched cells</text>']
  for i,(d,m) in enumerate(facets):
-  y=45+i*105;metric,label=BEHAVIORS.get(m,(None,'Content interpretation pending'))
+  y=45+i*105;metric,label=behavior(a,m)
   rr=[r for r in c['cells'] if r['facet']==m and r['metric']==metric]
   delta=[r['delta'] for r in rr];color='#7356a6' if delta and min(delta)<-1e-12 and max(delta)>1e-12 else '#267eb0' if delta and max(delta)>1e-12 else '#b86a24' if delta and min(delta)<-1e-12 else '#73818b'
   out.append(f'<rect x="0" y="{y}" width="1120" height="96" rx="8" fill="#f4f7f8"/><rect x="0" y="{y}" width="5" height="96" fill="{color}"/>')
@@ -486,7 +512,7 @@ def pattern_comparison_svg(a,b,c,reports):
    lines=[]
    for condition in sorted({r['condition'] for r in rr}):
     vals=[r[side] for r in rr if r['condition']==condition]
-    lines.extend(textwrap.wrap(condition.replace('_',' ')+': '+value_range(vals,metric=='advice_agreement_change'),28))
+    lines.extend(textwrap.wrap(condition.replace('_',' ')+': '+value_range(vals,metric in ['advice_agreement_change','advice_shift','belief_change']),28))
    if not lines:lines=['Not interpreted']
    for j,line in enumerate(lines[:4]):out.append(f'<text x="{x}" y="{y+22+j*17}" font-size="12">{esc(line)}</text>')
    checks=findings[a['id'] if side=='a' else b['id']][m]['checks']
@@ -505,9 +531,9 @@ def render(profiles,analysis):
  css='''body{font:16px/1.55 system-ui;color:#203b4a;background:#f3f6f7;margin:0}main{max-width:1180px;margin:auto;padding:32px}h1,h2,h3{line-height:1.2}h1{font-size:38px;margin:8px 0}h2{font-size:28px}h3{font-size:21px}p{max-width:90ch}a{color:#17618b}nav{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}nav a{background:#183f50;color:white;padding:10px 18px;border-radius:8px;text-decoration:none}.eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:12px;font-weight:700;color:#53717c}.muted,small{color:#586f7b}.banner{padding:10px 16px;background:#fff0d3;border-radius:8px;font-size:14px}.panel,section,article{background:white;border:1px solid #dce5e9;border-radius:14px;padding:22px;margin:18px 0}details{margin:12px 0}summary{cursor:pointer;padding:14px;background:#edf3f5;border-radius:8px;font-weight:600}summary:hover{background:#dcebed}summary:focus-visible,a:focus-visible{outline:3px solid #267eb0;outline-offset:3px}details[open]>summary{margin-bottom:16px}.model-picker{display:flex;flex-wrap:wrap;gap:8px}.model-tab{position:absolute;opacity:0;pointer-events:none}.model-label{cursor:pointer;padding:12px 18px;border:1px solid #b6cbd3;border-radius:8px;background:white}.model-tab:checked+.model-label{background:#183f50;color:white}.model-tab:focus-visible+.model-label{outline:3px solid #267eb0;outline-offset:3px}.profile-panel{display:none}.graphs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.graphs>div{background:#f8fafb;border:1px solid #e2e9ed;border-radius:12px;padding:12px}.graphs h4{margin:0;text-align:center}.graphs svg{display:block}.region-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}.region-grid>details{margin:0;align-self:start;border:1px solid #dce5e9;border-radius:10px;padding:10px}.facet{padding:12px 4px;border-top:1px solid #dce5e9}.facet h4{margin:5px 0}.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px}.blue{color:#267eb0}.orange{color:#a95b18}.gray{color:#657782}svg{width:100%;height:auto}svg text{font-family:system-ui;fill:currentColor}.profile-map text[fill="white"]{fill:white}.table{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:8px;border:1px solid #dce3e9;text-align:left}th{background:#edf3f8}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f9;padding:12px;font-size:12px}.technical>summary{padding:20px}html{scroll-behavior:smooth;scroll-padding-top:20px}@media(max-width:650px){main{padding:16px}h1{font-size:29px}.panel,section,article{padding:14px}.profile-map{min-width:760px}.map-scroll{overflow:auto}.graphs{grid-template-columns:1fr}.region-grid{grid-template-columns:1fr}}'''
  for i,p in enumerate(profiles):css+=f'#model-{i}:checked~.profile-{i}{{display:block}}'
  css+='.region-grid>details[open]{grid-column:1/-1}.observed{padding:16px;background:#f4f8f8;border-radius:10px;margin:10px 0}.pattern-comparison{min-width:960px}.psychology-graph{min-width:1000px}.kg-legend{padding:12px 16px;background:#f1edf5;border-radius:8px;font-size:14px}.model-label{display:inline-block;margin-bottom:8px;white-space:nowrap}'
- out=['<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>LLM psychological profiles</title><style>'+css+'</style><main><div class="eyebrow">Psychometric explorer · v0.7</div><h1>Understand a model. Then compare.</h1><p class="muted">Explore the full psychological profile, see where models differ, and inspect the evidence when you need it.</p>']
+ out=['<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>LLM psychological profiles</title><style>'+css+'</style><main><div class="eyebrow">Psychometric explorer</div><h1>Understand a model. Then compare.</h1><p class="muted">Explore measured response patterns by psychological region, compare models, and inspect the underlying evidence.</p>']
  if any(p['synthetic'] for p in profiles):out.append('<p class="banner"><b>SYNTHETIC DATA INCLUDED</b> · These examples demonstrate the tool, not real LLM findings.</p>')
- out.append('<nav aria-label="Report sections"><a href="#understand">1 · Psychological KG</a><a href="#compare">2 · Difference KG</a><a href="#relationships">3 · Relationships</a><a href="#technical">Evidence</a></nav><h2 id="understand">Psychological regions and their relationships</h2><p>Select a model. Colored boundaries mark the 11 psychological regions. The 14 nodes represent behavioral patterns and show what this model did. Click a node for its findings and original responses.</p><p class="kg-legend"><b>Solid node borders:</b> observed behavior; amber flags presentation sensitivity. <b>Dashed H1–H8 links:</b> proposed relationships between patterns, all currently untested. Click a link label to inspect its question and required test. Region colors identify areas, not scores.</p><details><summary>What is established, and what remains a hypothesis?</summary><p>The graph connects theory-defined regions and candidate facets to response-derived findings, measurement cells, conditions, scenarios and original responses. The cross-pattern relationship layer adds explicit research hypotheses, not inferred correlations. No cross-facet relationship has been estimated from the synthetic demo.</p><p>This is a candidate behavioral fingerprint. Establishing a psychological fingerprint still requires independent content ratings, recurring patterns across distinct scenarios, held-out prediction, repeated-run reproducibility and evidence that between-model differences exceed within-model variation.</p><p><a href="knowledge_graph.json" download>Download the typed psychological/evidence KG (JSON)</a></p></details><div class="profile-selector">')
+ out.append('<nav aria-label="Report sections"><a href="#understand">1 · Psychological KG</a><a href="#compare">2 · Difference KG</a><a href="#relationships">3 · Relationships</a><a href="#technical">Evidence</a></nav><h2 id="understand">Psychological regions and their relationships</h2><p>Select a model. Colored boundaries mark the 11 psychological regions. The nodes represent candidate behavioral patterns and show what this model did. Click a node for its findings and original responses.</p><p class="kg-legend"><b>Solid node borders:</b> observed behavior; amber flags presentation sensitivity. <b>Dashed H1–H8 links:</b> proposed relationships between patterns, all currently untested. Click a link label to inspect its question and required test. Region colors identify areas, not scores.</p><details><summary>What is established, and what remains a hypothesis?</summary><p>The graph connects theory-defined regions and candidate facets to response-derived findings, measurement cells, conditions, scenarios and original responses. The cross-pattern relationship layer adds explicit research hypotheses, not inferred correlations. No cross-facet relationship has been estimated from the synthetic demo.</p><p>This is a candidate behavioral fingerprint. Establishing a psychological fingerprint still requires independent content ratings, recurring patterns across distinct scenarios, held-out prediction, repeated-run reproducibility and evidence that between-model differences exceed within-model variation.</p><p><a href="knowledge_graph.json" download>Download the typed psychological/evidence KG (JSON)</a></p></details><div class="profile-selector">')
  for i,p in enumerate(profiles):out.append(f'<input class="model-tab" type="radio" name="profile" id="model-{i}"'+(' checked' if i==0 else '')+f'><label class="model-label" for="model-{i}">{esc(p["label"])} · {esc(p["split"])}</label> ')
  for i,report in enumerate(analysis['profiles']):
   p=by[report['id']];cov={r['facet']:r for r in report['coverage']}
@@ -518,7 +544,7 @@ def render(profiles,analysis):
     meta=p['catalog']['modules'][m];c=cov[m]
     finding=next(f for f in report['findings'] if f['facet']==m)
     out.append(finding_detail(p,finding))
-    out.append('<div class="facet"><h4>'+esc(meta['title'])+'</h4><p>'+esc(meta['scoring'])+'</p><p class="muted">'+str(c['n_scenarios'])+' scenarios · '+str(c['status'].get('valid',0))+' valid responses. '+('Content interpretation still needs human review.' if m in HUMAN else 'Task-choice measurements available; no validated trait score.')+'</p>')
+    out.append('<div class="facet"><h4>'+esc(meta['title'])+'</h4><p>'+esc(meta['scoring'])+'</p><p class="muted">'+str(c['n_scenarios'])+' scenarios · '+str(c['status'].get('valid',0))+' valid responses. '+esc(c['human_content'])+'</p>')
     cells=[r for r in report['cells'] if r['facet']==m]
     if cells:
      out.append('<details><summary>What this model actually chose</summary><p>Observed task values, kept separate by scenario and presentation. The first 12 design-sorted cells are shown; the detailed analysis retains every cell.</p>'+table(cells,['scenario','metric','condition','wording','base','order','transfer','value'],12)+'</details>')
@@ -551,7 +577,7 @@ def render(profiles,analysis):
    rr=[r for r in c['scenario_balanced'] if r['facet'] in d['modules']];changed=sum(not math.isclose(r['delta'],0,abs_tol=1e-12) for r in rr)
    status=f'{changed} of {len(rr)} matched cells differ' if rr else 'No matched numeric measurements'
    out.append('<details><summary>'+esc(d['title'])+'<br><small>'+status+f'</small></summary><div id="comparison-region-{c["a_id"]}-{c["b_id"]}-{di}">')
-   if any(m in HUMAN for m in d['modules']):out.append('<p>Content requiring human review is not scored here. Equal numeric cells do not establish equal psychological patterns.</p>')
+   if any(m in HUMAN for m in d['modules']):out.append('<p>Content ratings appear only when supplied through the rating importer. Equal numeric cells do not establish equal psychological patterns.</p>')
    if rr:out.append(difference_svg(rr)+table(rr,['facet','metric','condition','wording','base','order','transfer','a','b','delta'],36))
    out.append('</div></details>')
   out.append('</div><p class="muted">'+str(c['n_common_observations'])+' common valid feature observations. Unmatched observations excluded: '+str(c['n_a_only'])+' for A, '+str(c['n_b_only'])+' for B.</p></details>')
@@ -575,9 +601,9 @@ def save_csv(path,rows):
 
 def build(paths,out):
  profiles=[load_profile(p) for p in paths]
- if not profiles:raise ValueError('Supply at least one v0.7 graph')
+ if not profiles:raise ValueError('Supply at least one supported profile graph')
  result=analyze(profiles)
- result['provenance']=dict(analyzer_version='1.2.0',analyzer_sha256=hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),inputs=[dict(profile_id=p['id'],filename=pathlib.Path(p['path']).name,sha256=hashlib.sha256(pathlib.Path(p['path']).read_bytes()).hexdigest(),run=p['run'],split=p['split'],battery_hash=p['hash']) for p in profiles])
+ result['provenance']=dict(analyzer_version='1.3.0',analyzer_sha256=hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),inputs=[dict(profile_id=p['id'],filename=pathlib.Path(p['path']).name,sha256=hashlib.sha256(pathlib.Path(p['path']).read_bytes()).hexdigest(),run=p['run'],split=p['split'],battery_hash=p['hash']) for p in profiles])
  destination=pathlib.Path(out);destination.mkdir(parents=True,exist_ok=True)
  (destination/'analysis.json').write_text(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False),encoding='utf-8')
  (destination/'knowledge_graph.json').write_text(json.dumps(dict(result['knowledge_graph'],provenance=result['provenance']),indent=2,ensure_ascii=False,allow_nan=False),encoding='utf-8')

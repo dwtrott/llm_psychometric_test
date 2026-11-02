@@ -1,6 +1,8 @@
-# Design-aware analysis and visualization for v0.7
+# Analysis and visualization for v0.7 and the compact core
 
-**Measurement scope:** this analyzer summarizes available task features and evidence, not a comprehensive psychological fingerprint. Open-response content ratings are not imported. Read the [actual question excerpts](../battery_v7/ACTUAL_QUESTIONS.md) and [content/scoring audit](../battery_v7/CONTENT_AUDIT.md) to see exactly what is collected and what remains unmeasured.
+The new [categorized prompt list](../battery_core/PROMPTS.md) exports the same graph format. The analyzer accepts `0.8.0-core` as well as v0.7, reads category/metric definitions from its catalog, and displays imported `rating_*` content measurements with their evidence. Compare models using the same instrument hash; old and new batteries cannot be numerically pooled. The compact list has no held-out split or wording/order variants, so those checks remain untested.
+
+**Measurement scope:** this analyzer summarizes available task features and evidence, not a comprehensive psychological fingerprint. Content ratings are imported only through the [evidence-linked rating workflow](../battery_core/README.md#what-is-actually-scored). Missing or disputed ratings remain unscored. Read the [earlier v0.7 audit](../battery_v7/CONTENT_AUDIT.md) for historical limitations.
 
 The battery is frozen. This software uses its existing dimensions to analyze actual response evidence. It does not propose another questionnaire revision.
 
@@ -8,7 +10,7 @@ The battery is frozen. This software uses its existing dimensions to analyze act
 
 ## Inputs and outputs
 
-Input: one or more `graph.json` exports produced by `battery_v7/processor.py process`. You do not need raw response files alongside those graphs: prompts, responses, task features and presentation metadata are embedded in the export. Supply only one run per exact model configuration and partition. Old battery graphs and capability-control banks are intentionally rejected rather than silently pooled with profile evidence.
+Input: one or more `graph.json` exports produced by `battery_v7/processor.py process` or `battery_core/processor.py process`, optionally enriched as `rated_graph.json`. You do not need raw response files alongside those graphs: prompts, responses, task features and presentation metadata are embedded in the export. Supply only one run per exact model configuration and partition. Other instrument versions and capability-control banks are rejected rather than silently pooled with profile evidence.
 
 ```sh
 python analyzer/psychometric.py results/model-a-dev/graph.json results/model-b-dev/graph.json --out results/analysis
@@ -54,7 +56,7 @@ These are descriptive summaries, not reliability certification, significance tes
 
 Condition-effect changes use repeat indices present in all four arms, avoiding differences based on unrelated missingness subsets. Evidence references and per-scenario results remain available. No automatic ratings, human norms, Dark Triad diagnoses or independence assumptions for presentation variants are introduced.
 
-Coverage reflects the supplied graph/plan, not a reconstruction of the entire possible battery. This release does not import completed human-review forms, compute confidence intervals or automatically choose robust facets. Keeping those gaps visible is preferable to turning unrated content into inferred traits.
+Coverage reflects the supplied graph/plan, not a reconstruction of the entire possible battery. Completed ordinal content ratings enter through the separate importer; the analyzer does not itself judge text. It does not compute confidence intervals or automatically choose robust facets. Unrated content is not converted into inferred traits.
 
 ## Colab
 
