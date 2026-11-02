@@ -203,7 +203,10 @@ def render(profiles,analysis):
    cells=[r for r in report['cells'] if r['facet']==facet]
    parts.append('<details><summary>Measurements and repeat variability</summary>'+table(cells,['pair','condition','wording','base','order','transfer','cue','metric','value','n_repeats','sample_sd'],120)+'</details>')
    for axis,rows in report['contrasts'].items():
-    rr=[r for r in rows if r['facet']==facet];parts.append('<details><summary>'+esc({'condition':'Condition effects','wording':'Paraphrase sensitivity','order':'Option / label-position sensitivity','transfer':'Conceptual transfer-pattern effects'}[axis])+f' ({len(rr)} matched contrasts)</summary><p>Second listed level minus first, with other design factors fixed. Missing arms are omitted, never set to zero. Pattern effects can include differing task demands.</p>'+table(rr,['pair','metric','base','condition','wording','order','transfer','level_a','level_b','delta','n_repeat_pairs'],100)+'</details>')
+    rr=[r for r in rows if r['facet']==facet]
+    explanation='Second listed level minus first, with other design factors fixed. Missing arms are omitted, never set to zero.'
+    if axis=='transfer':explanation+=' These numeric features describe first-stage choices made before the fourth case was shown. This checks balance across transfer variants, not transfer performance. Application of the distinction requires human-coded evidence, which is not imported here.'
+    parts.append('<details><summary>'+esc({'condition':'Condition effects','wording':'Paraphrase sensitivity','order':'Option / label-position sensitivity','transfer':'Transfer-pattern balance checks'}[axis])+f' ({len(rr)} matched contrasts)</summary><p>'+explanation+'</p>'+table(rr,['pair','metric','base','condition','wording','order','transfer','level_a','level_b','delta','n_repeat_pairs'],100)+'</details>')
    parts.append('</article>')
   contexts=sorted({e.get('context') for e in p['graph']['edges'] if e['type']=='elicited_associate'})
   for context in contexts:parts.append('<details><summary>Observed concept graph: '+esc(context)+'</summary>'+semantic_svg([p],context)+'</details>')
