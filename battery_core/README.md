@@ -2,6 +2,12 @@
 
 **[Read the actual prompts, grouped by category](PROMPTS.md)** · **[Download the CSV](prompts.csv)**
 
+**[Run the battery on a Hugging Face model in Colab](https://colab.research.google.com/github/dwtrott/llm_psychometric_test/blob/main/battery_core/Run_HuggingFace_A100.ipynb)**
+
+Select an A100 runtime, then **Run all**. The notebook downloads `Qwen/Qwen2.5-7B-Instruct` by default, runs all prompts/follow-ups locally on the GPU, saves each unedited response, and downloads a ZIP with the graph, scores, analyzer report and viewer. Change `MODEL_ID` to use another compatible model; `Qwen/Qwen2.5-1.5B-Instruct` is a smaller option. No API key is needed for these defaults. Model execution adds Transformers/Accelerate/PyTorch dependencies; the battery and analyzer remain standard-library Python.
+
+An interrupted collection resumes by rerunning its cell. Optional Drive storage preserves results beyond runtime deletion. For a full-runtime resume, pin `SOURCE_REVISION` and `MODEL_REVISION` to the saved commits and keep the configuration unchanged. Invalid model responses are retained, not silently repaired or retried. This notebook's syntax and checkpoint/export pipeline have been tested locally with synthetic generators; a live Colab/A100 model run has not been verified here. [Notebook source](Run_HuggingFace_A100.ipynb).
+
 The compact core has **50 prompt cards across 11 categories and 22 facets**. Ten cards have a follow-up, so the CSV contains 60 stage rows. Eight cards elicit associations to different cue words. The other 42 cards supply two scenarios per facet. These are actual text-only questions; no images or external stimuli are needed.
 
 | Category | Included facets |

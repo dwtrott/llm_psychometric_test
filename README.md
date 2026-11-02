@@ -6,6 +6,8 @@ A research-informed exploratory battery and an independent offline viewer for co
 
 **[Read the 50 actual prompt cards, grouped by category](battery_core/PROMPTS.md)** · **[CSV](battery_core/prompts.csv)** · **[Run and analyze them](battery_core/README.md)**
 
+**[Open the A100 Colab notebook](https://colab.research.google.com/github/dwtrott/llm_psychometric_test/blob/main/battery_core/Run_HuggingFace_A100.ipynb)** to download a Hugging Face model, run the full battery, and download responses, scores, graphs and reports. Defaults to Qwen2.5-7B-Instruct; the model is configurable. No paid model API is used.
+
 The compact core contains text-only probes across 11 categories and 22 facets, including concepts, belief revision, curiosity, decisions, social understanding, support, trust, reciprocity, values, self-attribution and integrity. There are 50 cards / 60 stages, with no missing images or external stimuli. Automatic task features and explicitly reviewed content can enter the existing analyzer and KG viewer. This is exploratory measurement; psychological stability and validity still require real-model studies.
 
 ## Earlier v0.7: actual questions and measurement gaps
