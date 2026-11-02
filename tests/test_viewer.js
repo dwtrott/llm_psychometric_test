@@ -24,4 +24,11 @@ test('One-sided observations never get numeric delta',()=>{assert.deepEqual(c.ed
 test('Measured zeros have numeric differences',()=>assert.deepEqual(c.edgeDifference({a:{weight:0},b:{weight:.5}}),{category:'b',delta:.5}));
 test('Ratings use their raw scale',()=>assert.deepEqual(c.edgeDifference({a:{value:4},b:{value:2}},.3),{category:'a',delta:-2}));
 test('Swapping profiles reverses differences',()=>{for(const e of c.graphUnion(a,b,'evokes','neutral')){const x=c.edgeDifference(e),y=c.edgeDifference({a:e.b,b:e.a});if(x.delta!==null)assert.equal(x.delta,-y.delta)}});
+test('Automated scores require a common judge; fixed choices remain comparable',()=>{
+ const rows=[{item:'one',module:'X',conditions:{},family:'one',status:'valid',metrics:{feature_auto_rating_support:1,feature_choice:1}}];
+ const p={hash:'h',cells:c.aggregate(rows),graph:{automated_evaluation:{judge:{model:'J',revision:'one'}}}};
+ const q={...p,graph:{automated_evaluation:{judge:{model:'J',revision:'two'}}}};
+ assert.equal(c.matchCells(p,p).length,2);
+ const matched=c.matchCells(p,q);assert.equal(matched.length,1);assert.equal(matched[0].metric,'feature_choice');
+});
 console.log(checks+' checks passed');

@@ -16,6 +16,9 @@ spec=importlib.util.spec_from_file_location('core_engine',BASE.parent/'battery_v
 engine=importlib.util.module_from_spec(spec);spec.loader.exec_module(engine)
 read,write,lines,jsonl,digest=engine.read,engine.write,engine.lines,engine.jsonl,engine.digest
 
+pspec=importlib.util.spec_from_file_location('core_presentations',BASE/'presentations.py')
+presentations=importlib.util.module_from_spec(pspec);pspec.loader.exec_module(presentations)
+
 _legacy_stage_prompt=engine.stage_prompt
 
 
@@ -29,7 +32,7 @@ def stage_prompt(s):
         'Answer fields:']
     for name,f in s['fields'].items():
         typ=f['type']
-        if typ=='enum':description='a JSON string chosen from '+', '.join(json.dumps(v) for v in f['values'])
+        if typ=='enum':description='a JSON string chosen from '+', '.join(json.dumps(v)+((': '+f['options'][v]) if f.get('options') else '') for v in f['values'])
         elif typ=='text':description=f'a JSON string containing your own words, at most {f["max_words"]} words'
         elif typ=='strings':
             description=f'a JSON array of exactly {f["count"]} distinct strings, each one to five words'
@@ -85,7 +88,8 @@ def load(base=None):
 def prepare(b,config,run_id,repeats=1,facets=None):
     chosen=set(facets or b['modules'])
     if not chosen or not chosen<=b['modules'].keys():raise ValueError('Unknown facet selection')
-    subset=dict(b,items=[t for t in b['items'] if t['module'] in chosen])
+    rounds=config.get('presentation_rounds',1)
+    subset=dict(b,items=presentations.expand([t for t in b['items'] if t['module'] in chosen],rounds))
     p=engine.prepare(subset,config,run_id,repeats)
     splits=sorted({t['split'] for t in subset['items']})
     p.update(battery_hash=digest(b),facets=sorted(chosen),split=splits[0] if len(splits)==1 else 'all')
@@ -95,7 +99,7 @@ def prepare(b,config,run_id,repeats=1,facets=None):
 
 def validate(b,p):
     engine.validate_plan(b,p)
-    expected={t['item_id']:t for t in b['items'] if t['module'] in p['facets']}
+    expected={t['item_id']:t for t in presentations.expand([t for t in b['items'] if t['module'] in p['facets']],p['config'].get('presentation_rounds',1))}
     seen=set()
     for t in p['trials']:
         base=expected.get(t['item_id'])
@@ -113,6 +117,7 @@ def measure(rule,state,t):
         keys=t['stages'][rule['stage']]['keys']
         return sum(sub['metrics'][k+'_accuracy'] for k in keys)/len(keys)
     value=sub['answer'][rule['field']];arg=rule.get('arg')
+    if op=='lookup':return arg[value]
     if op=='scale':return value/arg
     if op=='equals':return int(value==arg)
     if op=='not_equals':return int(value!=arg)
@@ -154,6 +159,7 @@ def score(b,p,records,split=None):
         tn.update(features=features,capability_controls=controls,split=t['split'],presentation=t['presentation'])
         tn['metrics'].update({'feature_'+k:v for k,v in features.items()})
         it=nodes['item:'+t['item_id']]
+        it['scoring_key']=t['features']
         it.update(matched_pair=t['matched_pair'],presentation=t['presentation'],conditions=dict(condition=t['condition'],
                   paraphrase=t['paraphrase'],split=t['split'],cue=t['cue'],stratum=t['stratum']))
         for name,value in features.items():

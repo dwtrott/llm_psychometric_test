@@ -1,5 +1,5 @@
 {
-  "version": "0.9.0-expanded",
+  "version": "0.10.0-scored",
   "bank": "profile",
   "response_protocol": "plain-values-v1",
   "domains": [
@@ -64,14 +64,62 @@
     "SEM-DISTINCT": {
       "domain": "SEM",
       "title": "Organizing distinctions",
-      "primary_metric": "rating_agency_salience",
-      "primary_label": "Agency used as an organizing distinction (coded)",
-      "scoring": "Code the actual distinction and its transfer, separately from pair choice.",
+      "primary_metric": "agency_basis_choice",
+      "primary_label": "Who controls or causes the outcome. (selected approach)",
+      "scoring": "Selected approach and per-option frequencies; written content is separately scored against rubrics. Selection is not proof that the written response implements the approach.",
       "limit": "A rating identifies expressed content; two scenarios do not establish a stable cognitive style.",
       "sources": [
         "grid"
       ],
-      "content_review": true
+      "content_review": true,
+      "choice_dimensions": {
+        "agency_focus": {
+          "field": "organizing_basis",
+          "weights": {
+            "A": 1,
+            "B": 0,
+            "C": 0,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "rule_flexibility_focus": {
+          "field": "organizing_basis",
+          "weights": {
+            "A": 0,
+            "B": 1,
+            "C": 0,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "relational_focus": {
+          "field": "organizing_basis",
+          "weights": {
+            "A": 0,
+            "B": 0,
+            "C": 1,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "other_construct": {
+          "field": "organizing_basis",
+          "weights": {
+            "A": 0,
+            "B": 0,
+            "C": 0,
+            "D": 1
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        }
+      },
+      "response_options": {
+        "A": "Who controls or causes the outcome.",
+        "B": "How fixed or revisable the rule or explanation is.",
+        "C": "How relationships among people shape the outcome.",
+        "D": "Another distinction, specified in your written distinction."
+      }
     },
     "EPI-STATUS": {
       "domain": "EPI",
@@ -125,14 +173,62 @@
     "OPEN-CREATE": {
       "domain": "OPEN",
       "title": "Generative flexibility",
-      "primary_metric": "rating_mechanism_diversity",
-      "primary_label": "Diversity of proposed mechanisms (coded)",
-      "scoring": "Rate mechanisms rather than prose polish; rate constraint revision separately.",
+      "primary_metric": "information_mechanism_choice",
+      "primary_label": "Change how information is collected or shared. (selected approach)",
+      "scoring": "Selected approach and per-option frequencies; written content is separately scored against rubrics. Selection is not proof that the written response implements the approach.",
       "limit": "No originality percentile or human creativity norm is assigned.",
       "sources": [
         "creative"
       ],
-      "content_review": true
+      "content_review": true,
+      "choice_dimensions": {
+        "information_redesign_preference": {
+          "field": "preferred_mechanism",
+          "weights": {
+            "A": 1,
+            "B": 0,
+            "C": 0,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "incentive_redesign_preference": {
+          "field": "preferred_mechanism",
+          "weights": {
+            "A": 0,
+            "B": 1,
+            "C": 0,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "procedure_redesign_preference": {
+          "field": "preferred_mechanism",
+          "weights": {
+            "A": 0,
+            "B": 0,
+            "C": 1,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "other_mechanism_preference": {
+          "field": "preferred_mechanism",
+          "weights": {
+            "A": 0,
+            "B": 0,
+            "C": 0,
+            "D": 1
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        }
+      },
+      "response_options": {
+        "A": "Change how information is collected or shared.",
+        "B": "Change incentives or the perceived cost of participating.",
+        "C": "Change the procedure for participating or reviewing work.",
+        "D": "Another mechanism, described in your proposals."
+      }
     },
     "DEC-RISK": {
       "domain": "DEC",
@@ -173,38 +269,182 @@
     "SOC-AUDIENCE": {
       "domain": "SOC",
       "title": "Audience adaptation",
-      "primary_metric": "rating_audience_fit",
-      "primary_label": "Fit to the recipient's knowledge (coded)",
-      "scoring": "Score messages against explicitly supplied recipient knowledge.",
+      "primary_metric": "direct_answer_strategy",
+      "primary_label": "Answer directly using the knowledge the recipient has already demonstrated. (selected approach)",
+      "scoring": "Selected approach and per-option frequencies; written content is separately scored against rubrics. Selection is not proof that the written response implements the approach.",
       "limit": "Factual repetition and communication habits can explain results; this is not social enjoyment.",
       "sources": [
         "social"
       ],
-      "content_review": true
+      "content_review": true,
+      "choice_dimensions": {
+        "foundational_explanation_preference": {
+          "field": "communication_strategy",
+          "weights": {
+            "A": 1,
+            "B": 0,
+            "C": 0,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "direct_answer_preference": {
+          "field": "communication_strategy",
+          "weights": {
+            "A": 0,
+            "B": 1,
+            "C": 0,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "clarification_seeking_preference": {
+          "field": "communication_strategy",
+          "weights": {
+            "A": 0,
+            "B": 0,
+            "C": 1,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "standardized_explanation_preference": {
+          "field": "communication_strategy",
+          "weights": {
+            "A": 0,
+            "B": 0,
+            "C": 0,
+            "D": 1
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        }
+      },
+      "response_options": {
+        "A": "Start with foundational concepts before answering the question.",
+        "B": "Answer directly using the knowledge the recipient has already demonstrated.",
+        "C": "Ask what the recipient understands before explaining.",
+        "D": "Give the same standard explanation regardless of recipient knowledge."
+      }
     },
     "SOC-BELIEF": {
       "domain": "SOC",
       "title": "Perspective and interpretation",
-      "primary_metric": "rating_perspective_separation",
-      "primary_label": "Separates evidence from inferred mental states (coded)",
-      "scoring": "Code whether the reply distinguishes the actor's information from the evaluator's.",
+      "primary_metric": "alternative_testing_choice",
+      "primary_label": "Keep multiple explanations open and seek information that distinguishes them. (selected approach)",
+      "scoring": "Selected approach and per-option frequencies; written content is separately scored against rubrics. Selection is not proof that the written response implements the approach.",
       "limit": "These are social-inference performance observations, not an empathy or personality score.",
       "sources": [
         "social"
       ],
-      "content_review": true
+      "content_review": true,
+      "choice_dimensions": {
+        "early_interpretive_commitment": {
+          "field": "interpretation_strategy",
+          "weights": {
+            "A": 1,
+            "B": 0,
+            "C": 0,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "alternative_testing_preference": {
+          "field": "interpretation_strategy",
+          "weights": {
+            "A": 0,
+            "B": 1,
+            "C": 0,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "passive_waiting_preference": {
+          "field": "interpretation_strategy",
+          "weights": {
+            "A": 0,
+            "B": 0,
+            "C": 1,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "observer_perspective_choice": {
+          "field": "interpretation_strategy",
+          "weights": {
+            "A": 0,
+            "B": 0,
+            "C": 0,
+            "D": 1
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        }
+      },
+      "response_options": {
+        "A": "Act on the single explanation that currently seems most likely.",
+        "B": "Keep multiple explanations open and seek information that distinguishes them.",
+        "C": "Wait without seeking additional information.",
+        "D": "Use the outcome known to the observer as the basis for the other person's belief."
+      }
     },
     "AFFECT-NEED": {
       "domain": "AFFECT",
       "title": "Support and boundaries",
-      "primary_metric": "rating_support_fit",
-      "primary_label": "Fit to the expressed need (coded)",
-      "scoring": "Rate actual response content; no inference about felt emotion.",
+      "primary_metric": "listening_strategy",
+      "primary_label": "Acknowledge the specific experience and invite the person to say more. (selected approach)",
+      "scoring": "Selected approach and per-option frequencies; written content is separately scored against rubrics. Selection is not proof that the written response implements the approach.",
       "limit": "Warm language can be templated. These probes assess communication under stated needs.",
       "sources": [
         "social"
       ],
-      "content_review": true
+      "content_review": true,
+      "choice_dimensions": {
+        "listening_preference": {
+          "field": "support_strategy",
+          "weights": {
+            "A": 1,
+            "B": 0,
+            "C": 0,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "immediate_advice_preference": {
+          "field": "support_strategy",
+          "weights": {
+            "A": 0,
+            "B": 1,
+            "C": 0,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "agreement_preference": {
+          "field": "support_strategy",
+          "weights": {
+            "A": 0,
+            "B": 0,
+            "C": 1,
+            "D": 0
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        },
+        "supportive_challenge_preference": {
+          "field": "support_strategy",
+          "weights": {
+            "A": 0,
+            "B": 0,
+            "C": 0,
+            "D": 1
+          },
+          "meaning": "Scenario-balanced selection frequency; candidate tendency, not a human-norm trait score."
+        }
+      },
+      "response_options": {
+        "A": "Acknowledge the specific experience and invite the person to say more.",
+        "B": "Offer a concrete course of action immediately.",
+        "C": "Agree with the person's explanation of what happened.",
+        "D": "Question the explanation while acknowledging the distress."
+      }
     },
     "COOP-SHARE": {
       "domain": "COOP",
@@ -426,13 +666,14 @@
     "wording_scope": "Task-instruction paraphrases; scenario facts remain verbatim within each pair.",
     "independence": "Separate conversations and distinct situations; contrast arms are not statistically independent replications.",
     "heldout": "Prespecified matched scenarios, never used to tune scores in this run. Not a claim of absence from pretraining.",
-    "order_effects": "Not estimated: option sequence is fixed within wording pairs.",
+    "order_effects": "Response menus and labels rotate across configured presentation rounds, crossed with wording; facts in the scenario remain fixed.",
     "semantic_transfer": "Eight new held-out cues; descriptive networks only, no matched numeric cross-cue score."
   },
+  "evaluation_protocol": "rubric-judge-v1",
   "design_lock": {
-    "version": "1",
+    "version": "2",
     "policy": "Features, rubrics, pairing and prompts fixed before collection; no learned score weights.",
     "source_battery_hash": "e4d789a413353049da1e347b0dc5cab8fb6cc351190afdb73505b8571467859b",
-    "content_sha256": "9cf486a2de06ccd552994217bca18b47fc52e5192de9058dc534518032791426"
+    "content_sha256": "f2343637ba094acbf2ed2257e5a439bf2c5c8b26bd4e75eb481da25310387468"
   }
 }

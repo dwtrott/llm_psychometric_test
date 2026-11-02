@@ -54,9 +54,13 @@ def records_at(path):
 
 
 def prepare_run(config,run_dir,run_id,repeats=1,facets=None,battery_dir=None):
+    if config.get('provider')=='huggingface-local' and (config.get('adapter_version')!='1.3.0' or battery_dir is None):
+        raise ValueError('STALE COLAB NOTEBOOK: reopen the notebook from GitHub in a fresh runtime. The scored full battery requires adapter 1.3.0 and an explicit battery_full directory. No compact run was started.')
     out=Path(run_dir);out.mkdir(parents=True,exist_ok=True)
     source=Path(battery_dir) if battery_dir is not None else ROOT/'battery_core'
     b=processor.load(source)
+    if config.get('provider')=='huggingface-local' and b['version']!='0.10.0-scored':
+        raise ValueError('Expected scored full battery v0.10.0. Refresh the notebook and source checkout.')
     proposed=processor.prepare(b,config,run_id,repeats,facets)
     path=out/'plan.json'
     if path.exists():
@@ -122,7 +126,14 @@ def export(run_dir):
     out=Path(run_dir);b=processor.load(out/'instrument' if (out/'instrument').exists() else None);plan=processor.read(out/'plan.json')
     records=records_at(out/'responses.jsonl')
     rows,summary,graph,review=processor.score(b,plan,records)
+    evaluator=module('hf_evaluator',ROOT/'battery_core/evaluate.py')
+    states=processor.engine.replay(b,plan,records)
+    graph=evaluator.enrich(graph,b,plan,states,out)
+    evaluated_nodes={n['id']:n for n in graph['nodes']}
+    for row in rows:row['features']=evaluated_nodes['trial:'+row['trial_id']]['features']
+    summary['evaluation']=graph['automated_evaluation']
     result=out/'results';result.mkdir(exist_ok=True)
+    evaluator.report(graph,result/'measurements.html')
     processor.lines(result/'trial_scores.jsonl',rows)
     processor.lines(result/'human_review.template.jsonl',review)
     states=processor.engine.replay(b,plan,records)
@@ -143,7 +154,8 @@ def export(run_dir):
     summary['completion']=audit['summary']
     summary['run_status']='complete' if audit['summary']['complete'] else 'incomplete'
     start=audit_path.read_text(encoding='utf-8').replace('<h1>',
-        '<p><a href="results/analysis/report.html">Open analysis (check coverage below first)</a> · '
+        '<p><a href="results/measurements.html"><b>Read the actual scores and supporting quotations</b></a> · '
+        '<a href="results/analysis/report.html">Open analysis (check coverage below first)</a> · '
         '<a href="results/viewer.html">Open graph viewer</a></p><h1>',1)
     (out/'START_HERE.html').write_text(start,encoding='utf-8')
     atomic_json(result/'scores.json',summary)
@@ -154,11 +166,20 @@ def export(run_dir):
         graphs=[]
         for split in ['development','heldout']:
             _,_,partition,partition_review=processor.score(b,plan,records,split=split)
+            partition=evaluator.enrich(partition,b,plan,states,out)
             path=result/f'graph-{split}.json';atomic_json(path,partition);graphs.append(path)
             processor.lines(result/f'human_review-{split}.template.jsonl',partition_review)
     report=analysis.build(graphs,result/'analysis')
     viewer.build_viewer(graphs,result/'viewer.html')
     return dict(summary=summary,audit=str(audit_path),start=str(out/'START_HERE.html'),report=str(report),graph=str(result/'graph.json'),graphs=[str(p) for p in graphs],viewer=str(result/'viewer.html'))
+
+
+def evaluate_run(run_dir,generate,judge,progress=None):
+    out=Path(run_dir);b=processor.load(out/'instrument');plan=processor.read(out/'plan.json')
+    processor.validate(b,plan)
+    states=processor.engine.replay(b,plan,records_at(out/'responses.jsonl'))
+    evaluator=module('hf_evaluator_collection',ROOT/'battery_core/evaluate.py')
+    return evaluator.collect(b,plan,states,out,generate,judge,progress)
 
 
 class TransformersGenerator:

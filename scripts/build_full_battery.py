@@ -5,6 +5,7 @@ authored below, not produced by synonym replacement. Held-out situations are
 specified before responses, with response schemas/payoffs inherited from the
 matched development stratum. This is a design lock, not empirical validation.
 """
+from structured_choices import apply as structured_choices
 import copy
 import csv
 import hashlib
@@ -275,15 +276,16 @@ def build():
     assert set(PAIRS)==set(BASE)
     OUT.mkdir(exist_ok=True)
     bank={k:copy.deepcopy(v) for k,v in B.items() if k!='items'}
-    bank.update(version='0.9.0-expanded',measurement_design=dict(
+    bank.update(version='0.10.0-scored',measurement_design=dict(
         kind='scenario_wording_transfer',development_scenario_strata_per_nonassociation_facet='2; 4 in the five two-arm contrast facets',
         heldout_scenario_strata_per_nonassociation_facet='2; 4 in the five two-arm contrast facets',wordings_per_scenario=2,
         wording_scope='Task-instruction paraphrases; scenario facts remain verbatim within each pair.',
         independence='Separate conversations and distinct situations; contrast arms are not statistically independent replications.',
         heldout='Prespecified matched scenarios, never used to tune scores in this run. Not a claim of absence from pretraining.',
-        order_effects='Not estimated: option sequence is fixed within wording pairs.',
+        order_effects='Response menus and labels rotate across configured presentation rounds, crossed with wording; facts in the scenario remain fixed.',
         semantic_transfer='Eight new held-out cues; descriptive networks only, no matched numeric cross-cue score.'))
-    bank['design_lock']=dict(version='1',policy='Features, rubrics, pairing and prompts fixed before collection; no learned score weights.',
+    bank['evaluation_protocol']='rubric-judge-v1'
+    bank['design_lock']=dict(version='2',policy='Features, rubrics, pairing and prompts fixed before collection; no learned score weights.',
                              source_battery_hash=core.digest(B))
     rows=[];manifest=[]
     for sid,t in BASE.items():
@@ -308,6 +310,7 @@ def build():
                     if t['module']=='SEM-LINK':st['fields']['associates']['exclude']=cue
                     if split=='heldout' and sid=='OPEN-EXPLORE-01':
                         st['resources']['explanation']['content']='The log combines different dates. The gate was locked at 09:00 on Monday and unlocked at 09:00 on Tuesday.'
+                    prompt=structured_choices(t,n,st,prompt,bank['modules'])
                     rows.append(dict(prompt_id=item,category=bank['modules'][t['module']]['domain'],facet=t['module'],
                         title=t['scenario_name'] if split=='development' else design['name'],stage=n,prompt=prompt,
                         scenario=scenario,matched_pair=matched,split=split,paraphrase=wording,condition=condition,
@@ -320,12 +323,27 @@ def build():
     with (OUT/'prompts.csv').open('w',encoding='utf-8-sig',newline='') as f:
         w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
     (OUT/'design_manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
-    parts=['# Expanded psychological prompt battery',
+    scoring=['# Scoring key: choices to candidate tendencies',
+        'A weight is a task-level indicator, not a calibrated human trait loading. Choice-based strength is the mean indicator within each scenario, then the equally weighted mean across scenarios within a partition and condition. Wordings, rounds and repetitions are not independent scenarios. A zero for a choice means that option was not selected, not that the model lacks the underlying capacity. Written rubric judgments and capability controls are separate.',
+        'Response menus rotate in the runner. The keys below use canonical option meanings; displayed P1/P2/P3/P4 codes are translated back before interpretation. Fixed-choice facts in the scenario are not rewritten.']
+    for mid,m in bank['modules'].items():
+        scoring+=['## '+mid+' — '+m['title'],'**Primary observation:** '+m['primary_label'],'**Interpretation:** '+m['scoring'],'**Limit:** '+m['limit']]
+        if m.get('choice_dimensions'):
+            for dimension,d in m['choice_dimensions'].items():
+                scoring.append('**'+dimension+'**: '+ '; '.join(m['response_options'][k]+' → '+str(v) for k,v in d['weights'].items()))
+        else:
+            for sid,t in BASE.items():
+                if t['module']==mid:scoring.append('**'+sid+'**\n\n```json\n'+json.dumps(t['features'],indent=2)+'\n```')
+    (OUT/'SCORING.md').write_text('\n\n'.join(scoring)+'\n',encoding='utf-8')
+    parts=['# Scored psychological prompt battery',
            '240 conversation cards / 280 question stages, 11 categories and 22 facets. '
            'Every card starts a fresh conversation. Follow-ups stay in that conversation. '
            '120 cards are development and 120 held-out. The two wordings share identical facts; only task instructions are paraphrased. '
-           'These are original exploratory probes, not a validated full personality inventory. See [design and running guide](README.md).']
+           'Most cards now include selected options or numeric decisions; written answers receive separate evidence-quoted automated rubric scores. These are original exploratory probes, not a validated full personality inventory. See [design and running guide](README.md).']
     page=['<!doctype html><meta charset="utf-8"><title>Expanded battery: actual questions</title><style>body{font:16px/1.5 system-ui;margin:30px}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #bcc;padding:14px;vertical-align:top;overflow-wrap:anywhere}th{background:#eef3f7}h2{margin-top:50px}</style><h1>Actual questions: scenario and wording comparisons</h1><p>Each row compares the original and alternate instruction; scenario facts, response fields and incentives are held fixed. Development and matched held-out scenarios are displayed separately. This is a prespecified exploratory design, not psychological validation.</p>']
+    def menus(row):
+        fields=json.loads(row['response_fields'])
+        return ''.join('<p><b>'+html.escape(name)+'</b></p><ul>'+''.join('<li>'+html.escape(code+': '+f.get('options',{}).get(code,code))+'</li>' for code in f['values'])+'</ul>' for name,f in fields.items() if f['type']=='enum')
     for d in bank['domains']:
         parts.append('## '+d['title']);page.append('<h2>'+html.escape(d['title'])+'</h2>')
         for sid,t in BASE.items():
@@ -336,8 +354,8 @@ def build():
                 for n in range(len(t['stages'])):
                     a,z=[r for r in selected if r['stage']==n]
                     parts.extend(['### '+a['prompt_id']+' / '+z['prompt_id'],f'**Facet:** {t["module"]}; **partition:** {split}; **stage:** {n+1}',
-                                  '**Original:** '+a['prompt'],'**Alternate:** '+z['prompt'],'**Response fields:** '+', '.join(json.loads(a['response_fields']))])
-                    page.append('<tr><td>'+html.escape(split+': '+a['title']+f' (stage {n+1})')+'</td><td>'+html.escape(a['prompt'])+'</td><td>'+html.escape(z['prompt'])+'</td></tr>')
+                                  '**Original:** '+a['prompt'],'**Alternate:** '+z['prompt'],'**Response fields and menus:** '+json.dumps(json.loads(a['response_fields']),ensure_ascii=False)])
+                    page.append('<tr><td>'+html.escape(split+': '+a['title']+f' (stage {n+1})')+'</td><td>'+html.escape(a['prompt'])+menus(a)+'</td><td>'+html.escape(z['prompt'])+menus(z)+'</td></tr>')
             page.append('</table>')
     (OUT/'PROMPTS.md').write_text('\n\n'.join(parts)+'\n',encoding='utf-8')
     (OUT/'side-by-side.html').write_text('\n'.join(page),encoding='utf-8')

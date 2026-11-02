@@ -46,7 +46,7 @@ def audit(b,plan,records):
                generation_seconds=sum(r.get('wall_seconds',0) for r in records))
     stats['complete']=stats['cards_valid']==stats['cards_planned'] and stats['stages_accepted']==stats['stages_planned']
     stats['scope_complete']=set(plan['facets'])==set(b['modules'])
-    stats['instrument_cards']=len(b['items'])*plan['repeats']
+    stats['instrument_cards']=len(b['items'])*plan['repeats']*plan['config'].get('presentation_rounds',1)
     coverage=[]
     for mid,meta in b['modules'].items():
         selected=[c for c in cards if c['facet']==mid]

@@ -15,7 +15,7 @@ def fingerprint(x):return hashlib.sha256(stable(x).encode()).hexdigest()
 
 def load_profile(path):
  path=pathlib.Path(path);g=json.loads(path.read_text(encoding='utf-8-sig'))
- if g.get('battery_version') not in ['0.7.0-draft','0.8.0-core','0.8.1-core','0.9.0-expanded'] or g.get('bank')!='profile':raise ValueError('Use a supported profile graph; capability controls remain separate.')
+ if g.get('battery_version') not in ['0.7.0-draft','0.8.0-core','0.8.1-core','0.9.0-expanded','0.10.0-scored'] or g.get('bank')!='profile':raise ValueError('Use a supported profile graph; capability controls remain separate.')
  if g.get('analysis_split')=='all':raise ValueError('Load graph-development.json and graph-heldout.json separately; do not pool partitions.')
  if not g.get('battery_hash') or not isinstance(g.get('profile_catalog'),dict):raise ValueError('Missing battery identity or catalog')
  nodes={}
@@ -76,8 +76,11 @@ def compare(a,b,transfer=False):
   if a['config']!=b['config'] or (a['split'],b['split'])!=('development','heldout'):raise ValueError('Transfer requires identical configuration, development then heldout')
   if not b['lock']:raise ValueError('Held-out graph has no analysis-lock identity')
  elif a['split']!=b['split']:raise ValueError('Compare models within the same partition')
+ def judge_identity(p):return {k:v for k,v in (p.get('graph',{}).get('automated_evaluation',{}).get('judge') or {}).items() if k!='same_model_as_subject'}
+ judges_match=judge_identity(a)==judge_identity(b)
+ def allowed(metric):return judges_match or not metric.startswith('auto_rating_')
  fixed=[k for k in AXES if not (transfer and k=='scenario')]+['metric','repeat']
- def index(p):return {tuple(r[k] for k in fixed):r for r in measurements(p)}
+ def index(p):return {tuple(r[k] for k in fixed):r for r in measurements(p) if allowed(r['metric'])}
  aa,bb=index(a),index(b);shared=aa.keys()&bb.keys();groups=collections.defaultdict(list)
  for key in sorted(shared):groups[key[:-1]].append((aa[key],bb[key]))
  cells=[]
@@ -89,7 +92,7 @@ def compare(a,b,transfer=False):
  aggregate=[dict(zip(groupkeys,key),a=mean([r['a'] for r in rs]),b=mean([r['b'] for r in rs]),delta=mean([r['delta'] for r in rs]),n_scenarios=len(rs),pairs=sorted({r['pair'] for r in rs})) for key,rs in sorted(pooled.items())]
  # Does the within-scenario condition effect itself transfer/change between models?
  def effects(p):
-  return {tuple(r[k] for k in ['facet','pair','wording','base','order','transfer','cue','metric','level_a','level_b']):r for r in contrast(p,'condition')}
+  return {tuple(r[k] for k in ['facet','pair','wording','base','order','transfer','cue','metric','level_a','level_b']):r for r in contrast(p,'condition') if allowed(r['metric'])}
  ea,eb=effects(a),effects(b);effect_changes=[]
  for key in sorted(ea.keys()&eb.keys()):
   x,y=ea[key],eb[key]
@@ -100,7 +103,7 @@ def compare(a,b,transfer=False):
   if not rr:continue
   da=mean([arms[1][r]-arms[0][r] for r in rr]);db=mean([arms[3][r]-arms[2][r] for r in rr])
   effect_changes.append(dict(zip(['facet','pair','wording','base','order','transfer','cue','metric','level_a','level_b'],key),a=da,b=db,delta=db-da,n_repeat_pairs=len(rr)))
- return dict(a_id=a['id'],b_id=b['id'],a_label=a['label'],b_label=b['label'],mode='heldout_transfer' if transfer else 'model_comparison',same_configuration=a['config']==b['config'],n_common_observations=len(shared),n_a_only=len(aa.keys()-bb.keys()),n_b_only=len(bb.keys()-aa.keys()),cells=cells,scenario_balanced=aggregate,condition_effect_changes=effect_changes,interpretation='Descriptive differences on common valid feature/cell/repeat indices. Repeats are not independent scenarios. No statistical significance, latent trait or predictive validation inferred.')
+ return dict(automated_ratings_comparable=judges_match,a_id=a['id'],b_id=b['id'],a_label=a['label'],b_label=b['label'],mode='heldout_transfer' if transfer else 'model_comparison',same_configuration=a['config']==b['config'],n_common_observations=len(shared),n_a_only=len(aa.keys()-bb.keys()),n_b_only=len(bb.keys()-aa.keys()),cells=cells,scenario_balanced=aggregate,condition_effect_changes=effect_changes,interpretation='Descriptive differences on common valid feature/cell/repeat indices. Repeats are not independent scenarios. No statistical significance, latent trait or predictive validation inferred.')
 
 def analyze(profiles):
  seen=set();reports=[]
@@ -167,6 +170,8 @@ def behavior(profile,facet):
 def content_status(profile,facet,rows):
  meta=profile['catalog']['modules'][facet]
  if not meta.get('content_review',facet in HUMAN):return 'task-choice features only'
+ automatic=sum(any(k.startswith('auto_rating_') for k in r['features']) for r in rows)
+ if automatic:return f'{automatic} trials with automated rubric scores (not human ratings); inspect judge provenance and missing criteria'
  rated=sum(any(k.startswith('rating_') for k in r['features']) for r in rows)
  return f'{rated} trials with imported content ratings; inspect missing criteria' if rated else 'not imported / requires review'
 
@@ -537,6 +542,7 @@ def render(profiles,analysis):
   valid=sum(r['status']=='valid' for r in p['rows']);total=len(p['rows'])
   if valid<total:out.append(f'<p class="banner"><b>PARTIAL RUN: {esc(p["label"])}</b>: {valid} of {total} cards passed format checks. Missing or rejected answers are not psychological findings. Inspect the run audit before interpreting this graph.</p>')
   if p['graph'].get('battery_version','').endswith('-core'):out.append('<p class="banner">Compact exploratory battery: broad category coverage, but no paraphrase, option-order or held-out robustness tests. This run alone cannot establish a stable psychological fingerprint.</p>')
+ if any(not c.get('automated_ratings_comparable',True) for c in analysis['comparisons']):out.append('<p class="banner">Automated content scores were excluded from comparisons with different judge configurations. Fixed-rule choices and numeric measures remain comparable on matched cells.</p>')
  if any(p['synthetic'] for p in profiles):out.append('<p class="banner"><b>SYNTHETIC DATA INCLUDED</b> · These examples demonstrate the tool, not real LLM findings.</p>')
  out.append('<nav aria-label="Report sections"><a href="#understand">1 · Psychological KG</a><a href="#compare">2 · Difference KG</a><a href="#relationships">3 · Relationships</a><a href="#technical">Evidence</a></nav><h2 id="understand">Psychological regions and their relationships</h2><p>Select a model. Colored boundaries mark the 11 psychological regions. The nodes represent candidate behavioral patterns and show what this model did. Click a node for its findings and original responses.</p><p class="kg-legend"><b>Solid node borders:</b> observed behavior; amber flags presentation sensitivity. <b>Dashed H1–H8 links:</b> proposed relationships between patterns, all currently untested. Click a link label to inspect its question and required test. Region colors identify areas, not scores.</p><details><summary>What is established, and what remains a hypothesis?</summary><p>The graph connects theory-defined regions and candidate facets to response-derived findings, measurement cells, conditions, scenarios and original responses. The cross-pattern relationship layer adds explicit research hypotheses, not inferred correlations. No cross-facet relationship has been estimated from the synthetic demo.</p><p>This is a candidate behavioral fingerprint. Establishing a psychological fingerprint still requires independent content ratings, recurring patterns across distinct scenarios, held-out prediction, repeated-run reproducibility and evidence that between-model differences exceed within-model variation.</p><p><a href="knowledge_graph.json" download>Download the typed psychological/evidence KG (JSON)</a></p></details><div class="profile-selector">')
  for i,p in enumerate(profiles):out.append(f'<input class="model-tab" type="radio" name="profile" id="model-{i}"'+(' checked' if i==0 else '')+f'><label class="model-label" for="model-{i}">{esc(p["label"])} · {esc(p["split"])}</label> ')
