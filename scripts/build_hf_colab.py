@@ -16,7 +16,7 @@ cell('markdown','''
 
 1. Choose **Runtime → Change runtime type → GPU → A100**.
 2. Keep the defaults below for a first run, then choose **Runtime → Run all**.
-3. Wait for the result ZIP to download. Extract it and open `results/analysis/report.html` or `results/viewer.html`.
+3. Wait for the result ZIP to download. Extract it and open **`START_HERE.html`**. This shows exactly which questions received accepted answers, which failed, and which stages have no response. Analysis and graph links are there too.
 
 Default: [Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct), a public chat model. No Hugging Face key is required for this default. Change `MODEL_ID` to try another compatible text/chat model. The notebook downloads weights and performs inference **inside your Colab GPU session**, not through a paid inference API.
 
@@ -30,7 +30,7 @@ MODEL_ID = "Qwen/Qwen2.5-7B-Instruct"
 # Smaller alternative: "Qwen/Qwen2.5-1.5B-Instruct"
 MODEL_REVISION = "main"  # Resolved to an exact Hugging Face commit before loading.
 SOURCE_REVISION = "main" # Or the exact battery source commit from a previous run.
-RUN_LABEL = "first-run" # Change for a new run/settings; keep to resume an interrupted run.
+RUN_LABEL = "format-v1" # New protocol: do not reuse the old first-run results directory.
 REPEATS = 1
 MAX_NEW_TOKENS = 512
 SEED = 42
@@ -65,12 +65,11 @@ if origin != REPO_URL:
     raise RuntimeError("Existing checkout belongs to a different repository. Choose a new REPO_DIR.")
 if subprocess.check_output(["git", "-C", str(REPO_DIR), "status", "--porcelain"], text=True).strip():
     raise RuntimeError("The checkout has local edits. Use a clean checkout so the run records an exact source revision.")
-if SOURCE_REVISION != "main":
-    subprocess.run(["git", "-C", str(REPO_DIR), "fetch", "--depth", "1", "origin", SOURCE_REVISION], check=True)
-    subprocess.run(["git", "-C", str(REPO_DIR), "checkout", "--detach", "FETCH_HEAD"], check=True)
+subprocess.run(["git", "-C", str(REPO_DIR), "fetch", "--depth", "1", "origin", SOURCE_REVISION], check=True)
+subprocess.run(["git", "-C", str(REPO_DIR), "checkout", "--detach", "FETCH_HEAD"], check=True)
 SOURCE_COMMIT = subprocess.check_output(["git", "-C", str(REPO_DIR), "rev-parse", "HEAD"], text=True).strip()
 print("Battery source:", SOURCE_COMMIT)
-print("An existing checkout is reused unchanged when resuming; it is not silently updated.")
+print("SOURCE_REVISION=main fetches the current release. To resume an older run, set SOURCE_REVISION to that run's saved commit.")
 ''')
 cell('markdown','''
 ## Check the GPU and load the model
@@ -141,7 +140,7 @@ config = dict(
     model_revision=RESOLVED_MODEL_REVISION, tokenizer_revision=RESOLVED_MODEL_REVISION,
     chat_template_sha256=hashlib.sha256(template_identity.encode()).hexdigest(),
     dtype="bfloat16", attention="sdpa", quantization="none", seed=SEED,
-    decoding=generator.generation.to_dict(), adapter_version="1.0.0",
+    decoding=generator.generation.to_dict(), adapter_version="1.1.0",
     transformers_version=transformers.__version__, torch_version=str(torch.__version__),
     accelerate_version=accelerate.__version__, huggingface_hub_version=huggingface_hub.__version__,
     cuda_version=torch.version.cuda, gpu=GPU_NAME, source_commit=SOURCE_COMMIT,
@@ -151,7 +150,7 @@ battery, plan = runner.prepare_run(config, RUN_DIR, RUN_ID, REPEATS, FACETS)
 
 # Include the actual instrument and implementation in the downloadable archive.
 for relative in ["battery_core/prompts.csv", "battery_core/battery.json", "battery_core/processor.py",
-                 "battery_core/hf_runner.py", "battery_core/PROMPTS.md", "battery_core/README.md",
+                 "battery_core/hf_runner.py", "battery_core/run_audit.py", "battery_core/PROMPTS.md", "battery_core/README.md",
                  "battery_v7/_engine.py", "battery_v7/content_ratings.py", "analyzer/psychometric.py",
                  "viewer/viewer.py", "viewer/viewer.html"]:
     destination = RUN_DIR / "source" / relative
@@ -169,7 +168,7 @@ print("Results folder:", RUN_DIR)
 cell('markdown','''
 ## Run all prompts
 
-The progress bar counts completed cards, including refusals and invalid responses. Optional information requests and follow-ups are handled automatically. Keep the notebook open while it runs. If execution is interrupted, rerun this cell to continue from the saved journal. A model/runtime exception stops collection; it is logged and leaves that request pending. A returned but invalid answer is retained and is not retried.
+The progress bar counts **processed cards**, which can include rejected responses. Its separate accepted/rejected counters show success. **100% processed does not mean a complete evaluation.** The next cell reports exactly how many question stages have accepted answers and lists any missing stages. Optional requests and follow-ups are automatic, but an invalid response stops that card's remaining stages. An interrupted collection can resume by rerunning this cell; invalid answers are retained and not silently repaired or retried.
 ''')
 cell('code','''
 from tqdm.auto import tqdm
@@ -177,17 +176,17 @@ from tqdm.auto import tqdm
 saved = runner.records_at(RUN_DIR / "responses.jsonl")
 states = runner.processor.engine.replay(battery, plan, saved)
 finished = sum(s["status"] != "pending" for s in states.values())
-bar = tqdm(total=len(plan["trials"]), initial=finished, desc="Battery cards")
+bar = tqdm(total=len(plan["trials"]), initial=finished, desc="Cards processed (not success)")
 def show_progress(event):
-    bar.update(event["completed"] - bar.n)
-    bar.set_postfix(calls=event["calls"], card=event["item_id"], status=event["status"])
+    bar.update(event["processed"] - bar.n)
+    bar.set_postfix(accepted=event["accepted"], rejected=event["quality"].get("invalid", 0), calls=event["calls"])
 
 try:
     records = runner.collect(battery, plan, RUN_DIR, generator, show_progress)
 finally:
     bar.close()
     print("Responses saved to", RUN_DIR / "responses.jsonl")
-print(f"Finished collection: {len(records)} model responses.")
+print(f"Collection stopped after {len(records)} model responses. Check the completion report below before interpreting the run.")
 ''')
 cell('markdown','''
 ## Score and inspect results
@@ -198,19 +197,20 @@ cell('code','''
 from IPython.display import HTML, display
 
 artifacts = runner.export(RUN_DIR)
-print(json.dumps(artifacts["summary"]["quality"], indent=2))
+print("RUN STATUS:", artifacts["summary"]["run_status"].upper())
+print(json.dumps(artifacts["summary"]["completion"], indent=2))
 print(json.dumps(artifacts["summary"]["collection"], indent=2))
 print("Content review targets:", artifacts["summary"].get("review_pending", "see human_review.template.jsonl"))
 print("Graph:", artifacts["graph"])
 print("Interactive viewer:", artifacts["viewer"])
 if artifacts["summary"]["collection"]["token_limit_hits"]:
     print("Some generations reached the token limit. Inspect their raw outputs; any changed-limit rerun must use a new RUN_LABEL.")
-display(HTML(Path(artifacts["report"]).read_text(encoding="utf-8")))
+display(HTML(Path(artifacts["audit"]).read_text(encoding="utf-8")))
 ''')
 cell('markdown','''
 ## Download everything
 
-The ZIP contains the exact plan/configuration, raw `responses.jsonl`, timing/token metadata, `results/graph.json`, scores, review templates, an analyzer report and a self-contained graph viewer. Extract the whole ZIP to keep the report's relative graph links working. No model weights are included.
+The ZIP contains **`START_HERE.html`**, the question-by-question audit, exact plan/configuration, raw `responses.jsonl`, timing/token metadata, `results/graph.json`, scores, review templates, an analyzer report and a graph viewer. Extract the whole ZIP to keep links working. A ZIP can contain an **incomplete** run; the start page states this explicitly. No model weights are included.
 
 To compare another model, change `MODEL_ID`, use a new run label and run again. Keep both graph exports and load them into the existing analyzer's Colab notebook. Different battery hashes cannot be compared. The separate network-atlas mockup is not the result viewer.
 ''')

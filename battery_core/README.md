@@ -4,7 +4,7 @@
 
 **[Run the battery on a Hugging Face model in Colab](https://colab.research.google.com/github/dwtrott/llm_psychometric_test/blob/main/battery_core/Run_HuggingFace_A100.ipynb)**
 
-Select an A100 runtime, then **Run all**. The notebook downloads `Qwen/Qwen2.5-7B-Instruct` by default, runs all prompts/follow-ups locally on the GPU, saves each unedited response, and downloads a ZIP with the graph, scores, analyzer report and viewer. Change `MODEL_ID` to use another compatible model; `Qwen/Qwen2.5-1.5B-Instruct` is a smaller option. No API key is needed for these defaults. Model execution adds Transformers/Accelerate/PyTorch dependencies; the battery and analyzer remain standard-library Python.
+Select an A100 runtime, then **Run all**. Open **START_HERE.html** in the downloaded ZIP first: it lists completion, category/facet coverage, every question and the exact responses. Processed cards are not necessarily accepted cards. The notebook downloads `Qwen/Qwen2.5-7B-Instruct` by default, runs all prompts/follow-ups locally on the GPU, saves each unedited response, and downloads a ZIP with the graph, scores, analyzer report and viewer. Change `MODEL_ID` to use another compatible model; `Qwen/Qwen2.5-1.5B-Instruct` is a smaller option. No API key is needed for these defaults. Model execution adds Transformers/Accelerate/PyTorch dependencies; the battery and analyzer remain standard-library Python.
 
 An interrupted collection resumes by rerunning its cell. Optional Drive storage preserves results beyond runtime deletion. For a full-runtime resume, pin `SOURCE_REVISION` and `MODEL_REVISION` to the saved commits and keep the configuration unchanged. Invalid model responses are retained, not silently repaired or retried. This notebook's syntax and checkpoint/export pipeline have been tested locally with synthetic generators; a live Colab/A100 model run has not been verified here. [Notebook source](Run_HuggingFace_A100.ipynb).
 
@@ -84,3 +84,13 @@ The Python runner, content importer and analyzer use only the standard library. 
 Automated checks exercise all 50 cards, follow-up/resource requests, response validation, separate controls, missingness, rating agreement and provenance, two-model comparison, KG integrity, SVG generation, and the existing viewer export. Fixtures are explicitly synthetic. They test the software contract, not psychological validity, real-model behavior or rater agreement in practice.
 
 The authoring source is [build_core_prompts.py](../scripts/build_core_prompts.py); the rendered CSV and question list are committed for direct reading. Regeneration changes instrument identity if wording or rules change. Sources and adaptation status are listed at the end of the [prompt list](PROMPTS.md).
+
+## Response protocol correction (0.8.1-core)
+
+The first Qwen 7B run exposed ambiguous formatting instructions: the old template placed field definitions where answer values belonged. The new protocol lists required value types in plain language. Question content is unchanged, but the protocol and battery hash change; use a new run label (`format-v1`) and do not pool it with old runs. The notebook fetches the selected source revision each time setup runs. The updated formatting has offline regression coverage; successful completion on a live model still needs verification.
+
+The audit reports missing and rejected stages rather than silently repairing them. Format acceptance is not correctness, content review, or proof of a stable psychological pattern. To audit an older downloaded ZIP with its original battery data (without executing its archived code):
+
+```sh
+python battery_core/run_audit.py path/to/results.zip --out results/run-audit
+```

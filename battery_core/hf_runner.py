@@ -103,7 +103,9 @@ def collect(b,plan,run_dir,generate,progress=None):
             append_record(out/'responses.jsonl',record)
             records.append(record);state=new_state;states[trial['trial_id']]=state
             if progress:
-                progress(dict(calls=len(records),completed=sum(s['status']!='pending' for s in states.values()),
+                progress(dict(calls=len(records),processed=sum(s['status']!='pending' for s in states.values()),
+                              completed=sum(s['status']=='valid' for s in states.values()),
+                              accepted=sum(s['status']=='valid' for s in states.values()),
                               total=len(states),item_id=trial['item_id'],status=state['status'],
                               quality=dict(collections.Counter(s['status'] for s in states.values()))))
     return records
@@ -115,7 +117,6 @@ def export(run_dir):
     records=records_at(out/'responses.jsonl')
     rows,summary,graph,review=processor.score(b,plan,records)
     result=out/'results';result.mkdir(exist_ok=True)
-    for name,value in [('graph.json',graph),('scores.json',summary)]:atomic_json(result/name,value)
     processor.lines(result/'trial_scores.jsonl',rows)
     processor.lines(result/'human_review.template.jsonl',review)
     states=processor.engine.replay(b,plan,records)
@@ -128,12 +129,23 @@ def export(run_dir):
     summary['collection']=dict(calls=len(records),generated_tokens=sum(r.get('generation',{}).get('output_tokens',0) for r in records),
         generation_seconds=sum(r.get('wall_seconds',0) for r in records),
         token_limit_hits=sum(bool(r.get('generation',{}).get('hit_token_limit')) for r in records))
+    auditor=module('hf_audit',ROOT/'battery_core/run_audit.py')
+    audit=auditor.audit(b,plan,records)
+    audit_path=auditor.write_report(audit,result)
+    graph['run_completion']=audit['summary']
+    atomic_json(result/'graph.json',graph)
+    summary['completion']=audit['summary']
+    summary['run_status']='complete' if audit['summary']['complete'] else 'incomplete'
+    start=audit_path.read_text(encoding='utf-8').replace('<h1>',
+        '<p><a href="results/analysis/report.html">Open analysis (check coverage below first)</a> · '
+        '<a href="results/viewer.html">Open graph viewer</a></p><h1>',1)
+    (out/'START_HERE.html').write_text(start,encoding='utf-8')
     atomic_json(result/'scores.json',summary)
     analysis=module('hf_analysis',ROOT/'analyzer/psychometric.py')
     viewer=module('hf_viewer',ROOT/'viewer/viewer.py')
     report=analysis.build([result/'graph.json'],result/'analysis')
     viewer.build_viewer([result/'graph.json'],result/'viewer.html')
-    return dict(summary=summary,report=str(report),graph=str(result/'graph.json'),viewer=str(result/'viewer.html'))
+    return dict(summary=summary,audit=str(audit_path),start=str(out/'START_HERE.html'),report=str(report),graph=str(result/'graph.json'),viewer=str(result/'viewer.html'))
 
 
 class TransformersGenerator:

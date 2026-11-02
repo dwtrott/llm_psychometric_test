@@ -16,13 +16,14 @@ CONFIG=dict(provider='synthetic-test',model='fixture',seed=42,synthetic=True)
 
 
 def fake_generate(messages,seed):
-    # Use only the same JSON schema that a model receives, never scoring keys.
+    # Synthetic orchestration fixture, not evidence of model format compliance.
     last=messages[-1]['content']
     if 'Available resources and costs: ' in last:
         menu=json.JSONDecoder().raw_decode(last.split('Available resources and costs: ',1)[1])[0]
         return dict(text=json.dumps(dict(action='request',resource=next(iter(menu)))),output_tokens=10)
-    prompt=next(m['content'] for m in reversed(messages) if m['role']=='user' and 'Submit JSON: ' in m['content'])
-    schema=json.JSONDecoder().raw_decode(prompt.split('Submit JSON: ',1)[1])[0]['answer']
+    bank=r.processor.load()
+    schemas={r.processor.stage_prompt(stage):stage['fields'] for item in bank['items'] for stage in item['stages']}
+    schema=next(fields for m in reversed(messages) if m['role']=='user' for prompt,fields in schemas.items() if m['content'].endswith(prompt))
     answer={}
     for k,f in schema.items():
         answer[k]=(f['values'][0] if f['type']=='enum' else f['min'] if f['type'] in ['number','integer'] else
@@ -31,6 +32,29 @@ def fake_generate(messages,seed):
 
 
 class HFRunner(unittest.TestCase):
+    def test_category_audit_exposes_rejected_followup_and_new_protocol(self):
+        with tempfile.TemporaryDirectory() as d:
+            b,plan=r.prepare_run(CONFIG,d,'audit',facets=['SEM-DISTINCT'])
+            events=[]
+            records=r.collect(b,plan,d,lambda messages,seed:dict(text='{"action":"submit","answer":{"pair":{"type":"enum","values":["LM"]}}}'),events.append)
+            self.assertEqual(events[-1]['processed'],2)
+            self.assertEqual(events[-1]['accepted'],0)
+            result=r.export(d)
+            audit=json.loads(Path(result['audit']).with_suffix('.json').read_text(encoding='utf-8'))
+            self.assertEqual(audit['summary']['stages_without_response'],2)
+            self.assertEqual(audit['summary']['cards_valid'],0)
+            self.assertFalse(audit['summary']['complete'])
+            self.assertEqual(len(audit['coverage']),22)
+            text=Path(result['audit']).read_text(encoding='utf-8')
+            self.assertIn('Category and facet coverage',text)
+            self.assertIn('PARTIAL RUN',Path(result['report']).read_text(encoding='utf-8'))
+            stage=plan['trials'][0]['stages'][0]
+            prompt=r.processor.stage_prompt(stage)
+            self.assertIn('Answer fields:',prompt)
+            self.assertNotIn('Submit JSON:',prompt)
+            legacy=copy.deepcopy(stage);legacy.pop('response_protocol')
+            self.assertEqual(r.processor.stage_prompt(legacy),r.processor._legacy_stage_prompt(legacy))
+
     def test_transformers_adapter_slices_prompt_and_preserves_generated_text(self):
         class Inputs(dict):
             def to(self,device):return self

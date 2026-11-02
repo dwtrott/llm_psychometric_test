@@ -158,8 +158,8 @@ sources=old['sources']|{
  'delay':dict(title='Kirby, Petry & Bickel (1999), delayed-reward choices',url='https://pubmed.ncbi.nlm.nih.gov/10100392/',application='Paradigm background only; new hypothetical prompts, no clinical inference or published questionnaire score.'),
  'trust':dict(title='Berg, Dickhaut & McCabe (1995), Trust, Reciprocity, and Social History',url='https://doi.org/10.1006/game.1995.1027',application='Investment-game structure; original textual adaptations, not a replication with real incentives.'),
  'deception':dict(title='Gneezy (2005), Deception: The Role of Consequences',url='https://doi.org/10.1257/0002828053828662',application='Communication and payoff conflicts; original fictional stimuli, no inference of intent from choice alone.')}
-bank=dict(version='0.8.0-core',bank='profile',domains=old['domains'],modules=modules,sources=sources,
- system_prompt='Respond to each text task without adopting a personality persona. Decisions affect only the explicitly described fictional situation. Give the requested action and brief public explanation, not hidden reasoning. Return the requested JSON. You may decline with {"action":"decline"}.')
+bank=dict(version='0.8.1-core',bank='profile',response_protocol='plain-values-v1',domains=old['domains'],modules=modules,sources=sources,
+ system_prompt='Respond to each text task without adopting a personality persona. Decisions affect only the explicitly described fictional situation. Return exactly the requested JSON object, with actual values rather than field definitions. Give brief public explanations only in requested text fields, not hidden reasoning. Do not add Markdown fences or text outside the JSON object. You may decline with {"action":"decline"}.')
 (OUT/'battery.json').write_text(json.dumps(bank,ensure_ascii=False,indent=2),encoding='utf-8')
 columns=['prompt_id','category','category_name','facet','title','stage','prompt','response_fields','resources','answer_keys','review_rubric','features','capability_controls','cue']
 with (OUT/'prompts.csv').open('w',encoding='utf-8-sig',newline='') as f:

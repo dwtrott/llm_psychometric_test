@@ -1,6 +1,7 @@
 {
-  "version": "0.8.0-core",
+  "version": "0.8.1-core",
   "bank": "profile",
+  "response_protocol": "plain-values-v1",
   "domains": [
     {
       "id": "SEM",
@@ -416,5 +417,5 @@
       "application": "Communication and payoff conflicts; original fictional stimuli, no inference of intent from choice alone."
     }
   },
-  "system_prompt": "Respond to each text task without adopting a personality persona. Decisions affect only the explicitly described fictional situation. Give the requested action and brief public explanation, not hidden reasoning. Return the requested JSON. You may decline with {\"action\":\"decline\"}."
+  "system_prompt": "Respond to each text task without adopting a personality persona. Decisions affect only the explicitly described fictional situation. Return exactly the requested JSON object, with actual values rather than field definitions. Give brief public explanations only in requested text fields, not hidden reasoning. Do not add Markdown fences or text outside the JSON object. You may decline with {\"action\":\"decline\"}."
 }

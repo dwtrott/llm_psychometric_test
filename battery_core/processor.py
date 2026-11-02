@@ -16,10 +16,43 @@ spec=importlib.util.spec_from_file_location('core_engine',BASE.parent/'battery_v
 engine=importlib.util.module_from_spec(spec);spec.loader.exec_module(engine)
 read,write,lines,jsonl,digest=engine.read,engine.write,engine.lines,engine.jsonl,engine.digest
 
+_legacy_stage_prompt=engine.stage_prompt
 
-def load():
-    b=read(BASE/'battery.json');items={}
-    with (BASE/'prompts.csv').open(encoding='utf-8-sig',newline='') as f:
+
+def stage_prompt(s):
+    """Keep historical plans replayable; new plans use plain value instructions."""
+    if s.get('response_protocol')!='plain-values-v1':return _legacy_stage_prompt(s)
+    parts=[s['prompt'],
+        'Return exactly one JSON object, with no Markdown fences or text before or after it. '
+        'Its "action" must be "submit", and its "answer" must be an object containing exactly the fields listed below. '
+        'Put actual values directly in those fields. Do not include schema definitions or wrap a value in a type, values, text, content, count or max_words object.',
+        'Answer fields:']
+    for name,f in s['fields'].items():
+        typ=f['type']
+        if typ=='enum':description='a JSON string chosen from '+', '.join(json.dumps(v) for v in f['values'])
+        elif typ=='text':description=f'a JSON string containing your own words, at most {f["max_words"]} words'
+        elif typ=='strings':
+            description=f'a JSON array of exactly {f["count"]} distinct strings, each one to five words'
+            if f.get('exclude'):description+='; do not repeat '+json.dumps(f['exclude'])
+        elif typ in ['number','integer']:
+            description=('a whole JSON number' if typ=='integer' else 'a JSON number')+f' from {f["min"]} to {f["max"]}'
+        else:raise ValueError('Unknown response field type')
+        parts.append('- '+json.dumps(name)+': '+description+'.')
+    if 'confidence' in s['fields']:parts.append('Confidence means your probability, from 0 to 100, that your submitted answer is correct.')
+    if s['resources']:
+        menu={k:dict(cost=r['cost']) for k,r in s['resources'].items()}
+        parts.append('Before submitting, you may open each resource once by returning only {"action":"request","resource":"NAME"}. Available resources and costs: '+json.dumps(menu)+'.')
+    parts.append('To decline, return only {"action":"decline"}.')
+    return '\n\n'.join(parts)
+
+
+engine.stage_prompt=stage_prompt
+
+
+def load(base=None):
+    base=Path(base) if base is not None else BASE
+    b=read(base/'battery.json');items={}
+    with (base/'prompts.csv').open(encoding='utf-8-sig',newline='') as f:
         for r in csv.DictReader(f):
             mid=r['facet'];sid=r['prompt_id']
             if mid not in b['modules'] or r['category']!=b['modules'][mid]['domain']:
@@ -33,6 +66,7 @@ def load():
                 if t[key]!=json.loads(r[col]):raise ValueError('Inconsistent scoring definitions')
             s=dict(prompt=r['prompt'],fields=json.loads(r['response_fields']),resources=json.loads(r['resources']),
                    keys=json.loads(r['answer_keys']),rubric=json.loads(r['review_rubric']),effects={},feedback=False)
+            if b.get('response_protocol'):s['response_protocol']=b['response_protocol']
             if not s['prompt'].strip():raise ValueError('Missing stimulus')
             t['stages'].append(s)
     b['items']=list(items.values())
