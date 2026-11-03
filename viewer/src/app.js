@@ -55,7 +55,7 @@ function matchCells(a,b){
  const judge=p=>{const j=p.graph?.automated_evaluation?.judge;return j?stable(Object.fromEntries(Object.entries(j).filter(([k])=>k!=='same_model_as_subject'))):null};
  const sameJudge=judge(a)!==null&&judge(a)===judge(b);
  const bm=new Map(b.cells.map(c=>[c.key,c]));const out=[];
- for(const ac of a.cells){if(ac.metric.startsWith('feature_auto_rating_')&&!sameJudge)continue;const bc=bm.get(ac.key);if(!bc)continue;
+ for(const ac of a.cells){if(ac.metric.startsWith('feature_auto_rating_')&&!sameJudge)continue;const blocked=p=>(p.graph?.measurement_validity||[]).some(d=>d.facet===ac.module&&('feature_'+d.metric)===ac.metric&&d.condition===ac.conditions.condition&&['method_confounded','presentation_sensitive'].includes(d.status));if(blocked(a)||blocked(b))continue;const bc=bm.get(ac.key);if(!bc)continue;
   const ai=new Set(ac.rows.map(r=>r.item)),bi=new Set(bc.rows.map(r=>r.item));const shared=new Set([...ai].filter(i=>bi.has(i)));
   if(!shared.size)continue;
   const ar=ac.rows.filter(r=>shared.has(r.item)),br=bc.rows.filter(r=>shared.has(r.item));

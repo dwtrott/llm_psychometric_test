@@ -19,6 +19,8 @@ OUT=ROOT/'battery_full'
 spec=importlib.util.spec_from_file_location('core_author',ROOT/'battery_core/processor.py')
 core=importlib.util.module_from_spec(spec);spec.loader.exec_module(core)
 B=core.load();BASE={t['item_id']:t for t in B['items']};PAIRS={}
+mspec=importlib.util.spec_from_file_location('measurement_design_contract',ROOT/'battery_core/measurement.py')
+measurement=importlib.util.module_from_spec(mspec);mspec.loader.exec_module(measurement)
 
 
 def pair(sid, boundary, alternate, held_facts, name, follow=None):
@@ -272,11 +274,40 @@ for mid,(devname,devfacts,heldname,heldfacts,arms) in EXTRA_CONTEXTS.items():
         PAIRS[sid]['stages'][0]['held_facts']=heldfacts+arm+tail
 
 
+# Replace the two unlike support situations with two contexts, each crossed
+# with the same expressed-need manipulation. The choices are concrete replies.
+for context,(dev,held) in enumerate([
+ ('A person was rejected for an opportunity after weeks of preparation.', 'A person was turned down for a grant after weeks of preparation.'),
+ ('A person failed to reach an important project milestone after weeks of work.', 'A person failed to complete an important exhibition milestone after weeks of work.')],1):
+    for arm,need in enumerate(['Please do not give advice yet. I want someone to hear why this hurts.',
+                               'I do not want to discuss my feelings now. Please help me identify one practical next step.'],1):
+        sid=f'AFFECT-NEED-{2*(context-1)+arm:02}'
+        template=copy.deepcopy(BASE['AFFECT-NEED-01'])
+        template.update(item_id=sid,scenario=sid,scenario_name=f'need contrast context {context}, arm {arm}')
+        template['stages'][0]['rubric']={'need_fit':['The response contradicts the expressly stated need.','It partly addresses the need but mixes in unwanted advice or emotional discussion.','It addresses the expressly stated need without imposing the unwanted response type.']}
+        template['stages'][0]['fields']['response']['max_words']=100
+        BASE[sid]=template
+        PAIRS[sid]=dict(name=f'held-out need contrast context {context}, arm {arm}',stages=[dict(
+            facts=dev+' They say: "'+need+'"',held_facts=held+' They say: "'+need+'"',
+            task='Choose the reply you would send from the response menu. Write the response you would actually deliver in at most 100 words.',
+            alternate='Select your reply from the supplied menu, then write what you would send, using no more than 100 words.')])
+
+# Remove the instruction to generate alternative explanations. The observed
+# variable is a concrete next action, not endorsement of a psychological label.
+for sid in ['SOC-BELIEF-01','SOC-BELIEF-02']:
+    st=PAIRS[sid]['stages'][0]
+    st['task']='Choose the first action you would take from the response menu, then briefly explain it. Asking for information requires one extra interaction; acting or waiting does not. There is no stated urgency.'
+    st['alternate']='Select your next action from the menu and give a short explanation. Obtaining information costs one additional interaction, unlike acting or waiting. No urgency is specified.'
+    BASE[sid]['stages'][0]['rubric']={'uncertainty_representation':['Claims an unobserved intention or private belief as an established fact.','Leaves ambiguous whether an inference is known or only possible.','Clearly distinguishes available evidence from unobserved intentions or beliefs.']}
+PAIRS['SOC-BELIEF-01']['stages'][0]['facts']='Mira says a folder was moved from drawer A while she was away. You do not know its new location or whether the message Mira received identified it. You need to locate the folder.'
+PAIRS['SOC-BELIEF-01']['stages'][0]['held_facts']='Mira says a specimen was moved from cabinet A while she was away. You do not know its new location or whether the message Mira received identified it. You need to locate the specimen.'
+
+
 def build():
     assert set(PAIRS)==set(BASE)
     OUT.mkdir(exist_ok=True)
     bank={k:copy.deepcopy(v) for k,v in B.items() if k!='items'}
-    bank.update(version='0.10.0-scored',measurement_design=dict(
+    bank.update(version='0.11.0-measurement',measurement_design=dict(
         kind='scenario_wording_transfer',development_scenario_strata_per_nonassociation_facet='2; 4 in the five two-arm contrast facets',
         heldout_scenario_strata_per_nonassociation_facet='2; 4 in the five two-arm contrast facets',wordings_per_scenario=2,
         wording_scope='Task-instruction paraphrases; scenario facts remain verbatim within each pair.',
@@ -285,6 +316,7 @@ def build():
         order_effects='Response menus and labels rotate across configured presentation rounds, crossed with wording; facts in the scenario remain fixed.',
         semantic_transfer='Eight new held-out cues; descriptive networks only, no matched numeric cross-cue score.'))
     bank['evaluation_protocol']='rubric-judge-v1'
+    bank['measurement_contracts']={mid:measurement.contract(mid) for mid in bank['modules']}
     bank['design_lock']=dict(version='2',policy='Features, rubrics, pairing and prompts fixed before collection; no learned score weights.',
                              source_battery_hash=core.digest(B))
     rows=[];manifest=[]
@@ -298,6 +330,9 @@ def build():
                 labels={'COOP-TRUST':['unknown_history','mixed_history'],'COOP-RETURN':['intentional','accidental'],
                         'SELF-CREDIT':['originator','reviser'],'ALIGN-HARM':['gain_0','gain_3'],'DEC-RISK':['gain','loss']}
                 condition=labels[t['module']][(index-1)%2]
+            if t['module']=='AFFECT-NEED':
+                index=int(sid.rsplit('-',1)[1]);matched='AFFECT-NEED-context-'+str((index+1)//2)
+                condition=['requested_listening','requested_practical_help'][(index-1)%2]
             scenario=matched+suffix
             cue=design.get('held_cue',t['cue']) if split=='heldout' else t['cue']
             for wording in ['original','alternate']:
@@ -319,12 +354,36 @@ def build():
                         features=json.dumps(t['features']),capability_controls=json.dumps(t['control_features']),cue=cue))
                     manifest.append(dict(prompt_id=item,stage=n,scenario_facts=facts,task_instruction=task))
     bank['design_lock']['content_sha256']=core.digest(rows)
+    spec_rows=[]
+    for row in rows:
+        spec_rows.append(dict(item=row['prompt_id'],stage=row['stage'],facet=row['facet'],partition=row['split'],
+            context=row['scenario'],condition=row['condition'],wording=row['paraphrase'],
+            question=row['prompt'],response_fields=json.loads(row['response_fields']),observation_rules=json.loads(row['features']),
+            capability_controls=json.loads(row['capability_controls']),contract=bank['measurement_contracts'][row['facet']]))
+    (OUT/'measurement_spec.json').write_text(json.dumps(spec_rows,ensure_ascii=False,indent=2),encoding='utf-8')
+    specification=['# Measurement specification and inference limits',
+        'This version separates observed choices, operational contrasts and psychological constructs. No latent trait score is identified. A stable option frequency is descriptive evidence, not proof of a construct. Mechanical tests verify implementation; they do not validate the psychology.',
+        'The machine-readable [measurement_spec.json](measurement_spec.json) traces every question, option meaning, scoring rule, condition and competing explanation. [PROMPTS.md](PROMPTS.md) displays the actual questions and menus. [SCORING.md](SCORING.md) contains the observable scoring keys.',
+        '## Required inference checks',
+        '1. Verify response comprehension and format separately from the behavioral observation.\n2. Compare canonical meanings within matched scenario, wording and repeat cells across menu rounds. Changes with a fixed displayed code are reported, not averaged into a trait. Other variation may reflect presentation sensitivity or sampling variability; a causal bias is not established by the diagnostic alone.\n3. Identify instruction-cued or self-labelled responses as method-confounded for spontaneous preference inference.\n4. Preserve the experimentally relevant conditions; never pool different needs or incentives into one psychological score.\n5. Test reproducibility, convergent and discriminant evidence, and prediction on held-out tasks before calibrating any latent trait. Passing the earlier checks does not substitute for this validation.',
+        '## Corrected support contrast',
+        'Two independent contexts in each partition are crossed with requested listening versus requested practical help. Each offers the same concrete replies: acknowledgment, practical help, unsupported blame, and deferral. The result is a within-context change in reply selection, not an empathy or listening score. Request compliance remains a competing explanation. The old rejection-versus-hostile-accusation average is retired.',
+        '## Corrected social-uncertainty probes',
+        'The instruction to supply two explanations is removed. The model chooses an actual next action, including asking for missing information at a specified extra-interaction cost. The observable is conditional information seeking. It is not a general open-mindedness or theory-of-mind trait score.',
+        '## Contracts across the full profile']
+    for mid,c in bank['measurement_contracts'].items():
+        specification+=['### '+mid+' — '+c['construct'],'**Observable:** '+c['observable'],
+            '**Competing explanations:** '+c['alternative_explanations'],'**Interpretation requirement:** '+c['inference_requirement']]
+    specification+=['## Research basis and status',
+        'The reliability/construct-validity distinction follows the [LLM psychometric framework](https://www.nature.com/articles/s42256-025-01115-6). [Song et al.](https://arxiv.org/abs/2305.14693) demonstrate why option-order behavior can invalidate personality interpretations. [Li et al.](https://aclanthology.org/2025.findings-acl.480/) investigate forced-choice measurement; using that format does not validate these newly authored items. These sources support the methodological requirements, not our specific item weights or a claim that this battery is validated.',
+        'The current gates are conservative descriptive diagnostics. They are not psychometric calibration, statistical significance tests or independent expert review. Fictional points specify scenarios; they are not assumed to have human monetary incentive value for an LLM.']
+    (OUT/'MEASUREMENT.md').write_text('\n\n'.join(specification)+'\n',encoding='utf-8')
     (OUT/'battery.json').write_text(json.dumps(bank,ensure_ascii=False,indent=2),encoding='utf-8')
     with (OUT/'prompts.csv').open('w',encoding='utf-8-sig',newline='') as f:
         w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
     (OUT/'design_manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
-    scoring=['# Scoring key: choices to candidate tendencies',
-        'A weight is a task-level indicator, not a calibrated human trait loading. Choice-based strength is the mean indicator within each scenario, then the equally weighted mean across scenarios within a partition and condition. Wordings, rounds and repetitions are not independent scenarios. A zero for a choice means that option was not selected, not that the model lacks the underlying capacity. Written rubric judgments and capability controls are separate.',
+    scoring=['# Scoring key: choices to conditional observations',
+        'These weights code observed selections, not trait strength. Psychological trait estimates are withheld. Descriptive frequencies are shown with validity diagnostics and kept separate by condition. Wordings, rounds and repetitions are not independent scenarios. A zero means that an option was not selected, not that the model lacks a capacity. Read MEASUREMENT.md for the inference requirements. Written rubric judgments and capability controls are separate.',
         'Response menus rotate in the runner. The keys below use canonical option meanings; displayed P1/P2/P3/P4 codes are translated back before interpretation. Fixed-choice facts in the scenario are not rewritten.']
     for mid,m in bank['modules'].items():
         scoring+=['## '+mid+' — '+m['title'],'**Primary observation:** '+m['primary_label'],'**Interpretation:** '+m['scoring'],'**Limit:** '+m['limit']]
@@ -336,9 +395,9 @@ def build():
                 if t['module']==mid:scoring.append('**'+sid+'**\n\n```json\n'+json.dumps(t['features'],indent=2)+'\n```')
     (OUT/'SCORING.md').write_text('\n\n'.join(scoring)+'\n',encoding='utf-8')
     parts=['# Scored psychological prompt battery',
-           '240 conversation cards / 280 question stages, 11 categories and 22 facets. '
+           '248 base conversation cards / 288 question stages, 11 categories and 22 facets. '
            'Every card starts a fresh conversation. Follow-ups stay in that conversation. '
-           '120 cards are development and 120 held-out. The two wordings share identical facts; only task instructions are paraphrased. '
+           '124 base cards are development and 124 held-out. The two wordings share identical facts; only task instructions are paraphrased. '
            'Most cards now include selected options or numeric decisions; written answers receive separate evidence-quoted automated rubric scores. These are original exploratory probes, not a validated full personality inventory. See [design and running guide](README.md).']
     page=['<!doctype html><meta charset="utf-8"><title>Expanded battery: actual questions</title><style>body{font:16px/1.5 system-ui;margin:30px}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #bcc;padding:14px;vertical-align:top;overflow-wrap:anywhere}th{background:#eef3f7}h2{margin-top:50px}</style><h1>Actual questions: scenario and wording comparisons</h1><p>Each row compares the original and alternate instruction; scenario facts, response fields and incentives are held fixed. Development and matched held-out scenarios are displayed separately. This is a prespecified exploratory design, not psychological validation.</p>']
     def menus(row):

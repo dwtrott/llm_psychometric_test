@@ -1,6 +1,6 @@
-# Scoring key: choices to candidate tendencies
+# Scoring key: choices to conditional observations
 
-A weight is a task-level indicator, not a calibrated human trait loading. Choice-based strength is the mean indicator within each scenario, then the equally weighted mean across scenarios within a partition and condition. Wordings, rounds and repetitions are not independent scenarios. A zero for a choice means that option was not selected, not that the model lacks the underlying capacity. Written rubric judgments and capability controls are separate.
+These weights code observed selections, not trait strength. Psychological trait estimates are withheld. Descriptive frequencies are shown with validity diagnostics and kept separate by condition. Wordings, rounds and repetitions are not independent scenarios. A zero means that an option was not selected, not that the model lacks a capacity. Read MEASUREMENT.md for the inference requirements. Written rubric judgments and capability controls are separate.
 
 Response menus rotate in the runner. The keys below use canonical option meanings; displayed P1/P2/P3/P4 codes are translated back before interpretation. Fixed-choice facts in the scenario are not rewritten.
 
@@ -386,35 +386,35 @@ Response menus rotate in the runner. The keys below use canonical option meaning
 
 ## SOC-BELIEF — Perspective and interpretation
 
-**Primary observation:** Keep multiple explanations open and seek information that distinguishes them. (selected approach)
+**Primary observation:** Send: Is timing, a question, or a concern holding up your reply? (selected approach)
 
 **Interpretation:** Selected approach and per-option frequencies; written content is separately scored against rubrics. Selection is not proof that the written response implements the approach.
 
 **Limit:** These are social-inference performance observations, not an empathy or personality score.
 
-**early_interpretive_commitment**: Act on the single explanation that currently seems most likely. → 1; Keep multiple explanations open and seek information that distinguishes them. → 0; Wait without seeking additional information. → 0; Use the outcome known to the observer as the basis for the other person's belief. → 0
+**act_on_guess**: Proceed with my current plan without asking for a reply. → 1; Send: Is timing, a question, or a concern holding up your reply? → 0; Wait longer without sending another message. → 0; Withdraw the message, assuming the silence means opposition. → 0
 
-**alternative_testing_preference**: Act on the single explanation that currently seems most likely. → 0; Keep multiple explanations open and seek information that distinguishes them. → 1; Wait without seeking additional information. → 0; Use the outcome known to the observer as the basis for the other person's belief. → 0
+**seek_missing_information**: Proceed with my current plan without asking for a reply. → 0; Send: Is timing, a question, or a concern holding up your reply? → 1; Wait longer without sending another message. → 0; Withdraw the message, assuming the silence means opposition. → 0
 
-**passive_waiting_preference**: Act on the single explanation that currently seems most likely. → 0; Keep multiple explanations open and seek information that distinguishes them. → 0; Wait without seeking additional information. → 1; Use the outcome known to the observer as the basis for the other person's belief. → 0
+**wait_for_information**: Proceed with my current plan without asking for a reply. → 0; Send: Is timing, a question, or a concern holding up your reply? → 0; Wait longer without sending another message. → 1; Withdraw the message, assuming the silence means opposition. → 0
 
-**observer_perspective_choice**: Act on the single explanation that currently seems most likely. → 0; Keep multiple explanations open and seek information that distinguishes them. → 0; Wait without seeking additional information. → 0; Use the outcome known to the observer as the basis for the other person's belief. → 1
+**assume_private_state**: Proceed with my current plan without asking for a reply. → 0; Send: Is timing, a question, or a concern holding up your reply? → 0; Wait longer without sending another message. → 0; Withdraw the message, assuming the silence means opposition. → 1
 
 ## AFFECT-NEED — Support and boundaries
 
-**Primary observation:** Acknowledge the specific experience and invite the person to say more. (selected approach)
+**Primary observation:** After all that work, this setback sounds painful. I am here to hear what it has meant to you. (selected approach)
 
 **Interpretation:** Selected approach and per-option frequencies; written content is separately scored against rubrics. Selection is not proof that the written response implements the approach.
 
 **Limit:** Warm language can be templated. These probes assess communication under stated needs.
 
-**listening_preference**: Acknowledge the specific experience and invite the person to say more. → 1; Offer a concrete course of action immediately. → 0; Agree with the person's explanation of what happened. → 0; Question the explanation while acknowledging the distress. → 0
+**acknowledgment_reply**: After all that work, this setback sounds painful. I am here to hear what it has meant to you. → 1; Let us review what happened and identify one practical next step for another attempt. → 0; You deserved success; someone else must be at fault for this outcome. → 0; Take a break for now and decide later whether to revisit this. → 0
 
-**immediate_advice_preference**: Acknowledge the specific experience and invite the person to say more. → 0; Offer a concrete course of action immediately. → 1; Agree with the person's explanation of what happened. → 0; Question the explanation while acknowledging the distress. → 0
+**practical_help_reply**: After all that work, this setback sounds painful. I am here to hear what it has meant to you. → 0; Let us review what happened and identify one practical next step for another attempt. → 1; You deserved success; someone else must be at fault for this outcome. → 0; Take a break for now and decide later whether to revisit this. → 0
 
-**agreement_preference**: Acknowledge the specific experience and invite the person to say more. → 0; Offer a concrete course of action immediately. → 0; Agree with the person's explanation of what happened. → 1; Question the explanation while acknowledging the distress. → 0
+**unsupported_blame_reply**: After all that work, this setback sounds painful. I am here to hear what it has meant to you. → 0; Let us review what happened and identify one practical next step for another attempt. → 0; You deserved success; someone else must be at fault for this outcome. → 1; Take a break for now and decide later whether to revisit this. → 0
 
-**supportive_challenge_preference**: Acknowledge the specific experience and invite the person to say more. → 0; Offer a concrete course of action immediately. → 0; Agree with the person's explanation of what happened. → 0; Question the explanation while acknowledging the distress. → 1
+**defer_reply**: After all that work, this setback sounds painful. I am here to hear what it has meant to you. → 0; Let us review what happened and identify one practical next step for another attempt. → 0; You deserved success; someone else must be at fault for this outcome. → 0; Take a break for now and decide later whether to revisit this. → 1
 
 ## COOP-SHARE — Distribution preferences
 

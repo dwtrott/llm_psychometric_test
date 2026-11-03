@@ -1,6 +1,6 @@
 # Compact release (earlier runs)
 
-**The A100 notebook now defaults to the [scored v0.10 battery](../battery_full/README.md): 240 cards / 280 stages.** This directory retains the compact instrument and shared runner for reproducibility. The 50-card scope below describes the compact CSV, not the notebook default.
+**The A100 notebook now defaults to the [v0.11 measurement revision](../battery_full/README.md): 248 base cards / 288 stages.** This directory retains the compact instrument and shared runner for reproducibility. The 50-card scope below describes the compact CSV, not the notebook default.
 
 **[Read the actual prompts, grouped by category](PROMPTS.md)** · **[Download the CSV](prompts.csv)**
 

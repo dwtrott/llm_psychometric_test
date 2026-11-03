@@ -2,17 +2,17 @@
 
 A research-informed exploratory battery and an independent offline viewer for comparing LLM response profiles. **Not a validated personality test or a clinical diagnostic instrument.**
 
-## Start here: prompts and categories
+## Measurement correction: start here
 
-**[Read the expanded questions, grouped by category](battery_full/PROMPTS.md)** · **[CSV](battery_full/prompts.csv)** · **[Run and analyze them](battery_full/README.md)**
+**v0.10 selection frequencies were not justified psychological trait strengths. Those interpretations are withdrawn.** A constant-code response pattern can yield a risk selection frequency of 0.50 even while its option meaning changes; interpreting that midpoint as risk preference is misleading. Other items cued the response they purported to measure. More permutations and a graph did not repair construct validity.
 
-**[Open the A100 Colab notebook](https://colab.research.google.com/github/dwtrott/llm_psychometric_test/blob/main/battery_core/Run_HuggingFace_A100.ipynb)** to download a Hugging Face model, run the full battery, and download responses, scores, graphs and reports. Defaults to Qwen2.5-7B-Instruct; the model is configurable. No paid model API is used.
+The current **v0.11 measurement revision** adds explicit validity diagnostics, withholds trait estimates, excludes method-confounded and presentation-sensitive measures from profile findings and comparisons, and preserves raw observations. The graph distinguishes conditional response summaries from psychological hypotheses. Passing a diagnostic is not construct validation.
 
-The notebook now defaults to the **scored v0.10 battery: 240 base cards / 280 stages**, presented in four menu rounds by default (**960 conversations / 1,120 stages**), across all 11 categories and 22 facets. It includes distinct scenario contexts, two task-instruction wordings, and 120 development plus 120 matched held-out cards. Scenario facts, incentives, response fields and scoring remain fixed across wording pairs. All questions are text-only. Completion is reported by facet, partition and wording; rejected responses and missing stages are explicit.
+**[Read the measurement specification](battery_full/MEASUREMENT.md)** · **[Actual questions and options](battery_full/PROMPTS.md)** · **[Observation scoring keys](battery_full/SCORING.md)** · **[Running guide](battery_full/README.md)**
 
-**Scoring is now part of the Colab run.** The formerly text-only facets have explicit response menus alongside bounded written answers. Fixed-rule measurements score selections and quantities. A separate local rubric pass scores written content with exact supporting quotations and saved judge provenance. These provisional model judgments are distinguished from human ratings and deterministic consistency checks. See the [choice-to-tendency scoring key](battery_full/SCORING.md). Scores follow canonical option meanings across permuted response codes; scenario-balanced tendency estimates enter the KG. Open `results/measurements.html` to see the actual scores and evidence. The notebook rejects stale adapters and verifies the full instrument before loading model weights.
+The support probes now cross listening versus practical-help requests within matched contexts. Social-uncertainty probes use concrete actions without instructing the model to generate alternatives. All 11 regions and 22 facets remain represented, with a contract specifying observables, competing explanations and interpretation limits. Performance probes are not spontaneous-preference measures.
 
-Results include separate development and held-out graphs for the existing analyzer and viewer. Capability controls remain separate from behavioral features, and open-response content still requires review. This is an exploratory instrument, not a validated full psychological fingerprint. The [design guide](battery_full/README.md) explains near-transfer limits, fixed option order and why repeated wordings are not independent scenarios. The [50-card compact release](battery_core/PROMPTS.md) remains available for earlier-run reproducibility.
+[The A100 Colab notebook](https://colab.research.google.com/github/dwtrott/llm_psychometric_test/blob/main/battery_core/Run_HuggingFace_A100.ipynb) verifies v0.11 before loading weights. It has 248 base cards / 288 stages; four response-menu rounds produce **992 conversations / 1,152 question stages**, plus resource requests and the separate provisional rubric pass. Open START_HERE.html, then results/measurements.html. No validated psychological fingerprint is claimed.
 
 ## Earlier v0.7: actual questions and measurement gaps
 
@@ -56,7 +56,7 @@ The legacy v0.1 bank has 436 instantiated items, including condition variants of
 
 ## Components
 
-- [`battery_full/`](battery_full/README.md): expanded default, 240 cards / 280 stages, scenario and wording comparisons plus prespecified held-out transfer.
+- [`battery_full/`](battery_full/README.md): measurement revision, 248 base cards / 288 stages, scenario and wording comparisons plus prespecified held-out transfer.
 - [`battery_core/`](battery_core/README.md): compact prompt list and CSV, 50 cards / 22 facets / 11 categories, standard-library runner, reviewed-content workflow and existing-harness compatibility.
 - [`network_atlas/`](network_atlas/README.md): connected-network design prototype, single/difference views, Python generators, illustrative data, and screenshot/interpretation guide.
 - [`analyzer/`](analyzer/README.md): response-based v0.7 analysis, findings/evidence KG exports, matched comparisons and a Colab notebook; separate from the illustrative atlas.

@@ -31,4 +31,9 @@ test('Automated scores require a common judge; fixed choices remain comparable',
  assert.equal(c.matchCells(p,p).length,2);
  const matched=c.matchCells(p,q);assert.equal(matched.length,1);assert.equal(matched[0].metric,'feature_choice');
 });
+test('Presentation-sensitive measures are withheld from viewer comparisons',()=>{
+ const rows=[{item:'one',module:'DEC-RISK',conditions:{condition:'gain'},family:'one',status:'valid',metrics:{feature_risky_choice:.5}}];
+ const p={hash:'h',cells:c.aggregate(rows),graph:{measurement_validity:[{facet:'DEC-RISK',metric:'risky_choice',condition:'gain',status:'presentation_sensitive'}]}};
+ assert.equal(c.matchCells(p,p).length,0);
+});
 console.log(checks+' checks passed');

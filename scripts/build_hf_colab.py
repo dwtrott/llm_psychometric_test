@@ -20,18 +20,18 @@ cell('markdown','''
 
 Default: [Qwen2.5-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct), a public chat model. No Hugging Face key is required for this default. Change `MODEL_ID` to try another compatible text/chat model. The notebook downloads weights and performs inference **inside your Colab GPU session**, not through a paid inference API.
 
-The base instrument has **240 cards / 280 question stages**. By default it runs four response-menu rotations: **960 conversations / 1,120 question stages**, plus up to 64 resource calls. The base instrument contains 120 development cards and 120 held-out cards, across all 11 categories and 22 facets. The bank includes distinct scenario contexts and two task-instruction wordings. Presentation rounds rotate labels and response menus without changing the meaning or scoring of options; they are not new independent scenarios. Four rounds fully balance two- and four-option menus; three-option menus require a multiple of three for full balance (use 12 rounds to balance all menu sizes). Each card starts a fresh conversation; its follow-ups retain that card's history. The first download/loading can take longer than generation. A GPU with 40 GB or more is recommended for the default BF16 configuration.
+The base instrument has **248 cards / 288 question stages**. By default it runs four response-menu rotations: **992 conversations / 1,152 question stages**, plus up to 64 resource calls. The base instrument contains 124 development cards and 124 held-out cards, across all 11 categories and 22 facets. The bank includes distinct scenario contexts and two task-instruction wordings. Presentation rounds rotate labels and response menus without changing the meaning or scoring of options; they are not new independent scenarios. Four rounds fully balance two- and four-option menus; three-option menus require a multiple of three for full balance (use 12 rounds to balance all menu sizes). Each card starts a fresh conversation; its follow-ups retain that card's history. The first download/loading can take longer than generation. A GPU with 40 GB or more is recommended for the default BF16 configuration.
 
 The notebook saves raw model text and generation token IDs after every call. It does not repair JSON, discard refusals, retry invalid answers, or supply evaluator scoring keys to the model. Formatting failures are part of the recorded results. Written content receives a separate local-model rubric pass, with evidence quotations and explicit judge provenance. Human ratings remain separate. Rubrics and task features are fixed before collection; the held-out partition is a prespecified transfer check, not evidence that the prompts were absent from model training. Task paraphrases preserve facts verbatim; response-menu round effects are analyzed separately. This run is not a validated personality diagnosis.
 ''')
 cell('code','''
 # Settings: the defaults run and score the whole battery once.
-NOTEBOOK_PROTOCOL = "scored-v010"
+NOTEBOOK_PROTOCOL = "measurement-v011"
 MODEL_ID = "Qwen/Qwen2.5-7B-Instruct"
 # Smaller alternative: "Qwen/Qwen2.5-1.5B-Instruct"
 MODEL_REVISION = "main"  # Resolved to an exact Hugging Face commit before loading.
 SOURCE_REVISION = "main" # Or the exact battery source commit from a previous run.
-RUN_LABEL = "scored-v010" # New battery: keep earlier results in their original directory.
+RUN_LABEL = "measurement-v011" # New battery: keep earlier results in their original directory.
 REPEATS = 1
 PRESENTATION_ROUNDS = 4 # Four response-menu rotations, separate from wording and scenarios.
 MAX_NEW_TOKENS = 512
@@ -77,13 +77,13 @@ SOURCE_COMMIT = subprocess.check_output(["git", "-C", str(REPO_DIR), "rev-parse"
 # Fail before downloading a model if source and notebook are incompatible.
 import json, csv
 instrument_meta = json.loads((REPO_DIR / "battery_full/battery.json").read_text(encoding="utf-8"))
-if NOTEBOOK_PROTOCOL != "scored-v010" or instrument_meta.get("version") != "0.10.0-scored":
+if NOTEBOOK_PROTOCOL != "measurement-v011" or instrument_meta.get("version") != "0.11.0-measurement":
     raise RuntimeError("Notebook/source mismatch. Reopen the current GitHub notebook; do not reuse stale cells.")
 with (REPO_DIR / "battery_full/prompts.csv").open(encoding="utf-8-sig", newline="") as handle:
     full_rows = list(csv.DictReader(handle))
-assert len(full_rows) == 280 and len({row["prompt_id"] for row in full_rows}) == 240
+assert len(full_rows) == 288 and len({row["prompt_id"] for row in full_rows}) == 248
 assert len({row["facet"] for row in full_rows}) == 22 and len({row["category"] for row in full_rows}) == 11
-print("Verified full scored instrument: 240 cards / 280 stages / 22 facets / 11 categories.")
+print("Verified full scored instrument: 248 cards / 288 stages / 22 facets / 11 categories.")
 print("Battery source:", SOURCE_COMMIT)
 print("SOURCE_REVISION=main fetches the current release. To resume an older run, set SOURCE_REVISION to that run's saved commit.")
 ''')
@@ -156,7 +156,7 @@ config = dict(
     model_revision=RESOLVED_MODEL_REVISION, tokenizer_revision=RESOLVED_MODEL_REVISION,
     chat_template_sha256=hashlib.sha256(template_identity.encode()).hexdigest(),
     dtype="bfloat16", attention="sdpa", quantization="none", seed=SEED,
-    decoding=generator.generation.to_dict(), adapter_version="1.3.0",
+    decoding=generator.generation.to_dict(), adapter_version="1.4.0",
     transformers_version=transformers.__version__, torch_version=str(torch.__version__),
     accelerate_version=accelerate.__version__, huggingface_hub_version=huggingface_hub.__version__,
     cuda_version=torch.version.cuda, gpu=GPU_NAME, source_commit=SOURCE_COMMIT,
@@ -166,8 +166,8 @@ if FACETS is not None and not ALLOW_PARTIAL:
     raise ValueError("A facet subset would omit part of the battery. Use FACETS=None for the full run.")
 battery, plan = runner.prepare_run(config, RUN_DIR, RUN_ID, REPEATS, FACETS, REPO_DIR / "battery_full")
 if FACETS is None:
-    assert len(plan["trials"]) == 240 * REPEATS * PRESENTATION_ROUNDS, "Unexpected full battery size"
-    assert sum(len(t["stages"]) for t in plan["trials"]) == 280 * REPEATS * PRESENTATION_ROUNDS, "Unexpected stage count"
+    assert len(plan["trials"]) == 248 * REPEATS * PRESENTATION_ROUNDS, "Unexpected full battery size"
+    assert sum(len(t["stages"]) for t in plan["trials"]) == 288 * REPEATS * PRESENTATION_ROUNDS, "Unexpected stage count"
 from collections import Counter
 coverage = Counter((t["module"], t["split"], t["paraphrase"]) for t in plan["trials"])
 print("PLANNED COVERAGE — each line is facet / partition / wording / cards")
@@ -179,10 +179,10 @@ runner.atomic_json(RUN_DIR / "planned_coverage.json", [dict(facet=k[0], split=k[
 
 # Include the actual instrument and implementation in the downloadable archive.
 for relative in ["battery_core/prompts.csv", "battery_core/battery.json", "battery_core/processor.py",
-                 "battery_core/hf_runner.py", "battery_core/evaluate.py", "battery_core/presentations.py", "battery_core/run_audit.py", "battery_core/PROMPTS.md", "battery_core/README.md",
+                 "battery_core/hf_runner.py", "battery_core/evaluate.py", "battery_core/measurement.py", "battery_core/presentations.py", "battery_core/run_audit.py", "battery_core/PROMPTS.md", "battery_core/README.md",
                  "battery_v7/_engine.py", "battery_v7/content_ratings.py", "analyzer/psychometric.py",
                  "viewer/viewer.py", "viewer/viewer.html", "battery_full/battery.json", "battery_full/prompts.csv",
-                 "battery_full/PROMPTS.md", "battery_full/SCORING.md", "battery_full/README.md", "battery_full/design_manifest.json"]:
+                 "battery_full/PROMPTS.md", "battery_full/SCORING.md", "battery_full/MEASUREMENT.md", "battery_full/measurement_spec.json", "battery_full/README.md", "battery_full/design_manifest.json"]:
     destination = RUN_DIR / "source" / relative
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(REPO_DIR / relative, destination)
@@ -258,7 +258,7 @@ print("Raw rubric judgments:", RUN_DIR / "evaluation.jsonl")
 cell('markdown','''
 ## Inspect measured results
 
-The exports include selected-option frequencies, numeric decisions, rubric scores with excerpts, and deterministic consistency checks. Format success and substantive evaluation coverage are separate. Missing rubric judgments never become zeros.
+The exports begin with measurement-validity diagnostics. Trait estimates are withheld. Raw conditional choices, numeric decisions, rubric scores and consistency checks remain available; presentation-sensitive or method-confounded measures are excluded from psychological summaries and comparisons. Format success and substantive evaluation coverage are separate. Missing rubric judgments never become zeros.
 ''')
 cell('code','''
 from IPython.display import HTML, display

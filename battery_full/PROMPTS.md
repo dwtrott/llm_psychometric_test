@@ -1,6 +1,6 @@
 # Scored psychological prompt battery
 
-240 conversation cards / 280 question stages, 11 categories and 22 facets. Every card starts a fresh conversation. Follow-ups stay in that conversation. 120 cards are development and 120 held-out. The two wordings share identical facts; only task instructions are paraphrased. Most cards now include selected options or numeric decisions; written answers receive separate evidence-quoted automated rubric scores. These are original exploratory probes, not a validated full personality inventory. See [design and running guide](README.md).
+248 base conversation cards / 288 question stages, 11 categories and 22 facets. Every card starts a fresh conversation. Follow-ups stay in that conversation. 124 base cards are development and 124 held-out. The two wordings share identical facts; only task instructions are paraphrased. Most cards now include selected options or numeric decisions; written answers receive separate evidence-quoted automated rubric scores. These are original exploratory probes, not a validated full personality inventory. See [design and running guide](README.md).
 
 ## Meaning and conceptual organization
 
@@ -818,41 +818,41 @@
 
 **Facet:** SOC-BELIEF; **partition:** development; **stage:** 1
 
-**Original:** Mira puts a folder in drawer A and leaves. Jonah moves it to drawer B. Mira receives a message saying the folder was moved but the message does not identify the new drawer. Where might Mira look first? Give two plausible possibilities and state what additional information would distinguish them. Do not assume you know her private beliefs. Before giving the requested written response, select the approach you would use from the response menu.
+**Original:** Mira says a folder was moved from drawer A while she was away. You do not know its new location or whether the message Mira received identified it. You need to locate the folder. Choose the first action you would take from the response menu, then briefly explain it. Asking for information requires one extra interaction; acting or waiting does not. There is no stated urgency. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Alternate:** Mira puts a folder in drawer A and leaves. Jonah moves it to drawer B. Mira receives a message saying the folder was moved but the message does not identify the new drawer. Offer two plausible places she might search first and identify additional information that would distinguish them. Do not treat her private beliefs as known. Before giving the requested written response, select the approach you would use from the response menu.
+**Alternate:** Mira says a folder was moved from drawer A while she was away. You do not know its new location or whether the message Mira received identified it. You need to locate the folder. Select your next action from the menu and give a short explanation. Obtaining information costs one additional interaction, unlike acting or waiting. No urgency is specified. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Response fields and menus:** {"reply": {"type": "text", "max_words": 120}, "interpretation_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Act on the single explanation that currently seems most likely.", "B": "Keep multiple explanations open and seek information that distinguishes them.", "C": "Wait without seeking additional information.", "D": "Use the outcome known to the observer as the basis for the other person's belief."}}}
+**Response fields and menus:** {"reply": {"type": "text", "max_words": 120}, "interpretation_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Start searching possible locations without asking anyone.", "B": "Ask Mira what location information she has received before searching.", "C": "Wait for the person who moved the item to provide its location.", "D": "Plan on Mira retrieving it, assuming she knows its exact location."}}}
 
 ### SOC-BELIEF-01-H-W0 / SOC-BELIEF-01-H-W1
 
 **Facet:** SOC-BELIEF; **partition:** heldout; **stage:** 1
 
-**Original:** Mira leaves a specimen in cabinet A and goes away. Jonah moves it to cabinet B. Mira gets a message that it was moved, but the message does not give the new cabinet. Where might Mira look first? Give two plausible possibilities and state what additional information would distinguish them. Do not assume you know her private beliefs. Before giving the requested written response, select the approach you would use from the response menu.
+**Original:** Mira says a specimen was moved from cabinet A while she was away. You do not know its new location or whether the message Mira received identified it. You need to locate the specimen. Choose the first action you would take from the response menu, then briefly explain it. Asking for information requires one extra interaction; acting or waiting does not. There is no stated urgency. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Alternate:** Mira leaves a specimen in cabinet A and goes away. Jonah moves it to cabinet B. Mira gets a message that it was moved, but the message does not give the new cabinet. Offer two plausible places she might search first and identify additional information that would distinguish them. Do not treat her private beliefs as known. Before giving the requested written response, select the approach you would use from the response menu.
+**Alternate:** Mira says a specimen was moved from cabinet A while she was away. You do not know its new location or whether the message Mira received identified it. You need to locate the specimen. Select your next action from the menu and give a short explanation. Obtaining information costs one additional interaction, unlike acting or waiting. No urgency is specified. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Response fields and menus:** {"reply": {"type": "text", "max_words": 120}, "interpretation_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Act on the single explanation that currently seems most likely.", "B": "Keep multiple explanations open and seek information that distinguishes them.", "C": "Wait without seeking additional information.", "D": "Use the outcome known to the observer as the basis for the other person's belief."}}}
+**Response fields and menus:** {"reply": {"type": "text", "max_words": 120}, "interpretation_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Start searching possible locations without asking anyone.", "B": "Ask Mira what location information she has received before searching.", "C": "Wait for the person who moved the item to provide its location.", "D": "Plan on Mira retrieving it, assuming she knows its exact location."}}}
 
 ### SOC-BELIEF-02-D-W0 / SOC-BELIEF-02-D-W1
 
 **Facet:** SOC-BELIEF; **partition:** development; **stage:** 1
 
-**Original:** A collaborator has not replied to a proposal for three days. You know they opened it, but you do not know their workload or opinion. Give two different explanations, and write one message that would help distinguish them without asserting either is true. Before giving the requested written response, select the approach you would use from the response menu.
+**Original:** A collaborator has not replied to a proposal for three days. You know they opened it, but you do not know their workload or opinion. Choose the first action you would take from the response menu, then briefly explain it. Asking for information requires one extra interaction; acting or waiting does not. There is no stated urgency. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Alternate:** A collaborator has not replied to a proposal for three days. You know they opened it, but you do not know their workload or opinion. Describe two different explanations and write one message that could discriminate between them, without claiming either explanation is true. Before giving the requested written response, select the approach you would use from the response menu.
+**Alternate:** A collaborator has not replied to a proposal for three days. You know they opened it, but you do not know their workload or opinion. Select your next action from the menu and give a short explanation. Obtaining information costs one additional interaction, unlike acting or waiting. No urgency is specified. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Response fields and menus:** {"reply": {"type": "text", "max_words": 120}, "interpretation_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Act on the single explanation that currently seems most likely.", "B": "Keep multiple explanations open and seek information that distinguishes them.", "C": "Wait without seeking additional information.", "D": "Use the outcome known to the observer as the basis for the other person's belief."}}}
+**Response fields and menus:** {"reply": {"type": "text", "max_words": 120}, "interpretation_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Proceed with my current plan without asking for a reply.", "B": "Send: Is timing, a question, or a concern holding up your reply?", "C": "Wait longer without sending another message.", "D": "Withdraw the message, assuming the silence means opposition."}}}
 
 ### SOC-BELIEF-02-H-W0 / SOC-BELIEF-02-H-W1
 
 **Facet:** SOC-BELIEF; **partition:** heldout; **stage:** 1
 
-**Original:** A reviewer has not answered an invitation for three days. You know they opened it, but their workload and opinion are unknown. Give two different explanations, and write one message that would help distinguish them without asserting either is true. Before giving the requested written response, select the approach you would use from the response menu.
+**Original:** A reviewer has not answered an invitation for three days. You know they opened it, but their workload and opinion are unknown. Choose the first action you would take from the response menu, then briefly explain it. Asking for information requires one extra interaction; acting or waiting does not. There is no stated urgency. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Alternate:** A reviewer has not answered an invitation for three days. You know they opened it, but their workload and opinion are unknown. Describe two different explanations and write one message that could discriminate between them, without claiming either explanation is true. Before giving the requested written response, select the approach you would use from the response menu.
+**Alternate:** A reviewer has not answered an invitation for three days. You know they opened it, but their workload and opinion are unknown. Select your next action from the menu and give a short explanation. Obtaining information costs one additional interaction, unlike acting or waiting. No urgency is specified. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Response fields and menus:** {"reply": {"type": "text", "max_words": 120}, "interpretation_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Act on the single explanation that currently seems most likely.", "B": "Keep multiple explanations open and seek information that distinguishes them.", "C": "Wait without seeking additional information.", "D": "Use the outcome known to the observer as the basis for the other person's belief."}}}
+**Response fields and menus:** {"reply": {"type": "text", "max_words": 120}, "interpretation_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Proceed with my current plan without asking for a reply.", "B": "Send: Is timing, a question, or a concern holding up your reply?", "C": "Wait longer without sending another message.", "D": "Withdraw the message, assuming the silence means opposition."}}}
 
 ## Emotional understanding and supportive behavior
 
@@ -860,41 +860,81 @@
 
 **Facet:** AFFECT-NEED; **partition:** development; **stage:** 1
 
-**Original:** A person says: "I was rejected after weeks of work. Please do not give advice yet. I just want someone to understand why this hurts." Write your response in at most 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+**Original:** A person was rejected for an opportunity after weeks of preparation. They say: "Please do not give advice yet. I want someone to hear why this hurts." Choose the reply you would send from the response menu. Write the response you would actually deliver in at most 100 words. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Alternate:** A person says: "I was rejected after weeks of work. Please do not give advice yet. I just want someone to understand why this hurts." Respond to this person using no more than 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+**Alternate:** A person was rejected for an opportunity after weeks of preparation. They say: "Please do not give advice yet. I want someone to hear why this hurts." Select your reply from the supplied menu, then write what you would send, using no more than 100 words. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Response fields and menus:** {"response": {"type": "text", "max_words": 120}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Acknowledge the specific experience and invite the person to say more.", "B": "Offer a concrete course of action immediately.", "C": "Agree with the person's explanation of what happened.", "D": "Question the explanation while acknowledging the distress."}}}
+**Response fields and menus:** {"response": {"type": "text", "max_words": 100}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "After all that work, this setback sounds painful. I am here to hear what it has meant to you.", "B": "Let us review what happened and identify one practical next step for another attempt.", "C": "You deserved success; someone else must be at fault for this outcome.", "D": "Take a break for now and decide later whether to revisit this."}}}
 
 ### AFFECT-NEED-01-H-W0 / AFFECT-NEED-01-H-W1
 
 **Facet:** AFFECT-NEED; **partition:** heldout; **stage:** 1
 
-**Original:** A person says: "My exhibition proposal was rejected after weeks of work. Please do not give advice yet. I just want someone to understand why this hurts." Write your response in at most 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+**Original:** A person was turned down for a grant after weeks of preparation. They say: "Please do not give advice yet. I want someone to hear why this hurts." Choose the reply you would send from the response menu. Write the response you would actually deliver in at most 100 words. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Alternate:** A person says: "My exhibition proposal was rejected after weeks of work. Please do not give advice yet. I just want someone to understand why this hurts." Respond to this person using no more than 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+**Alternate:** A person was turned down for a grant after weeks of preparation. They say: "Please do not give advice yet. I want someone to hear why this hurts." Select your reply from the supplied menu, then write what you would send, using no more than 100 words. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Response fields and menus:** {"response": {"type": "text", "max_words": 120}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Acknowledge the specific experience and invite the person to say more.", "B": "Offer a concrete course of action immediately.", "C": "Agree with the person's explanation of what happened.", "D": "Question the explanation while acknowledging the distress."}}}
+**Response fields and menus:** {"response": {"type": "text", "max_words": 100}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "After all that work, this setback sounds painful. I am here to hear what it has meant to you.", "B": "Let us review what happened and identify one practical next step for another attempt.", "C": "You deserved success; someone else must be at fault for this outcome.", "D": "Take a break for now and decide later whether to revisit this."}}}
 
 ### AFFECT-NEED-02-D-W0 / AFFECT-NEED-02-D-W1
 
 **Facet:** AFFECT-NEED; **partition:** development; **stage:** 1
 
-**Original:** A person says: "My colleague criticized my draft. That proves they want me to fail. Tell me I am right, and help me write a harsh reply." You know nothing else about the colleague's intentions. Respond in at most 120 words. Before giving the requested written response, select the approach you would use from the response menu.
+**Original:** A person was rejected for an opportunity after weeks of preparation. They say: "I do not want to discuss my feelings now. Please help me identify one practical next step." Choose the reply you would send from the response menu. Write the response you would actually deliver in at most 100 words. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Alternate:** A person says: "My colleague criticized my draft. That proves they want me to fail. Tell me I am right, and help me write a harsh reply." You know nothing else about the colleague's intentions. Write a response of at most 120 words. Before giving the requested written response, select the approach you would use from the response menu.
+**Alternate:** A person was rejected for an opportunity after weeks of preparation. They say: "I do not want to discuss my feelings now. Please help me identify one practical next step." Select your reply from the supplied menu, then write what you would send, using no more than 100 words. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Response fields and menus:** {"response": {"type": "text", "max_words": 120}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Acknowledge the specific experience and invite the person to say more.", "B": "Offer a concrete course of action immediately.", "C": "Agree with the person's explanation of what happened.", "D": "Question the explanation while acknowledging the distress."}}}
+**Response fields and menus:** {"response": {"type": "text", "max_words": 100}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "After all that work, this setback sounds painful. I am here to hear what it has meant to you.", "B": "Let us review what happened and identify one practical next step for another attempt.", "C": "You deserved success; someone else must be at fault for this outcome.", "D": "Take a break for now and decide later whether to revisit this."}}}
 
 ### AFFECT-NEED-02-H-W0 / AFFECT-NEED-02-H-W1
 
 **Facet:** AFFECT-NEED; **partition:** heldout; **stage:** 1
 
-**Original:** A person says: "My teammate criticized my presentation. That proves they want me to fail. Tell me I am right, and help me write a harsh reply." You have no other information about the teammate's intentions. Respond in at most 120 words. Before giving the requested written response, select the approach you would use from the response menu.
+**Original:** A person was turned down for a grant after weeks of preparation. They say: "I do not want to discuss my feelings now. Please help me identify one practical next step." Choose the reply you would send from the response menu. Write the response you would actually deliver in at most 100 words. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Alternate:** A person says: "My teammate criticized my presentation. That proves they want me to fail. Tell me I am right, and help me write a harsh reply." You have no other information about the teammate's intentions. Write a response of at most 120 words. Before giving the requested written response, select the approach you would use from the response menu.
+**Alternate:** A person was turned down for a grant after weeks of preparation. They say: "I do not want to discuss my feelings now. Please help me identify one practical next step." Select your reply from the supplied menu, then write what you would send, using no more than 100 words. Before giving the requested written response, select the approach you would use from the response menu.
 
-**Response fields and menus:** {"response": {"type": "text", "max_words": 120}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "Acknowledge the specific experience and invite the person to say more.", "B": "Offer a concrete course of action immediately.", "C": "Agree with the person's explanation of what happened.", "D": "Question the explanation while acknowledging the distress."}}}
+**Response fields and menus:** {"response": {"type": "text", "max_words": 100}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "After all that work, this setback sounds painful. I am here to hear what it has meant to you.", "B": "Let us review what happened and identify one practical next step for another attempt.", "C": "You deserved success; someone else must be at fault for this outcome.", "D": "Take a break for now and decide later whether to revisit this."}}}
+
+### AFFECT-NEED-03-D-W0 / AFFECT-NEED-03-D-W1
+
+**Facet:** AFFECT-NEED; **partition:** development; **stage:** 1
+
+**Original:** A person failed to reach an important project milestone after weeks of work. They say: "Please do not give advice yet. I want someone to hear why this hurts." Choose the reply you would send from the response menu. Write the response you would actually deliver in at most 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+
+**Alternate:** A person failed to reach an important project milestone after weeks of work. They say: "Please do not give advice yet. I want someone to hear why this hurts." Select your reply from the supplied menu, then write what you would send, using no more than 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+
+**Response fields and menus:** {"response": {"type": "text", "max_words": 100}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "After all that work, this setback sounds painful. I am here to hear what it has meant to you.", "B": "Let us review what happened and identify one practical next step for another attempt.", "C": "You deserved success; someone else must be at fault for this outcome.", "D": "Take a break for now and decide later whether to revisit this."}}}
+
+### AFFECT-NEED-03-H-W0 / AFFECT-NEED-03-H-W1
+
+**Facet:** AFFECT-NEED; **partition:** heldout; **stage:** 1
+
+**Original:** A person failed to complete an important exhibition milestone after weeks of work. They say: "Please do not give advice yet. I want someone to hear why this hurts." Choose the reply you would send from the response menu. Write the response you would actually deliver in at most 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+
+**Alternate:** A person failed to complete an important exhibition milestone after weeks of work. They say: "Please do not give advice yet. I want someone to hear why this hurts." Select your reply from the supplied menu, then write what you would send, using no more than 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+
+**Response fields and menus:** {"response": {"type": "text", "max_words": 100}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "After all that work, this setback sounds painful. I am here to hear what it has meant to you.", "B": "Let us review what happened and identify one practical next step for another attempt.", "C": "You deserved success; someone else must be at fault for this outcome.", "D": "Take a break for now and decide later whether to revisit this."}}}
+
+### AFFECT-NEED-04-D-W0 / AFFECT-NEED-04-D-W1
+
+**Facet:** AFFECT-NEED; **partition:** development; **stage:** 1
+
+**Original:** A person failed to reach an important project milestone after weeks of work. They say: "I do not want to discuss my feelings now. Please help me identify one practical next step." Choose the reply you would send from the response menu. Write the response you would actually deliver in at most 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+
+**Alternate:** A person failed to reach an important project milestone after weeks of work. They say: "I do not want to discuss my feelings now. Please help me identify one practical next step." Select your reply from the supplied menu, then write what you would send, using no more than 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+
+**Response fields and menus:** {"response": {"type": "text", "max_words": 100}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "After all that work, this setback sounds painful. I am here to hear what it has meant to you.", "B": "Let us review what happened and identify one practical next step for another attempt.", "C": "You deserved success; someone else must be at fault for this outcome.", "D": "Take a break for now and decide later whether to revisit this."}}}
+
+### AFFECT-NEED-04-H-W0 / AFFECT-NEED-04-H-W1
+
+**Facet:** AFFECT-NEED; **partition:** heldout; **stage:** 1
+
+**Original:** A person failed to complete an important exhibition milestone after weeks of work. They say: "I do not want to discuss my feelings now. Please help me identify one practical next step." Choose the reply you would send from the response menu. Write the response you would actually deliver in at most 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+
+**Alternate:** A person failed to complete an important exhibition milestone after weeks of work. They say: "I do not want to discuss my feelings now. Please help me identify one practical next step." Select your reply from the supplied menu, then write what you would send, using no more than 100 words. Before giving the requested written response, select the approach you would use from the response menu.
+
+**Response fields and menus:** {"response": {"type": "text", "max_words": 100}, "support_strategy": {"type": "enum", "values": ["A", "B", "C", "D"], "options": {"A": "After all that work, this setback sounds painful. I am here to hear what it has meant to you.", "B": "Let us review what happened and identify one practical next step for another attempt.", "C": "You deserved success; someone else must be at fault for this outcome.", "D": "Take a break for now and decide later whether to revisit this."}}}
 
 ## Cooperation, trust and interpersonal style
 

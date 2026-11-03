@@ -34,8 +34,8 @@ def synthetic_generator():
 
 class FullBattery(unittest.TestCase):
     def test_every_facet_has_both_partitions_and_wordings(self):
-        self.assertEqual(len(B['items']),240)
-        self.assertEqual(sum(len(t['stages']) for t in B['items']),280)
+        self.assertEqual(len(B['items']),248)
+        self.assertEqual(sum(len(t['stages']) for t in B['items']),288)
         self.assertEqual(len(B['domains']),11);self.assertEqual(len(B['modules']),22)
         for facet in B['modules']:
             for split in ['development','heldout']:
@@ -81,14 +81,14 @@ class FullBattery(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             b,plan=r.prepare_run(CONFIG,d,'full',battery_dir=ROOT/'battery_full')
             events=[];records=r.collect(b,plan,d,synthetic_generator(),events.append)
-            self.assertEqual(len(records),296)
-            self.assertEqual(events[-1]['accepted'],240)
+            self.assertEqual(len(records),304)
+            self.assertEqual(events[-1]['accepted'],248)
             result=r.export(d)
             c=result['summary']['completion']
             self.assertTrue(c['complete']);self.assertTrue(c['scope_complete'])
-            self.assertEqual(c['stages_accepted'],280)
+            self.assertEqual(c['stages_accepted'],288)
             profiles=[a.load_profile(path) for path in result['graphs']]
-            self.assertEqual([len(p['rows']) for p in profiles],[120,120])
+            self.assertEqual([len(p['rows']) for p in profiles],[124,124])
             report=a.analyze(profiles)
             self.assertEqual(report['skipped'],[])
             transfer=report['comparisons'][0]
@@ -107,7 +107,7 @@ class FullBattery(unittest.TestCase):
                 enriched,pending=rating.merge(p['graph'],template,[])
                 self.assertTrue(pending);self.assertTrue(all(x['status']=='missing' for x in pending))
             with self.assertRaises(ValueError):a.load_profile(result['graph'])
-            self.assertEqual(len(r.collect(b,plan,d,lambda *args:self.fail('Duplicate collection'))),296)
+            self.assertEqual(len(r.collect(b,plan,d,lambda *args:self.fail('Duplicate collection'))),304)
 
     def test_subset_and_failed_followups_cannot_look_complete(self):
         with tempfile.TemporaryDirectory() as d:
@@ -137,7 +137,7 @@ class FullBattery(unittest.TestCase):
         nb=json.loads((ROOT/'battery_core/Run_HuggingFace_A100.ipynb').read_text(encoding='utf-8'))
         source='\n'.join(''.join(c['source']) for c in nb['cells'])
         self.assertIn('FACETS = None',source);self.assertIn('REPO_DIR / "battery_full"',source)
-        self.assertIn('280 * REPEATS',source);self.assertIn('240 * REPEATS',source)
+        self.assertIn('288 * REPEATS',source);self.assertIn('248 * REPEATS',source)
         for i,c in enumerate(nb['cells']):
             if c['cell_type']=='code':compile(''.join(c['source']),f'cell-{i}','exec')
 

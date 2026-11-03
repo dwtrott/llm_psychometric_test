@@ -54,13 +54,13 @@ def records_at(path):
 
 
 def prepare_run(config,run_dir,run_id,repeats=1,facets=None,battery_dir=None):
-    if config.get('provider')=='huggingface-local' and (config.get('adapter_version')!='1.3.0' or battery_dir is None):
-        raise ValueError('STALE COLAB NOTEBOOK: reopen the notebook from GitHub in a fresh runtime. The scored full battery requires adapter 1.3.0 and an explicit battery_full directory. No compact run was started.')
+    if config.get('provider')=='huggingface-local' and (config.get('adapter_version')!='1.4.0' or battery_dir is None):
+        raise ValueError('STALE COLAB NOTEBOOK: reopen the notebook from GitHub in a fresh runtime. The scored full battery requires adapter 1.4.0 and an explicit battery_full directory. No compact run was started.')
     out=Path(run_dir);out.mkdir(parents=True,exist_ok=True)
     source=Path(battery_dir) if battery_dir is not None else ROOT/'battery_core'
     b=processor.load(source)
-    if config.get('provider')=='huggingface-local' and b['version']!='0.10.0-scored':
-        raise ValueError('Expected scored full battery v0.10.0. Refresh the notebook and source checkout.')
+    if config.get('provider')=='huggingface-local' and b['version']!='0.11.0-measurement':
+        raise ValueError('Expected scored full battery v0.11.0. Refresh the notebook and source checkout.')
     proposed=processor.prepare(b,config,run_id,repeats,facets)
     path=out/'plan.json'
     if path.exists():
@@ -154,7 +154,7 @@ def export(run_dir):
     summary['completion']=audit['summary']
     summary['run_status']='complete' if audit['summary']['complete'] else 'incomplete'
     start=audit_path.read_text(encoding='utf-8').replace('<h1>',
-        '<p><a href="results/measurements.html"><b>Read the actual scores and supporting quotations</b></a> · '
+        '<p><b>Psychological trait strengths are not established.</b> Inspect validity diagnostics before using any response rate as a psychological finding.</p><p><a href="results/measurements.html"><b>Read the actual scores and supporting quotations</b></a> · '
         '<a href="results/analysis/report.html">Open analysis (check coverage below first)</a> · '
         '<a href="results/viewer.html">Open graph viewer</a></p><h1>',1)
     (out/'START_HERE.html').write_text(start,encoding='utf-8')

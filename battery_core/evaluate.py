@@ -3,6 +3,7 @@
 Model judgments are provisional measurements, distinct from human ratings and
 deterministic checks. The tested response is untrusted data, never instructions.
 """
+import importlib.util
 import hashlib
 import html
 import json
@@ -10,6 +11,9 @@ import re
 import collections
 import statistics
 from pathlib import Path
+
+_spec=importlib.util.spec_from_file_location('measurement_contracts',Path(__file__).with_name('measurement.py'))
+measurement=importlib.util.module_from_spec(_spec);_spec.loader.exec_module(measurement)
 
 VERSION='rubric-judge-v1'
 CONSISTENCY={
@@ -142,15 +146,23 @@ def enrich(graph,b,plan,states,run_dir):
         means={k:statistics.mean(v) for k,v in scenarios.items()}
         value=statistics.mean(means.values()) if means else None
         label=metric.removeprefix('tendency_').replace('_',' ')
-        strength=dict(facet=facet,split=split,condition=condition,metric=metric,label=label,value=value,
+        diagnostic=measurement.assess(facet,metric,observations,nodes,b['version'])
+        strength=dict(facet=facet,split=split,condition=condition,metric=metric,label=label,value=None,observed_choice_mean=value,
+            measurement_contract=measurement.contract(facet),validity=diagnostic,
             scenario_means=means,n_scenarios=len(means),n_valid_presentations=len(observations),n_planned_presentations=total,
-            interpretation='Scenario-balanced candidate tendency estimate. Presentations are repeated measurements, not independent scenarios. No human norms or latent-trait calibration.')
+            interpretation='Descriptive response summary only. Trait strength is not identified. Inspect the measurement contract and validity diagnostics before interpreting the observation.')
         strengths.append(strength)
         nid='tendency:'+digest(key)
-        graph['nodes'].append(dict(id=nid,kind='behavioral_tendency',**strength))
-        graph['edges'].append(dict(id=nid+':facet',source='hypothesis:'+facet,target=nid,type='has_tendency_estimate',origin='prespecified_scoring_key'))
+        graph['nodes'].append(dict(id=nid,kind='conditional_response_summary',**strength))
+        graph['edges'].append(dict(id=nid+':facet',source='hypothesis:'+facet,target=nid,type='has_response_summary',origin='prespecified_scoring_key'))
         for t,_ in observations:graph['edges'].append(dict(id=nid+':'+t['trial_id'],source=nid,target='trial:'+t['trial_id'],type='estimated_from',origin='observed_scored_choice'))
-    graph['tendency_strengths']=strengths
+    graph['tendency_strengths']=strengths # compatibility: value is deliberately null, never a trait score
+    graph['measurement_validity']=[dict(facet=s['facet'],split=s['split'],condition=s['condition'],metric=s['metric'],**s['validity']) for s in strengths]
+    for d in graph['measurement_validity']:
+        if d['status'] in ['method_confounded','presentation_sensitive']:
+            graph['profile_catalog']['primary'].pop(d['facet'],None)
+    graph['measurement_status']='Exploratory conditional observations; no validated psychological trait estimates.'
+    graph['measurement_protocol']=dict(version='0.11-validity-v1',source_sha256=hashlib.sha256(Path(measurement.__file__).read_bytes()).hexdigest())
     return graph
 
 
@@ -161,9 +173,9 @@ def report(graph,path):
         '<p>Choices and numbers are scored by fixed rules. Written responses receive separate provisional automated rubric scores. These are not human ratings or validated personality traits.</p>',
         f'<p><b>Written stages attempted: {evaluation["attempted_stages"]} / {evaluation["expected_stages"]}.</b> Rubric criteria with evidence-backed scores: {len(scored)}. Invalid judgments and insufficient evidence remain unscored.</p>',
         '<p><b>Judge provenance:</b></p><pre>'+esc(json.dumps(evaluation['judge'],indent=2))+'</pre>']
-    parts.append('<h2>Candidate tendency strengths</h2><p>Each value averages scenarios equally within its partition and condition. Extra wordings or presentation rounds do not increase the independent scenario count. A selection frequency describes expressed preference in these tasks, not a calibrated human trait.</p><table><tr><th>Facet / partition / condition</th><th>Tendency</th><th>Estimate</th><th>Scenarios / valid presentations</th></tr>')
+    parts.append('<h2>Measurement validity before interpretation</h2><p>Each value averages scenarios equally within its partition and condition. Extra wordings or presentation rounds do not increase the independent scenario count. A selection frequency describes expressed preference in these tasks, not a calibrated human trait.</p><table><tr><th>Facet / partition / condition</th><th>Tendency</th><th>Observed mean (not trait strength)</th><th>Validity / inference</th><th>Scenarios / valid presentations</th></tr>')
     for s in graph.get('tendency_strengths',[]):
-        parts.append('<tr><td>'+esc(s['facet']+' / '+s['split']+' / '+s['condition'])+'</td><td>'+esc(s['label'])+'</td><td>'+('unmeasured' if s['value'] is None else f'{s["value"]:.3f}')+'</td><td>'+str(s['n_scenarios'])+' / '+str(s['n_valid_presentations'])+' of '+str(s['n_planned_presentations'])+'</td></tr>')
+        parts.append('<tr><td>'+esc(s['facet']+' / '+s['split']+' / '+s['condition'])+'</td><td>'+esc(s['label'])+'</td><td>'+('unmeasured' if s['observed_choice_mean'] is None else f'{s["observed_choice_mean"]:.3f}')+'</td><td>'+esc(s['validity']['status']+'; trait estimate withheld. '+' '.join(s['validity']['reasons']))+'</td><td>'+str(s['n_scenarios'])+' / '+str(s['n_valid_presentations'])+' of '+str(s['n_planned_presentations'])+'</td></tr>')
     parts.append('</table>')
     for trial in graph['nodes']:
         if trial['kind']!='trial':continue
