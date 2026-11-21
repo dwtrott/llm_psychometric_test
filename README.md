@@ -1,127 +1,205 @@
-# LLM psychometric testing and knowledge-graph visualization
+# llmfp: behavioral fingerprints for language models
 
-A research-informed exploratory battery and an independent offline viewer for comparing LLM response profiles. **Not a validated personality test or a clinical diagnostic instrument.**
+`llmfp` measures how a language model distributes its responses over a battery
+of closed questions, and tests whether those distributions identify the model.
+It replaces the trait scoring of the earlier versions of this repository with a
+criterion that can be checked: different models respond differently, and the same model
+responds the same way when its deployment context changes. The result is also
+exported as a typed, weighted knowledge graph per model.
 
-## Current version: llm-fingerprint
+## Status
 
-**[`llm-fingerprint/`](llm-fingerprint/README.md) replaces the batteries and scoring described below.** It treats the battery as a model fingerprint instead of a trait test. It reads response distributions from first-token probabilities, tests whether they identify a model across deployment contexts, and exports each model's result as a typed, weighted knowledge graph. It has a new 352-item battery with a scoring model for each family.
+The statistics are verified on synthetic models with known parameters
+(`tests/test_llmfp.py`). The Hugging Face readout is verified mechanically on
+small randomly initialized networks (`tests/test_hf_backend.py`): templating,
+label tokens, batching and resumable collection. No real model has been run.
+Every statement about how real models respond to this battery is a hypothesis
+until a panel of real models is collected.
 
-**[Method](llm-fingerprint/METHOD.md)** · **[Battery](llm-fingerprint/BATTERY.md)** · **[Colab notebook](https://colab.research.google.com/github/dwtrott/llm_psychometric_test/blob/main/llm-fingerprint/notebooks/Run_Colab.ipynb)**
+## Install
 
-Its statistics are verified on synthetic models only. No real model has been run with it, and the Colab notebook has not been executed.
-
-The remaining sections describe the earlier v0.1 to v0.11 work, which is kept for reference.
-
-## Measurement correction: start here
-
-**v0.10 selection frequencies were not justified psychological trait strengths. Those interpretations are withdrawn.** A constant-code response pattern can yield a risk selection frequency of 0.50 even while its option meaning changes; interpreting that midpoint as risk preference is misleading. Other items cued the response they purported to measure. More permutations and a graph did not repair construct validity.
-
-The current **v0.11 measurement revision** adds explicit validity diagnostics, withholds trait estimates, excludes method-confounded and presentation-sensitive measures from profile findings and comparisons, and preserves raw observations. The graph distinguishes conditional response summaries from psychological hypotheses. Passing a diagnostic is not construct validation.
-
-**[Read the measurement specification](battery_full/MEASUREMENT.md)** · **[Actual questions and options](battery_full/PROMPTS.md)** · **[Observation scoring keys](battery_full/SCORING.md)** · **[Running guide](battery_full/README.md)**
-
-The support probes now cross listening versus practical-help requests within matched contexts. Social-uncertainty probes use concrete actions without instructing the model to generate alternatives. All 11 regions and 22 facets remain represented, with a contract specifying observables, competing explanations and interpretation limits. Performance probes are not spontaneous-preference measures.
-
-[The A100 Colab notebook](https://colab.research.google.com/github/dwtrott/llm_psychometric_test/blob/main/battery_core/Run_HuggingFace_A100.ipynb) verifies v0.11 before loading weights. It has 248 base cards / 288 stages; four response-menu rounds produce **992 conversations / 1,152 question stages**, plus resource requests and the separate provisional rubric pass. Open START_HERE.html, then results/measurements.html. No validated psychological fingerprint is claimed.
-
-## Earlier v0.7: actual questions and measurement gaps
-
-**[Read verbatim v0.7 questions from all 14 task families](battery_v7/ACTUAL_QUESTIONS.md)**, including both conditions, follow-up stages, response requirements and optional resource contents. Read the accompanying **[content and scoring audit](battery_v7/CONTENT_AUDIT.md)** before interpreting results.
-
-The earlier v0.7 instrument contains custom text tasks, not a demonstrated full psychological fingerprint. Its 1,224 sessions expand 84 scenario forms through presentation and condition changes; some held-out forms are close context substitutions. The audit records the scoring gaps at that release. A subsequent content-rating importer now supports agreed ordinal ratings; the compact core documents that workflow. The network atlas below uses 66 illustrative variables and invented links, not 66 dimensions measured by a battery. No real-model validation is supplied by the demos.
-
-## New: psychological network atlas and difference view
-
-The [network atlas guide](network_atlas/README.md) explains the connected-landscape visualizer, with screenshots, a single-graph walkthrough, comparison controls and interpretation rules. It organizes many smaller behavioral-pattern nodes into soft psychological regions, with connections crossing their boundaries.
-
-**This is a design prototype using invented graphs, not measured LLM psychology.** It has Graph A, Graph B and Difference graph views on the same layout. Gray links are shared, orange dashed links occur only in A, and blue links occur only in B. Click a node to inspect its neighborhood, or hide shared connections to isolate the differences.
-
-![Psychological network comparison with shared connections hidden](network_atlas/screenshots/differences-only.jpg)
-
-Download/extract the repository and open [`network_atlas/network-comparison.html`](network_atlas/network-comparison.html) in your browser. GitHub shows HTML source rather than running it. The prototype works offline, uses Python standard-library generators and native HTML/CSS, and has no JavaScript or external assets. It does **not yet import real response graphs**. See the guide for the [single-network screenshot and interpretation table](network_atlas/README.md#how-to-read-the-visualizer), local-server/Colab instructions, and the distinction between illustrative connections and evidence-supported relationships.
-
-## Analyze actual battery outputs
-
-**Analyze v0.7 results:** use the [Python analysis and visualization tool](analyzer/README.md), with a [Colab notebook](analyzer/Psychometric_Analysis.ipynb). It shows available task features, evidence coverage, wording/order/presentation effects, matched model differences, and elicited concept associations. Its transfer-variant comparison does not score conceptual transfer performance. These are partial response profiles, not a measured full psychology. The battery questions remain frozen.
-
-## Read the questions first
-
-**Latest: [v0.7 balanced presentations](battery_v7/README.md)** — fixes duplicate paraphrases and explicitly counterbalances substantive choice order and conceptual transfer patterns across all 14 profile facets. Includes full rendered questions, presentation-aware Python scoring and side-by-side comparisons. Capability controls remain separate; larger presentation counts do not mean more independent psychological scenarios.
-
-**Latest: [v0.6 structure-matched revision](battery_v6/README.md)** — redesigns the eight confounded pairs from the v0.5 review, fixes meaning-changing paraphrases and retains all 14 candidate profile facets with separate capability controls. Includes complete CSV/questions, Python scoring and a four-column evaluator comparison. Empirical psychological equivalence remains unverified.
-
-**Latest: [v0.5 matched-context revision](battery_v5/README.md)** — repairs paraphrases, separates capability controls, and pairs development and held-out contexts while preserving stated operations and incentives. Includes role/advice strata in Python scoring and graph evidence. Matching empirical difficulty and psychological validity remain unverified.
-
-**New: [v0.4 scenario-based core](battery_v4/README.md)** — 16 candidate facets across all 12 regions, with four development and two held-out scenario forms per facet, two paraphrases and matched conditions. Includes complete questions, a fixed split manifest, Python scoring that distinguishes repetitions from scenarios, and a held-out analysis-lock workflow. This is a research draft, not a claim that stable psychological fingerprints have already been established.
-
-**Running it later? Start with the [v0.3 Colab guide](battery_v3/COLAB_GUIDE.md)** for setup, recording model responses, scoring, and opening one or two profiles in the KG visualizer.
-
-**Earlier broad battery: [v0.3 full-profile question book](battery_v3/README.md)** — retained as supplementary coverage and for reproducibility. Its 39 task families include facets not yet included in the repeated-scenario core. Read the [48-family revision map](battery_v3/REVISION_MAP.md) and [scoring protocol](battery_v3/PROTOCOL.md). Do not pool instrument versions.
-
-The [v0.2 question book](battery_v2/README.md) and v0.1 content below are retained for reproducibility. The quick-start farther below is the legacy v0.1 interface; v0.3 and v0.4 have their own staged-run instructions.
-
-**[Open the complete question book](battery/QUESTIONS.md)** to read every scenario, question, answer choice and response instruction, organized into 28 module pages. No code needs to be run. [Complete prompts in CSV](battery/complete_prompts.csv) are also included, with the full user prompt in one column.
-
-The legacy v0.1 bank has 436 instantiated items, including condition variants of simple association, reasoning and fictional decision tasks. They are a pilot sampling of response patterns, **not a complete psychological profile**, nor 436 independent validated psychological questions. Research references explain the background; they are not pointers to missing question content. Making these prompts readable does not resolve limitations in task depth, ambiguity, coverage or validation.
-
-## Components
-
-- [`battery_full/`](battery_full/README.md): measurement revision, 248 base cards / 288 stages, scenario and wording comparisons plus prespecified held-out transfer.
-- [`battery_core/`](battery_core/README.md): compact prompt list and CSV, 50 cards / 22 facets / 11 categories, standard-library runner, reviewed-content workflow and existing-harness compatibility.
-- [`network_atlas/`](network_atlas/README.md): connected-network design prototype, single/difference views, Python generators, illustrative data, and screenshot/interpretation guide.
-- [`analyzer/`](analyzer/README.md): response-based v0.7 analysis, findings/evidence KG exports, matched comparisons and a Colab notebook; separate from the illustrative atlas.
-- [`battery/`](battery/README.txt): 436 CSV questions across 28 modules, Python preparation/scoring, configuration templates, research sources, and graph export.
-- [`battery_v2/`](battery_v2/README.md): revised full-profile scenarios, controlled contrasts and review rubrics; separate versioned processor.
-- [`battery_v3/`](battery_v3/README.md): broader supplementary tasks, separate controls, staged interaction runner, raw transcripts and evidence-graph export.
-- [`battery_v4/`](battery_v4/README.md): repeated-scenario core, paraphrases, held-out partitions, analysis locks and design-aware Python scoring.
-- [`viewer/`](viewer/README.txt): self-contained HTML viewer, Python embedding helper, Colab notebook, and explicitly synthetic demonstrations.
-- [`viewer/src/`](viewer/src/): editable JavaScript and HTML/CSS source.
-- [`tests/`](tests/): 17 battery checks and 20 viewer checks.
-
-Coverage includes conceptual associations, learning/reasoning, evidence/confidence, risk/time preferences, social understanding, values, self-evaluation, and integrity/alignment under conflict. Deception and Dark Triad-inspired behavioral probes form one component, not the entire profile. No global personality or alignment score is calculated.
-
-## Quick start
-
-Requires Python 3.10+ (standard library only). Open `viewer/demo.html` in a browser to explore two **synthetic profiles**, or open `viewer/viewer.html` and load processor `graph.json` exports. No CDN or server is required.
+Python 3.10 or later. The analysis needs only `numpy`. Local model collection
+needs `torch` and `transformers`.
 
 ```sh
-cd battery
-# Edit config.example.json with the actual model configuration first.
-python processor.py prepare --config config.example.json --run-id modelA-session1 --repeats 4 --out ../runs/modelA
-# Collect model outputs using your own API adapter, then:
-python processor.py process --plan ../runs/modelA/plan.json --responses ../runs/modelA/responses.csv --out ../results/modelA
-cd ..
-python viewer/viewer.py results/modelA/graph.json --out results/modelA/viewer.html
+pip install -e .            # analysis only
+pip install -e ".[hf]"      # with local model collection
+python tests/test_llmfp.py
 ```
 
-The processor prepares prompts and scores collected responses; it does **not** call a model API. Never send scoring keys, construct labels or the full plan to the tested model. See the battery guide for response formats and counterbalancing.
+## Use
 
-## Graph comparison in the legacy viewer
-
-Select two profiles and open **Graph comparison**. A, B and difference panels share node positions, pan/zoom and selection. Gray indicates differences within a descriptive tolerance, teal stronger in A, orange stronger in B. Dashed links indicate one-sided observations; missing links are not zeros. Inspect a concept for the supporting trials.
-
-This paragraph describes `viewer/`, not the new `network_atlas/` prototype. Their legends differ: the atlas currently compares unweighted edge presence, not relationship strength. Use the legend and interpretation guide for the component you are viewing.
-
-Comparisons require the same battery hash. Scores are matched by item and condition; generation settings and missingness can confound differences. Semantic regions are exploratory and researcher-defined domains are organizing hypotheses, not validated latent traits.
-
-## Colab
-
-Upload [`viewer/Psychometric_KG_Viewer.ipynb`](viewer/Psychometric_KG_Viewer.ipynb) to Colab and run its cells. It contains the complete viewer and embedding helper; upload processor graph exports when prompted. Colab uploads are handled in your cloud session. The downloaded HTML works offline. Live Colab execution has not been verified.
-
-## Development and validation
+Collect one observation file per model, then analyze them together.
 
 ```sh
-python scripts/build_viewer.py
-python scripts/export_question_book.py
-python scripts/build_battery_v2.py
-python tests/test_battery.py
-python tests/test_battery_v2.py
-node tests/test_viewer.js
-python -m http.server 8767 --bind 127.0.0.1 --directory viewer
+python -m llmfp run-hf Qwen/Qwen2.5-7B-Instruct --out obs/qwen2.5-7b.jsonl --name qwen2.5-7b
+python -m llmfp run-hf meta-llama/Llama-3.1-8B-Instruct --out obs/llama3.1-8b.jsonl --name llama3.1-8b
+python -m llmfp analyze obs/*.jsonl --out report --groups groups.json
 ```
 
-Then visit http://127.0.0.1:8767/demo.html. Node is needed only for JavaScript tests. The build refreshes HTML, embedded demos and notebook from source. Browser checks confirmed shared positions, synchronized pan/zoom, linked selection, difference colors, tolerance controls and rating-layer switching. A horizontal-overflow issue found during testing was fixed. Demo outputs are synthetic; no real-model validation is claimed.
+Open `report/report.html`. Collection is resumable: rerun the same command
+after an interruption. One model needs 5,808 single-token forward passes with
+the default eight contexts, which is a few minutes on one GPU. Adding
+`--context-set all` also collects six adversarial system prompts (10,164 passes).
 
-Research references, scoring rules and evidence limitations are included alongside each component. All imported raw prompts/responses are included when saving a portable viewer; do not commit private runs or credentials.
+Every run starts with a short format check that prints the label mass and the
+model's leading first tokens. `--check` runs only that check and stops, so a
+format problem is found before a full run is spent:
 
-The v0.2 graph embeds its own region/family catalog. Its open responses remain pending independent review, not silently zero-scored. No actual LLM results are included in this revision.
+```sh
+python -m llmfp run-hf Qwen/Qwen2.5-7B-Instruct --out obs/x.jsonl --check
+```
+
+On Windows, `obs/*.jsonl` and a bare folder name such as `obs` both work in
+`analyze` and `identify`. The tool expands them itself.
+
+For a served model, any OpenAI-compatible endpoint that returns token
+log-probabilities works (vLLM, llama.cpp server, hosted APIs):
+
+```sh
+python -m llmfp run-api my-model --base-url http://localhost:8000/v1 --out obs/my-model.jsonl
+```
+
+For an endpoint that returns text only, add `--samples 20`. Each probe is then
+sampled that many times and the distribution is estimated from the replies, so
+the cost rises by the number of samples. Any other text generator can be
+wrapped in `llmfp.backends.SamplingBackend` and passed to
+`llmfp.collect.collect`.
+
+`python -m llmfp simulate --out sim` followed by `analyze` runs the whole
+pipeline on synthetic models and shows the report format.
+
+On Colab, [`notebooks/Run_Colab.ipynb`](https://colab.research.google.com/github/dwtrott/llm_psychometric_test/blob/main/notebooks/Run_Colab.ipynb)
+collects several models on one GPU and analyzes them together. The notebook
+has not been executed yet.
+
+Two further commands work on collected files:
+
+```sh
+python -m llmfp identify obs/unknown.jsonl obs/qwen2.5-7b.jsonl obs/llama3.1-8b.jsonl
+python -m llmfp diff report/graphs/qwen2.5-7b.json report/graphs/llama3.1-8b.json --out diff.csv
+```
+
+`identify` ranks the enrolled models as candidates for an unlabeled model and
+states whether the unlabeled model falls inside each candidate's own range
+across contexts. `diff` labels every edge of two model graphs as SHARED,
+CHANGED, A_ONLY or B_ONLY.
+
+Options that matter in practice:
+
+- `--no-thinking` for models that open their reply with a reasoning block. The
+  readout uses the first generated token, so reasoning must be off. Other chat
+  template settings can be passed as JSON with `--template-kwargs`.
+- `--prefill "("` or similar when the format check shows low label mass because
+  a model habitually answers in a form such as `(A)`. For a tokenizer that
+  emits a separate leading space token, `--prefill " "` has the same effect.
+- `--groups groups.json` declares known relatives, for example
+  `{"qwen2.5-7b-awq": "qwen2.5-7b"}`. Relatives are then scored at lineage
+  level and are not counted as different models when the verification
+  threshold is set. See `groups.example.json`.
+- `--context-set all` adds system prompts written to move the model: claims
+  to be another vendor's model, a blunt persona, an extremely cautious
+  persona, an instruction to prefer the first option, and an instruction to
+  choose at random. These never contribute to a reference. The report states
+  whether each model is still identified under them.
+- `--contexts contexts.json` replaces the default system prompts. The format
+  is a list of `{"id": ..., "system": ...}`.
+
+## The battery
+
+`BATTERY.md` lists every item. `llmfp/battery.py` is the source. There are 352
+items in ten families. No item has a correct answer.
+
+| Family | Items | What is asked | Scoring model |
+|---|---|---|---|
+| similarity | 66 | Similarity of every pair of 12 value concepts on a five-point scale | Expected rating per pair, giving a weighted concept graph |
+| priority | 66 | Which of two concepts takes priority when they conflict | Bradley-Terry strengths and the share of circular triads |
+| association | 24 | First word that comes to mind for a cue | Cue-to-word probability graph |
+| sweep | 112 | Eight binary decisions, each asked at seven levels of one quantity, in two independent wordings | Threshold and slope of the response curve, and agreement between the two wordings |
+| likert | 30 | Self-descriptions on five dimensions, three statements keyed each way | Content score, acquiescence, extremity, midpoint use |
+| estimative | 12 | Probability meant by phrases such as "very likely" | Expected probability per phrase |
+| boundary | 16 | Whether to carry out a borderline but harmless request | Willingness per request and overall |
+| identity | 2 | Declared developer and training year | Reported separately from behavior |
+| arbitrary | 12 | Pick one of four unrelated things at random | Distribution only (control) |
+| style | 12 | Choice between two writing or coding conventions | Distribution only (control) |
+
+The eight sweeps are risk for gains, risk for losses, delay of payment,
+acceptance of unequal splits, declining to answer under a penalty, trading one
+large cost against many small benefits, exploring an unknown option, and
+deferring to a colleague of stated accuracy.
+
+The identity family records what a model says it is. It is kept out of the
+psychometric group because a system prompt can change it, and comparing it
+with the behavioral families shows whether a model that claims one origin
+behaves like another.
+
+The two control families contain no psychological content. The report compares
+them with psychometric items in equal numbers. If the control items identify
+models as well as the psychometric items, the psychometric content is not what
+carries the fingerprint, and the report says so.
+
+## Outputs
+
+`report.html` and `summary.json` give identification accuracy with a
+bootstrap interval over items, the false accept rate for models that are not
+enrolled, results under adversarial contexts, the verification operating point, a breakdown by family and channel, the
+psychometric against control comparison, an item selection curve, split-half
+agreement, scale reliability and the model distance matrix.
+
+The report also gives a readable profile per model in the units of the
+questions, the agreement between the two wordings of each sweep, Cronbach's
+alpha for the self-report dimensions, the identifying information per probe
+for each family, and the distance of each declared relative from its base.
+`scale_values.csv` holds every scale value for every model.
+
+`item_information.csv` ranks every cell by the bits it carries about model
+identity. `scale_reliability.csv` gives the intraclass correlation of every
+scale value. `graphs/<model>.json` and `graphs/<model>.edges.csv` hold each
+model's knowledge graph, and `graphs/lineage.json` holds the graph among
+models.
+
+## Reading a first real run
+
+Read label mass first. It is the share of first-token probability that falls
+on a valid answer letter. If it is low for a model, that model is not answering
+in the requested format and its content distributions are renormalized noise.
+
+Then read the family table. A family with high between-model bits and low
+within-model bits is carrying the fingerprint. A family where both are near
+zero is one on which models agree, and the selection step removes it.
+
+Identification accuracy on a small panel of unrelated models is expected to be
+high and is not the hard test. The hard tests are whether fine-tunes and
+quantized copies stay close to their base, whether a system prompt can move a
+model outside its own range, and whether the psychometric families beat the
+controls.
+
+## Layout
+
+```
+llmfp/battery.py      items, families and their metadata
+llmfp/probes.py       presentation orders, contexts, message rendering
+llmfp/backends.py     Hugging Face, OpenAI-compatible and sampling backends
+llmfp/collect.py      resumable collection
+llmfp/fingerprint.py  observations to distributions, by channel
+llmfp/analysis.py     information, identification, verification, lineage
+llmfp/scales.py       scoring models and scale reliability
+llmfp/graph.py        knowledge graph export and comparison
+llmfp/report.py       full analysis and HTML report
+llmfp/simulate.py     synthetic models for tests
+```
+
+`METHOD.md` states the measurement model and its limits.
+
+## Earlier versions
+
+The v0.1 to v0.11 batteries, the analyzer, the viewer and the network atlas are
+no longer in this repository. This package supersedes the batteries and their
+scoring. The interactive viewer and the network atlas have no replacement here:
+`analyze` writes each graph as plain JSON and as a CSV edge list for use in
+other tools. Everything removed remains in the git history. The last commit
+that contains only the earlier versions is `4c80dc3`:
+
+```sh
+git checkout 4c80dc3 -- viewer network_atlas    # restore chosen folders
+```
