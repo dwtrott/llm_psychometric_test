@@ -1,0 +1,5 @@
+{
+  "qwen2.5-7b-awq": "qwen2.5-7b",
+  "qwen2.5-7b-4bit": "qwen2.5-7b",
+  "my-finetune-of-llama3.1-8b": "llama3.1-8b"
+}

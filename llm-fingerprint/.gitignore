@@ -1,0 +1,6 @@
+__pycache__/
+*.egg-info/
+obs/
+report/
+sim/
+.ipynb_checkpoints/

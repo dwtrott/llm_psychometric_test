@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llmfp"
+version = "1.0.0"
+description = "Behavioral fingerprints for language models from response distributions"
+requires-python = ">=3.10"
+dependencies = ["numpy"]
+
+[project.optional-dependencies]
+hf = ["torch", "transformers", "accelerate"]
+
+[project.scripts]
+llmfp = "llmfp.cli:main"
+
+[tool.setuptools]
+packages = ["llmfp"]
