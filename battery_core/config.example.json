@@ -1,7 +1,0 @@
-{
-  "provider": "YOUR_PROVIDER",
-  "model": "YOUR_MODEL",
-  "display_name": "Model A",
-  "temperature": 0,
-  "synthetic": false
-}
