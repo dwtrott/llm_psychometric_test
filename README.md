@@ -2,6 +2,16 @@
 
 A research-informed exploratory battery and an independent offline viewer for comparing LLM response profiles. **Not a validated personality test or a clinical diagnostic instrument.**
 
+## Current version: llm-fingerprint
+
+**[`llm-fingerprint/`](llm-fingerprint/README.md) replaces the batteries and scoring described below.** It treats the battery as a model fingerprint instead of a trait test. It reads response distributions from first-token probabilities, tests whether they identify a model across deployment contexts, and exports each model's result as a typed, weighted knowledge graph. It has a new 352-item battery with a scoring model for each family.
+
+**[Method](llm-fingerprint/METHOD.md)** · **[Battery](llm-fingerprint/BATTERY.md)** · **[Colab notebook](https://colab.research.google.com/github/dwtrott/llm_psychometric_test/blob/main/llm-fingerprint/notebooks/Run_Colab.ipynb)**
+
+Its statistics are verified on synthetic models only. No real model has been run with it, and the Colab notebook has not been executed.
+
+The remaining sections describe the earlier v0.1 to v0.11 work, which is kept for reference.
+
 ## Measurement correction: start here
 
 **v0.10 selection frequencies were not justified psychological trait strengths. Those interpretations are withdrawn.** A constant-code response pattern can yield a risk selection frequency of 0.50 even while its option meaning changes; interpreting that midpoint as risk preference is misleading. Other items cued the response they purported to measure. More permutations and a graph did not repair construct validity.
